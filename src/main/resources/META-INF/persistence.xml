@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="SaeFxPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>ar.nex.entity.Especie</class>
+    <class>ar.nex.entity.Marca</class>
+    <class>ar.nex.entity.Equipo</class>
+    <class>ar.nex.entity.FleteDestino</class>
+    <class>ar.nex.entity.Item</class>
+    <class>ar.nex.entity.EquipoTipo</class>
+    <class>ar.nex.entity.Localidad</class>
+    <class>ar.nex.entity.Movimiento</class>
+    <class>ar.nex.entity.Stock</class>
+    <class>ar.nex.entity.Contacto</class>
+    <class>ar.nex.entity.Repuesto</class>
+    <class>ar.nex.entity.EquipoModelo</class>
+    <class>ar.nex.entity.Silo</class>
+    <class>ar.nex.entity.Provincia</class>
+    <class>ar.nex.entity.Empresa</class>
+    <class>ar.nex.entity.EquipoCompraVenta</class>
+    <class>ar.nex.entity.FleteTarifa</class>
+    <class>ar.nex.entity.Pedido</class>
+    <class>ar.nex.entity.Rubro</class>
+    <class>ar.nex.entity.Variedad</class>
+    <class>ar.nex.entity.Direccion</class>
+    <class>ar.nex.entity.EquipoCategoria</class>
+    <class>ar.nex.entity.CerealSilo</class>
+    <class>ar.nex.entity.CerealEspecie</class>
+    <class>ar.nex.entity.CerealMovimiento</class>
+    <class>ar.nex.entity.CerealStock</class>
+    <class>ar.nex.entity.CerealVariedad</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/test"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
+    </properties>
+  </persistence-unit>
+</persistence>
