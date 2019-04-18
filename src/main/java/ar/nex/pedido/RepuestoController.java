@@ -2,9 +2,10 @@ package ar.nex.pedido;
 
 import ar.nex.entity.Pedido;
 import ar.nex.entity.Repuesto;
-import ar.nex.service.PedidoJpaController;
-import ar.nex.service.RepuestoJpaController;
+import ar.nex.jpa.PedidoJpaController;
+import ar.nex.jpa.RepuestoJpaController;
 import ar.nex.util.DialogController;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -15,7 +16,9 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -23,6 +26,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -43,25 +47,17 @@ public class RepuestoController implements Initializable {
     @FXML
     private Button signOut;
     @FXML
-    private TextField boxCodigo;
+    private Button btnAdd;
     @FXML
-    private TextField boxDescripcion;
-    @FXML
-    private TextField boxMarca;
-    @FXML
-    private TextField boxObservacion;
-    @FXML
-    private Button btnAddNew;
-    @FXML
-    private Button btnUpdate;
+    private Button btnEdit;
     @FXML
     private Button btnDelete;
 
-    ObservableList<Repuesto> data = FXCollections.observableArrayList();
-    FilteredList<Repuesto> filteredData = new FilteredList<>(data);
-    Repuesto select;
-
-    @FXML
+    private ObservableList<Repuesto> data = FXCollections.observableArrayList();
+    private FilteredList<Repuesto> filteredData = new FilteredList<>(data);
+    private Repuesto select;
+    
+        @FXML
     private TableView<Repuesto> table;
     @FXML
     private TableColumn<?, ?> colCodigo;
@@ -70,17 +66,25 @@ public class RepuestoController implements Initializable {
     @FXML
     private TableColumn<?, ?> colMarca;
     @FXML
-    private TableColumn<?, ?> colObeservacion;
+    private TableColumn<?, ?> colInfo;
+    @FXML
+    private TableColumn<?, ?> colStock;
     @FXML
     private TableColumn colAccion;
 
     private EntityManagerFactory factory;
-    private RepuestoJpaController service;
+    private RepuestoJpaController jpaService;
     private PedidoJpaController srvPedido;
+    
+    private Repuesto repuesto;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         System.out.println("ar.nex.repuesto.RepuestoController.initialize()");
+
+        btnAdd.setOnAction(e -> this.add());
+        btnEdit.setOnAction(e -> this.edit());
+
         initTable();
         initService();
         loadData();
@@ -89,10 +93,6 @@ public class RepuestoController implements Initializable {
     public void clearAll() {
         System.out.println("ar.nex.util.RepuestoController.clearAll()");
         data.clear();
-        boxCodigo.clear();
-        boxDescripcion.clear();
-        boxMarca.clear();
-        boxObservacion.clear();
         searchBox.clear();
         select = null;
     }
@@ -102,12 +102,14 @@ public class RepuestoController implements Initializable {
         colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
         colMarca.setCellValueFactory(new PropertyValueFactory<>("marca"));
-        colObeservacion.setCellValueFactory(new PropertyValueFactory<>("obsercacion"));        
+        colInfo.setCellValueFactory(new PropertyValueFactory<>("info"));
+        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
+
         initCellAccion();
     }
 
     public void initCellAccion() {
-        colAccion.setCellValueFactory(new PropertyValueFactory<>("Accion"));        
+        colAccion.setCellValueFactory(new PropertyValueFactory<>("Accion"));
         Callback<TableColumn<Repuesto, String>, TableCell<Repuesto, String>> cellFactory
                 = //
                 (final TableColumn<Repuesto, String> param) -> {
@@ -124,7 +126,7 @@ public class RepuestoController implements Initializable {
                     } else {
                         btn.setOnAction(event -> {
                             Repuesto repuesto = getTableView().getItems().get(getIndex());
-                            Pedido newPedido = dialog.addToPedido(repuesto);                            
+                            Pedido newPedido = dialog.addToPedido(repuesto);
                             srvPedido.create(newPedido);
                         });
                         setGraphic(btn);
@@ -140,7 +142,7 @@ public class RepuestoController implements Initializable {
     public void initService() {
         System.out.println("ar.nex.util.RepuestoController.initService()");
         factory = Persistence.createEntityManagerFactory("SaeFxPU");
-        service = new RepuestoJpaController(factory);
+        jpaService = new RepuestoJpaController(factory);
         srvPedido = new PedidoJpaController(factory);
     }
 
@@ -148,7 +150,7 @@ public class RepuestoController implements Initializable {
         System.out.println("ar.nex.util.RepuestoController.loadData()");
         clearAll();
 
-        List<Repuesto> lst = service.findRepuestoEntities();
+        List<Repuesto> lst = jpaService.findRepuestoEntities();
         for (Repuesto item : lst) {
             data.add(item);
             table.setItems(data);
@@ -157,7 +159,7 @@ public class RepuestoController implements Initializable {
 
     @FXML
     private void Search() {
-                searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
+        searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
             filteredData.setPredicate((Predicate<? super Repuesto>) user -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
@@ -187,12 +189,12 @@ public class RepuestoController implements Initializable {
         System.out.println("ar.nex.util.RepuestoController.Add()");
         try {
             Repuesto item = new Repuesto();
-            item.setCodigo(boxCodigo.getText());
-            item.setDescripcion(boxDescripcion.getText());
-            item.setMarca(boxMarca.getText());
-            item.setObsercacion(boxObservacion.getText());
+//            item.setCodigo(boxCodigo.getText());
+//            item.setDescripcion(boxDescripcion.getText());
+//            item.setMarca(boxMarca.getText());
+//            item.setInfo(boxInfo.getText());
 
-            service.create(item);
+            jpaService.create(item);
 
         } catch (Exception e) {
             System.out.println(e);
@@ -205,18 +207,18 @@ public class RepuestoController implements Initializable {
     private void Update(ActionEvent event) {
         System.out.println("ar.nex.util.RepuestoController.Update()");
         try {
-            String msg = "Confirma Actualizar " + select.toString() + " a " + boxCodigo.getText();
-            if (dialog.confirmDialog(msg)) {
-                select.setCodigo(boxCodigo.getText());
-                select.setDescripcion(boxDescripcion.getText());
-                select.setMarca(boxMarca.getText());
-                select.setObsercacion(boxObservacion.getText());
-                service.edit(select);
-                dialog.showSuccess("Se Actualizo Correctamente!!!");
-            } else {
-                boxCodigo.clear();
-                boxDescripcion.clear();
-            }
+            String msg = "Confirma Actualizar " + select.toString() + " a ";
+//            if (dialog.confirmDialog(msg)) {
+//                select.setCodigo(boxCodigo.getText());
+//                select.setDescripcion(boxDescripcion.getText());
+//                select.setMarca(boxMarca.getText());
+//                select.setInfo(boxInfo.getText());
+//                jpaService.edit(select);
+//                dialog.showSuccess("Se Actualizo Correctamente!!!");
+//            } else {
+//                boxCodigo.clear();
+//                boxDescripcion.clear();
+//            }
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -229,12 +231,13 @@ public class RepuestoController implements Initializable {
     private void Delete(ActionEvent event) {
         try {
             if (dialog.confirmDialog("Confimar Eliminar : " + select.toString() + "???")) {
-                service.destroy(select.getIdRepuesto());
+                jpaService.destroy(select.getIdRepuesto());
                 dialog.showSuccess("Se Elimino Correctamente!!!");
-            } else {
-                boxCodigo.clear();
-                boxDescripcion.clear();
             }
+//            } else {
+//                boxCodigo.clear();
+//                boxDescripcion.clear();
+//            }
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -243,7 +246,7 @@ public class RepuestoController implements Initializable {
 
     @FXML
     private void selectMarca(ActionEvent event) {
-        boxMarca.setText(dialog.selectMarca());
+        // boxMarca.setText(dialog.selectMarca());
     }
 
     @FXML
@@ -251,12 +254,12 @@ public class RepuestoController implements Initializable {
         System.out.println("ar.nex.util.RepuestoController.showOnClick()");
         try {
             Repuesto item = (Repuesto) table.getSelectionModel().getSelectedItem();
-            select = service.findRepuesto(item.getIdRepuesto());
+            select = jpaService.findRepuesto(item.getIdRepuesto());
 
-            boxCodigo.setText(item.getCodigo());
-            boxDescripcion.setText(item.getDescripcion());
-            boxMarca.setText(item.getMarca());
-            boxObservacion.setText(item.getObsercacion());
+//            boxCodigo.setText(item.getCodigo());
+//            boxDescripcion.setText(item.getDescripcion());
+//            boxMarca.setText(item.getMarca());
+//            boxInfo.setText(item.getInfo());
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -265,5 +268,33 @@ public class RepuestoController implements Initializable {
     @FXML
     private void AddToPedido(ActionEvent event) {
         //
+    }
+
+    
+    public void add() {
+        repuesto = new Repuesto();
+        edit();
+    }
+
+    public void edit() {
+        System.out.println("ar.nex.pedido.RepuestoController.edit()");
+        try {
+            Stage dialog = new Stage();
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RepuestoDialog.fxml"));
+            RepuestoDialogController controller = new RepuestoDialogController(repuesto);
+            loader.setController(controller);
+
+            Scene scene = new Scene(loader.load());
+
+            dialog.setScene(scene);
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.resizableProperty().setValue(Boolean.FALSE);
+
+            dialog.showAndWait();
+
+        } catch (IOException e) {
+            System.err.print(e);
+        }
     }
 }

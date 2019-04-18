@@ -8,6 +8,7 @@ import ar.nex.pedido.*;
  */
 public enum EmpresaSelect {
 
+    TODAS(0, "Todas"),
     RRR(1, "Resconi Raul"), 
     RCM(2, "RCM S.A."),
     OTRA(3, "Otra Empresa");

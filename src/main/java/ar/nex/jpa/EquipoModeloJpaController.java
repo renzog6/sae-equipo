@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ar.nex.service;
+package ar.nex.jpa;
 
 import java.io.Serializable;
 import javax.persistence.Query;
@@ -12,9 +12,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import ar.nex.entity.Equipo;
 import ar.nex.entity.EquipoModelo;
-import ar.nex.service.exceptions.NonexistentEntityException;
 import java.util.ArrayList;
 import java.util.List;
+import ar.nex.entity.Repuesto;
+import ar.nex.jpa.exceptions.NonexistentEntityException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -37,6 +38,9 @@ public class EquipoModeloJpaController implements Serializable {
         if (equipoModelo.getEquipoList() == null) {
             equipoModelo.setEquipoList(new ArrayList<Equipo>());
         }
+        if (equipoModelo.getRepuestoList() == null) {
+            equipoModelo.setRepuestoList(new ArrayList<Repuesto>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -47,6 +51,12 @@ public class EquipoModeloJpaController implements Serializable {
                 attachedEquipoList.add(equipoListEquipoToAttach);
             }
             equipoModelo.setEquipoList(attachedEquipoList);
+            List<Repuesto> attachedRepuestoList = new ArrayList<Repuesto>();
+            for (Repuesto repuestoListRepuestoToAttach : equipoModelo.getRepuestoList()) {
+                repuestoListRepuestoToAttach = em.getReference(repuestoListRepuestoToAttach.getClass(), repuestoListRepuestoToAttach.getIdRepuesto());
+                attachedRepuestoList.add(repuestoListRepuestoToAttach);
+            }
+            equipoModelo.setRepuestoList(attachedRepuestoList);
             em.persist(equipoModelo);
             for (Equipo equipoListEquipo : equipoModelo.getEquipoList()) {
                 EquipoModelo oldModeloOfEquipoListEquipo = equipoListEquipo.getModelo();
@@ -55,6 +65,15 @@ public class EquipoModeloJpaController implements Serializable {
                 if (oldModeloOfEquipoListEquipo != null) {
                     oldModeloOfEquipoListEquipo.getEquipoList().remove(equipoListEquipo);
                     oldModeloOfEquipoListEquipo = em.merge(oldModeloOfEquipoListEquipo);
+                }
+            }
+            for (Repuesto repuestoListRepuesto : equipoModelo.getRepuestoList()) {
+                EquipoModelo oldEquipoModeloOfRepuestoListRepuesto = repuestoListRepuesto.getEquipoModelo();
+                repuestoListRepuesto.setEquipoModelo(equipoModelo);
+                repuestoListRepuesto = em.merge(repuestoListRepuesto);
+                if (oldEquipoModeloOfRepuestoListRepuesto != null) {
+                    oldEquipoModeloOfRepuestoListRepuesto.getRepuestoList().remove(repuestoListRepuesto);
+                    oldEquipoModeloOfRepuestoListRepuesto = em.merge(oldEquipoModeloOfRepuestoListRepuesto);
                 }
             }
             em.getTransaction().commit();
@@ -73,6 +92,8 @@ public class EquipoModeloJpaController implements Serializable {
             EquipoModelo persistentEquipoModelo = em.find(EquipoModelo.class, equipoModelo.getIdModelo());
             List<Equipo> equipoListOld = persistentEquipoModelo.getEquipoList();
             List<Equipo> equipoListNew = equipoModelo.getEquipoList();
+            List<Repuesto> repuestoListOld = persistentEquipoModelo.getRepuestoList();
+            List<Repuesto> repuestoListNew = equipoModelo.getRepuestoList();
             List<Equipo> attachedEquipoListNew = new ArrayList<Equipo>();
             for (Equipo equipoListNewEquipoToAttach : equipoListNew) {
                 equipoListNewEquipoToAttach = em.getReference(equipoListNewEquipoToAttach.getClass(), equipoListNewEquipoToAttach.getIdEquipo());
@@ -80,6 +101,13 @@ public class EquipoModeloJpaController implements Serializable {
             }
             equipoListNew = attachedEquipoListNew;
             equipoModelo.setEquipoList(equipoListNew);
+            List<Repuesto> attachedRepuestoListNew = new ArrayList<Repuesto>();
+            for (Repuesto repuestoListNewRepuestoToAttach : repuestoListNew) {
+                repuestoListNewRepuestoToAttach = em.getReference(repuestoListNewRepuestoToAttach.getClass(), repuestoListNewRepuestoToAttach.getIdRepuesto());
+                attachedRepuestoListNew.add(repuestoListNewRepuestoToAttach);
+            }
+            repuestoListNew = attachedRepuestoListNew;
+            equipoModelo.setRepuestoList(repuestoListNew);
             equipoModelo = em.merge(equipoModelo);
             for (Equipo equipoListOldEquipo : equipoListOld) {
                 if (!equipoListNew.contains(equipoListOldEquipo)) {
@@ -95,6 +123,23 @@ public class EquipoModeloJpaController implements Serializable {
                     if (oldModeloOfEquipoListNewEquipo != null && !oldModeloOfEquipoListNewEquipo.equals(equipoModelo)) {
                         oldModeloOfEquipoListNewEquipo.getEquipoList().remove(equipoListNewEquipo);
                         oldModeloOfEquipoListNewEquipo = em.merge(oldModeloOfEquipoListNewEquipo);
+                    }
+                }
+            }
+            for (Repuesto repuestoListOldRepuesto : repuestoListOld) {
+                if (!repuestoListNew.contains(repuestoListOldRepuesto)) {
+                    repuestoListOldRepuesto.setEquipoModelo(null);
+                    repuestoListOldRepuesto = em.merge(repuestoListOldRepuesto);
+                }
+            }
+            for (Repuesto repuestoListNewRepuesto : repuestoListNew) {
+                if (!repuestoListOld.contains(repuestoListNewRepuesto)) {
+                    EquipoModelo oldEquipoModeloOfRepuestoListNewRepuesto = repuestoListNewRepuesto.getEquipoModelo();
+                    repuestoListNewRepuesto.setEquipoModelo(equipoModelo);
+                    repuestoListNewRepuesto = em.merge(repuestoListNewRepuesto);
+                    if (oldEquipoModeloOfRepuestoListNewRepuesto != null && !oldEquipoModeloOfRepuestoListNewRepuesto.equals(equipoModelo)) {
+                        oldEquipoModeloOfRepuestoListNewRepuesto.getRepuestoList().remove(repuestoListNewRepuesto);
+                        oldEquipoModeloOfRepuestoListNewRepuesto = em.merge(oldEquipoModeloOfRepuestoListNewRepuesto);
                     }
                 }
             }
@@ -131,6 +176,11 @@ public class EquipoModeloJpaController implements Serializable {
             for (Equipo equipoListEquipo : equipoList) {
                 equipoListEquipo.setModelo(null);
                 equipoListEquipo = em.merge(equipoListEquipo);
+            }
+            List<Repuesto> repuestoList = equipoModelo.getRepuestoList();
+            for (Repuesto repuestoListRepuesto : repuestoList) {
+                repuestoListRepuesto.setEquipoModelo(null);
+                repuestoListRepuesto = em.merge(repuestoListRepuesto);
             }
             em.remove(equipoModelo);
             em.getTransaction().commit();

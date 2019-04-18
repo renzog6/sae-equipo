@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ar.nex.service;
+package ar.nex.jpa;
 
-import ar.nex.entity.FleteDestino;
-import ar.nex.service.exceptions.NonexistentEntityException;
+import ar.nex.entity.CerealMovimiento;
+import ar.nex.jpa.exceptions.NonexistentEntityException;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -20,9 +20,9 @@ import javax.persistence.criteria.Root;
  *
  * @author Renzo
  */
-public class FleteDestinoJpaController implements Serializable {
+public class CerealMovimientoJpaController implements Serializable {
 
-    public FleteDestinoJpaController(EntityManagerFactory emf) {
+    public CerealMovimientoJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
@@ -31,12 +31,12 @@ public class FleteDestinoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(FleteDestino fleteDestino) {
+    public void create(CerealMovimiento cerealMovimiento) {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            em.persist(fleteDestino);
+            em.persist(cerealMovimiento);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -45,19 +45,19 @@ public class FleteDestinoJpaController implements Serializable {
         }
     }
 
-    public void edit(FleteDestino fleteDestino) throws NonexistentEntityException, Exception {
+    public void edit(CerealMovimiento cerealMovimiento) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            fleteDestino = em.merge(fleteDestino);
+            cerealMovimiento = em.merge(cerealMovimiento);
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Long id = fleteDestino.getIdDestino();
-                if (findFleteDestino(id) == null) {
-                    throw new NonexistentEntityException("The fleteDestino with id " + id + " no longer exists.");
+                Long id = cerealMovimiento.getIdMovimiento();
+                if (findCerealMovimiento(id) == null) {
+                    throw new NonexistentEntityException("The cerealMovimiento with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -73,14 +73,14 @@ public class FleteDestinoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            FleteDestino fleteDestino;
+            CerealMovimiento cerealMovimiento;
             try {
-                fleteDestino = em.getReference(FleteDestino.class, id);
-                fleteDestino.getIdDestino();
+                cerealMovimiento = em.getReference(CerealMovimiento.class, id);
+                cerealMovimiento.getIdMovimiento();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The fleteDestino with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The cerealMovimiento with id " + id + " no longer exists.", enfe);
             }
-            em.remove(fleteDestino);
+            em.remove(cerealMovimiento);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -89,19 +89,19 @@ public class FleteDestinoJpaController implements Serializable {
         }
     }
 
-    public List<FleteDestino> findFleteDestinoEntities() {
-        return findFleteDestinoEntities(true, -1, -1);
+    public List<CerealMovimiento> findCerealMovimientoEntities() {
+        return findCerealMovimientoEntities(true, -1, -1);
     }
 
-    public List<FleteDestino> findFleteDestinoEntities(int maxResults, int firstResult) {
-        return findFleteDestinoEntities(false, maxResults, firstResult);
+    public List<CerealMovimiento> findCerealMovimientoEntities(int maxResults, int firstResult) {
+        return findCerealMovimientoEntities(false, maxResults, firstResult);
     }
 
-    private List<FleteDestino> findFleteDestinoEntities(boolean all, int maxResults, int firstResult) {
+    private List<CerealMovimiento> findCerealMovimientoEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(FleteDestino.class));
+            cq.select(cq.from(CerealMovimiento.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -113,20 +113,20 @@ public class FleteDestinoJpaController implements Serializable {
         }
     }
 
-    public FleteDestino findFleteDestino(Long id) {
+    public CerealMovimiento findCerealMovimiento(Long id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(FleteDestino.class, id);
+            return em.find(CerealMovimiento.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getFleteDestinoCount() {
+    public int getCerealMovimientoCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<FleteDestino> rt = cq.from(FleteDestino.class);
+            Root<CerealMovimiento> rt = cq.from(CerealMovimiento.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

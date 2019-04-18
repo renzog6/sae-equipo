@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ar.nex.service;
+package ar.nex.jpa;
 
 import java.io.Serializable;
 import javax.persistence.Query;
@@ -11,8 +11,8 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import ar.nex.entity.Equipo;
-import ar.nex.entity.EquipoTipo;
-import ar.nex.service.exceptions.NonexistentEntityException;
+import ar.nex.entity.EquipoCompraVenta;
+import ar.nex.jpa.exceptions.NonexistentEntityException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -22,9 +22,9 @@ import javax.persistence.EntityManagerFactory;
  *
  * @author Renzo
  */
-public class EquipoTipoJpaController implements Serializable {
+public class EquipoCompraVentaJpaController implements Serializable {
 
-    public EquipoTipoJpaController(EntityManagerFactory emf) {
+    public EquipoCompraVentaJpaController(EntityManagerFactory emf) {
         this.emf = emf;
     }
     private EntityManagerFactory emf = null;
@@ -33,28 +33,28 @@ public class EquipoTipoJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(EquipoTipo equipoTipo) {
-        if (equipoTipo.getEquipoList() == null) {
-            equipoTipo.setEquipoList(new ArrayList<Equipo>());
+    public void create(EquipoCompraVenta equipoCompraVenta) {
+        if (equipoCompraVenta.getEquipoList() == null) {
+            equipoCompraVenta.setEquipoList(new ArrayList<Equipo>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
             List<Equipo> attachedEquipoList = new ArrayList<Equipo>();
-            for (Equipo equipoListEquipoToAttach : equipoTipo.getEquipoList()) {
+            for (Equipo equipoListEquipoToAttach : equipoCompraVenta.getEquipoList()) {
                 equipoListEquipoToAttach = em.getReference(equipoListEquipoToAttach.getClass(), equipoListEquipoToAttach.getIdEquipo());
                 attachedEquipoList.add(equipoListEquipoToAttach);
             }
-            equipoTipo.setEquipoList(attachedEquipoList);
-            em.persist(equipoTipo);
-            for (Equipo equipoListEquipo : equipoTipo.getEquipoList()) {
-                EquipoTipo oldTipoOfEquipoListEquipo = equipoListEquipo.getTipo();
-                equipoListEquipo.setTipo(equipoTipo);
+            equipoCompraVenta.setEquipoList(attachedEquipoList);
+            em.persist(equipoCompraVenta);
+            for (Equipo equipoListEquipo : equipoCompraVenta.getEquipoList()) {
+                EquipoCompraVenta oldCompraVentaOfEquipoListEquipo = equipoListEquipo.getCompraVenta();
+                equipoListEquipo.setCompraVenta(equipoCompraVenta);
                 equipoListEquipo = em.merge(equipoListEquipo);
-                if (oldTipoOfEquipoListEquipo != null) {
-                    oldTipoOfEquipoListEquipo.getEquipoList().remove(equipoListEquipo);
-                    oldTipoOfEquipoListEquipo = em.merge(oldTipoOfEquipoListEquipo);
+                if (oldCompraVentaOfEquipoListEquipo != null) {
+                    oldCompraVentaOfEquipoListEquipo.getEquipoList().remove(equipoListEquipo);
+                    oldCompraVentaOfEquipoListEquipo = em.merge(oldCompraVentaOfEquipoListEquipo);
                 }
             }
             em.getTransaction().commit();
@@ -65,36 +65,36 @@ public class EquipoTipoJpaController implements Serializable {
         }
     }
 
-    public void edit(EquipoTipo equipoTipo) throws NonexistentEntityException, Exception {
+    public void edit(EquipoCompraVenta equipoCompraVenta) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            EquipoTipo persistentEquipoTipo = em.find(EquipoTipo.class, equipoTipo.getIdTipo());
-            List<Equipo> equipoListOld = persistentEquipoTipo.getEquipoList();
-            List<Equipo> equipoListNew = equipoTipo.getEquipoList();
+            EquipoCompraVenta persistentEquipoCompraVenta = em.find(EquipoCompraVenta.class, equipoCompraVenta.getIdCompraVenta());
+            List<Equipo> equipoListOld = persistentEquipoCompraVenta.getEquipoList();
+            List<Equipo> equipoListNew = equipoCompraVenta.getEquipoList();
             List<Equipo> attachedEquipoListNew = new ArrayList<Equipo>();
             for (Equipo equipoListNewEquipoToAttach : equipoListNew) {
                 equipoListNewEquipoToAttach = em.getReference(equipoListNewEquipoToAttach.getClass(), equipoListNewEquipoToAttach.getIdEquipo());
                 attachedEquipoListNew.add(equipoListNewEquipoToAttach);
             }
             equipoListNew = attachedEquipoListNew;
-            equipoTipo.setEquipoList(equipoListNew);
-            equipoTipo = em.merge(equipoTipo);
+            equipoCompraVenta.setEquipoList(equipoListNew);
+            equipoCompraVenta = em.merge(equipoCompraVenta);
             for (Equipo equipoListOldEquipo : equipoListOld) {
                 if (!equipoListNew.contains(equipoListOldEquipo)) {
-                    equipoListOldEquipo.setTipo(null);
+                    equipoListOldEquipo.setCompraVenta(null);
                     equipoListOldEquipo = em.merge(equipoListOldEquipo);
                 }
             }
             for (Equipo equipoListNewEquipo : equipoListNew) {
                 if (!equipoListOld.contains(equipoListNewEquipo)) {
-                    EquipoTipo oldTipoOfEquipoListNewEquipo = equipoListNewEquipo.getTipo();
-                    equipoListNewEquipo.setTipo(equipoTipo);
+                    EquipoCompraVenta oldCompraVentaOfEquipoListNewEquipo = equipoListNewEquipo.getCompraVenta();
+                    equipoListNewEquipo.setCompraVenta(equipoCompraVenta);
                     equipoListNewEquipo = em.merge(equipoListNewEquipo);
-                    if (oldTipoOfEquipoListNewEquipo != null && !oldTipoOfEquipoListNewEquipo.equals(equipoTipo)) {
-                        oldTipoOfEquipoListNewEquipo.getEquipoList().remove(equipoListNewEquipo);
-                        oldTipoOfEquipoListNewEquipo = em.merge(oldTipoOfEquipoListNewEquipo);
+                    if (oldCompraVentaOfEquipoListNewEquipo != null && !oldCompraVentaOfEquipoListNewEquipo.equals(equipoCompraVenta)) {
+                        oldCompraVentaOfEquipoListNewEquipo.getEquipoList().remove(equipoListNewEquipo);
+                        oldCompraVentaOfEquipoListNewEquipo = em.merge(oldCompraVentaOfEquipoListNewEquipo);
                     }
                 }
             }
@@ -102,9 +102,9 @@ public class EquipoTipoJpaController implements Serializable {
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
-                Long id = equipoTipo.getIdTipo();
-                if (findEquipoTipo(id) == null) {
-                    throw new NonexistentEntityException("The equipoTipo with id " + id + " no longer exists.");
+                Long id = equipoCompraVenta.getIdCompraVenta();
+                if (findEquipoCompraVenta(id) == null) {
+                    throw new NonexistentEntityException("The equipoCompraVenta with id " + id + " no longer exists.");
                 }
             }
             throw ex;
@@ -120,19 +120,19 @@ public class EquipoTipoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            EquipoTipo equipoTipo;
+            EquipoCompraVenta equipoCompraVenta;
             try {
-                equipoTipo = em.getReference(EquipoTipo.class, id);
-                equipoTipo.getIdTipo();
+                equipoCompraVenta = em.getReference(EquipoCompraVenta.class, id);
+                equipoCompraVenta.getIdCompraVenta();
             } catch (EntityNotFoundException enfe) {
-                throw new NonexistentEntityException("The equipoTipo with id " + id + " no longer exists.", enfe);
+                throw new NonexistentEntityException("The equipoCompraVenta with id " + id + " no longer exists.", enfe);
             }
-            List<Equipo> equipoList = equipoTipo.getEquipoList();
+            List<Equipo> equipoList = equipoCompraVenta.getEquipoList();
             for (Equipo equipoListEquipo : equipoList) {
-                equipoListEquipo.setTipo(null);
+                equipoListEquipo.setCompraVenta(null);
                 equipoListEquipo = em.merge(equipoListEquipo);
             }
-            em.remove(equipoTipo);
+            em.remove(equipoCompraVenta);
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -141,19 +141,19 @@ public class EquipoTipoJpaController implements Serializable {
         }
     }
 
-    public List<EquipoTipo> findEquipoTipoEntities() {
-        return findEquipoTipoEntities(true, -1, -1);
+    public List<EquipoCompraVenta> findEquipoCompraVentaEntities() {
+        return findEquipoCompraVentaEntities(true, -1, -1);
     }
 
-    public List<EquipoTipo> findEquipoTipoEntities(int maxResults, int firstResult) {
-        return findEquipoTipoEntities(false, maxResults, firstResult);
+    public List<EquipoCompraVenta> findEquipoCompraVentaEntities(int maxResults, int firstResult) {
+        return findEquipoCompraVentaEntities(false, maxResults, firstResult);
     }
 
-    private List<EquipoTipo> findEquipoTipoEntities(boolean all, int maxResults, int firstResult) {
+    private List<EquipoCompraVenta> findEquipoCompraVentaEntities(boolean all, int maxResults, int firstResult) {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            cq.select(cq.from(EquipoTipo.class));
+            cq.select(cq.from(EquipoCompraVenta.class));
             Query q = em.createQuery(cq);
             if (!all) {
                 q.setMaxResults(maxResults);
@@ -165,20 +165,20 @@ public class EquipoTipoJpaController implements Serializable {
         }
     }
 
-    public EquipoTipo findEquipoTipo(Long id) {
+    public EquipoCompraVenta findEquipoCompraVenta(Long id) {
         EntityManager em = getEntityManager();
         try {
-            return em.find(EquipoTipo.class, id);
+            return em.find(EquipoCompraVenta.class, id);
         } finally {
             em.close();
         }
     }
 
-    public int getEquipoTipoCount() {
+    public int getEquipoCompraVentaCount() {
         EntityManager em = getEntityManager();
         try {
             CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<EquipoTipo> rt = cq.from(EquipoTipo.class);
+            Root<EquipoCompraVenta> rt = cq.from(EquipoCompraVenta.class);
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();

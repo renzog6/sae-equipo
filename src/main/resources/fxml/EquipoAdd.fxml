@@ -13,7 +13,7 @@
         <AnchorPane prefHeight="450.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <children>
                 <Button fx:id="btnAceptar" layoutX="442.0" layoutY="405.0" onAction="#addEquipo" text="Aceptar" />
-                <Button fx:id="btnCancelar" layoutX="524.0" layoutY="405.0" onAction="#Cancelar" text="Cancelar" />
+                <Button fx:id="btnCancelar" layoutX="524.0" layoutY="405.0" text="Cancelar" />
                 <Label fx:id="label" layoutX="14.0" layoutY="14.0" minHeight="16" minWidth="69" text="Datos del Equipo" underline="true" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0">
                <font>
                   <Font size="14.0" />

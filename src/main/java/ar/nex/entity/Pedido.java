@@ -6,6 +6,8 @@
 package ar.nex.entity;
 
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -20,6 +22,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,10 +43,24 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Pedido.findByEstado", query = "SELECT p FROM Pedido p WHERE p.estado = :estado")
     , @NamedQuery(name = "Pedido.findByFechaFin", query = "SELECT p FROM Pedido p WHERE p.fechaFin = :fechaFin")
     , @NamedQuery(name = "Pedido.findByFechaInicio", query = "SELECT p FROM Pedido p WHERE p.fechaInicio = :fechaInicio")
-    , @NamedQuery(name = "Pedido.findByObservacion", query = "SELECT p FROM Pedido p WHERE p.observacion = :observacion")})
+    , @NamedQuery(name = "Pedido.findByInfo", query = "SELECT p FROM Pedido p WHERE p.info = :info")})
 public class Pedido implements Serializable {
 
+    @Column(name = "repuesto")
+    private BigInteger repuesto;
+    @Column(name = "info")
+    private String info;
+    @JoinTable(name = "ped_repuesto_pedido", joinColumns = {
+        @JoinColumn(name = "id_pedido", referencedColumnName = "id_pedido")}, inverseJoinColumns = {
+        @JoinColumn(name = "id_repuesto", referencedColumnName = "id_repuesto")})
+    @ManyToMany
+    private List<Repuesto> repuestoList;
+
+    
+
     private static final long serialVersionUID = 1L;
+    
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -59,15 +76,8 @@ public class Pedido implements Serializable {
     @Column(name = "fecha_inicio")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInicio;
-    @Column(name = "observacion")
-    private String observacion;
-   
-    @JoinTable(name = "ped_pedido_repuesto", joinColumns = {
-        @JoinColumn(name = "id_pedido", referencedColumnName = "id_pedido")}, inverseJoinColumns = {
-        @JoinColumn(name = "id_repuesto", referencedColumnName = "id_repuesto")})
-    @ManyToMany
-    private List<Repuesto> repuestoList;
-    
+
+
     @JoinColumn(name = "id_empresa", referencedColumnName = "id_empresa")
     @ManyToOne
     private Empresa empresa;
@@ -119,14 +129,6 @@ public class Pedido implements Serializable {
         this.fechaInicio = fechaInicio;
     }
 
-    public String getObservacion() {
-        return observacion;
-    }
-
-    public void setObservacion(String observacion) {
-        this.observacion = observacion;
-    }
-
     @XmlTransient
     public List<Repuesto> getRepuestoList() {
         return repuestoList;
@@ -168,5 +170,22 @@ public class Pedido implements Serializable {
     public String toString() {
         return "ar.nex.entity.Pedido[ idPedido=" + idPedido + " ]";
     }
-    
+
+    public BigInteger getRepuesto() {
+        return repuesto;
+    }
+
+    public void setRepuesto(BigInteger repuesto) {
+        this.repuesto = repuesto;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+     
 }

@@ -4,7 +4,7 @@ import ar.nex.entity.Empresa;
 import ar.nex.entity.Marca;
 import ar.nex.entity.Pedido;
 import ar.nex.entity.Repuesto;
-import ar.nex.service.EmpresaJpaController;
+import ar.nex.jpa.EmpresaJpaController;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -139,7 +139,7 @@ public class DialogController {
                 pedido.setFechaInicio(fd.parse(fecha.getText()));
                 pedido.getRepuestoList().add(repuesto);
                 pedido.setCantidad(Integer.parseInt(cantidad.getText()));
-                pedido.setObservacion(observacion.getText());
+                pedido.setInfo(observacion.getText());
                 //pedido.setEstado(EstadoPedido.PENDIENTE);
                 pedido.setEstado(1);
                 pedido.setEmpresa(empresaSelect);

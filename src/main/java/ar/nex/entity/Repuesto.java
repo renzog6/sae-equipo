@@ -14,8 +14,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -35,8 +35,21 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Repuesto.findByCodigo", query = "SELECT r FROM Repuesto r WHERE r.codigo = :codigo")
     , @NamedQuery(name = "Repuesto.findByDescripcion", query = "SELECT r FROM Repuesto r WHERE r.descripcion = :descripcion")
     , @NamedQuery(name = "Repuesto.findByMarca", query = "SELECT r FROM Repuesto r WHERE r.marca = :marca")
-    , @NamedQuery(name = "Repuesto.findByObsercacion", query = "SELECT r FROM Repuesto r WHERE r.obsercacion = :obsercacion")})
+    , @NamedQuery(name = "Repuesto.findByInfo", query = "SELECT r FROM Repuesto r WHERE r.info = :info")})
 public class Repuesto implements Serializable {
+
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "stock")
+    private Double stock;
+    @Column(name = "info")
+    private String info;
+    
+    @ManyToMany(mappedBy = "repuestoList")
+    private List<Empresa> empresaList;
+    
+    @JoinColumn(name = "equipo_modelo", referencedColumnName = "id_modelo")
+    @ManyToOne
+    private EquipoModelo equipoModelo;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -50,16 +63,9 @@ public class Repuesto implements Serializable {
     private String descripcion;
     @Column(name = "marca")
     private String marca;
-    @Column(name = "obsercacion")
-    private String obsercacion;
+
     @ManyToMany(mappedBy = "repuestoList")
     private List<Pedido> pedidoList;
-
-    @JoinTable(name = "ped_repuesto_empresa", joinColumns = {
-        @JoinColumn(name = "id_repuesto", referencedColumnName = "id_repuesto")}, inverseJoinColumns = {
-        @JoinColumn(name = "id_empresa", referencedColumnName = "id_empresa")})
-    @ManyToMany
-    private List<Empresa> empresaList;
 
     public Repuesto() {
     }
@@ -100,14 +106,6 @@ public class Repuesto implements Serializable {
         this.marca = marca;
     }
 
-    public String getObsercacion() {
-        return obsercacion;
-    }
-
-    public void setObsercacion(String obsercacion) {
-        this.obsercacion = obsercacion;
-    }
-
     @XmlTransient
     public List<Pedido> getPedidoList() {
         return pedidoList;
@@ -115,15 +113,6 @@ public class Repuesto implements Serializable {
 
     public void setPedidoList(List<Pedido> pedidoList) {
         this.pedidoList = pedidoList;
-    }
-
-    @XmlTransient
-    public List<Empresa> getEmpresaList() {
-        return empresaList;
-    }
-
-    public void setEmpresaList(List<Empresa> empresaList) {
-        this.empresaList = empresaList;
     }
 
     @Override
@@ -148,7 +137,41 @@ public class Repuesto implements Serializable {
 
     @Override
     public String toString() {
-        return codigo;
+        return "ar.nex.entity.Repuesto[ idRepuesto=" + idRepuesto + " ]";
     }
 
+    public Double getStock() {
+        return stock;
+    }
+
+    public void setStock(Double stock) {
+        this.stock = stock;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    @XmlTransient
+    public List<Empresa> getEmpresaList() {
+        return empresaList;
+    }
+
+    public void setEmpresaList(List<Empresa> empresaList) {
+        this.empresaList = empresaList;
+    }
+
+    public EquipoModelo getEquipoModelo() {
+        return equipoModelo;
+    }
+
+    public void setEquipoModelo(EquipoModelo equipoModelo) {
+        this.equipoModelo = equipoModelo;
+    }
+
+    
 }

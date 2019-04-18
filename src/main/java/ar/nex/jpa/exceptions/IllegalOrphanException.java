@@ -1,4 +1,4 @@
-package ar.nex.service.exceptions;
+package ar.nex.jpa.exceptions;
 
 import java.util.ArrayList;
 import java.util.List;

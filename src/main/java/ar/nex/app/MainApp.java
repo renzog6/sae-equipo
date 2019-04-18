@@ -1,4 +1,4 @@
-package ar.nex.saefx;
+package ar.nex.app;
 
 import javafx.application.Application;
 import static javafx.application.Application.launch;

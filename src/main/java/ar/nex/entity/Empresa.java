@@ -41,6 +41,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "Empresa.findByRazonSocial", query = "SELECT e FROM Empresa e WHERE e.razonSocial = :razonSocial")})
 public class Empresa implements Serializable {
 
+    @JoinTable(name = "ped_repuesto_empresa", joinColumns = {
+        @JoinColumn(name = "id_empresa", referencedColumnName = "id_empresa")}, inverseJoinColumns = {
+        @JoinColumn(name = "id_repuesto", referencedColumnName = "id_repuesto")})
+    @ManyToMany
+    private List<Repuesto> repuestoList;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,25 +61,20 @@ public class Empresa implements Serializable {
     private String observacion;
     @Column(name = "razon_social")
     private String razonSocial;
-
     @JoinTable(name = "empresa_rubro", joinColumns = {
         @JoinColumn(name = "id_empresa", referencedColumnName = "id_empresa")}, inverseJoinColumns = {
         @JoinColumn(name = "id_rubro", referencedColumnName = "id_rubro")})
     @ManyToMany
     private List<Rubro> rubroList;
-
     @ManyToMany(mappedBy = "empresaList")
     private List<Contacto> contactoList;
-
-    @ManyToMany(mappedBy = "empresaList")
-    private List<Repuesto> repuestoList;
-
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private List<Equipo> equipoList;
-
+    
     @OneToMany(mappedBy = "empresa")
     private List<Pedido> pedidoList;
-
+    
     @JoinColumn(name = "direccion_id", referencedColumnName = "id_direccion")
     @OneToOne(optional = false)
     private Direccion direccion;
@@ -161,15 +162,6 @@ public class Empresa implements Serializable {
         this.pedidoList = pedidoList;
     }
 
-    @XmlTransient
-    public List<Repuesto> getRepuestoList() {
-        return repuestoList;
-    }
-
-    public void setRepuestoList(List<Repuesto> repuestoList) {
-        this.repuestoList = repuestoList;
-    }
-
     public Direccion getDireccion() {
         return direccion;
     }
@@ -203,4 +195,13 @@ public class Empresa implements Serializable {
         return nombre;
     }
 
+    @XmlTransient
+    public List<Repuesto> getRepuestoList() {
+        return repuestoList;
+    }
+
+    public void setRepuestoList(List<Repuesto> repuestoList) {
+        this.repuestoList = repuestoList;
+    }
+    
 }

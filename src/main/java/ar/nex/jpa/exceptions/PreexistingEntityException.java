@@ -1,4 +1,4 @@
-package ar.nex.service.exceptions;
+package ar.nex.jpa.exceptions;
 
 public class PreexistingEntityException extends Exception {
     public PreexistingEntityException(String message, Throwable cause) {

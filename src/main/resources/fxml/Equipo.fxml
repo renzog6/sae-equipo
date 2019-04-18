@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.EquipoController">
+<BorderPane minHeight="768.0" minWidth="1024.0" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.EquipoController">
     <center>
 
         <AnchorPane minHeight="300.0" minWidth="500.0">
@@ -83,9 +83,6 @@
                         </ImageView>
                     </graphic>
                 </Button>
-            <Label fx:id="lblFCompra" layoutX="14.0" layoutY="21.0" prefHeight="20.0" prefWidth="200.0" text="Fecha Compra: " />
-            <Label fx:id="lblVendedor" layoutX="14.0" layoutY="50.0" prefHeight="20.0" prefWidth="200.0" text="Vendedor: " />
-            <Label fx:id="lblValor" layoutX="14.0" layoutY="79.0" prefHeight="20.0" prefWidth="200.0" text="Valor Compra $" />
                  
             </children>
         </AnchorPane>

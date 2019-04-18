@@ -3,19 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ar.nex.service;
+package ar.nex.jpa;
 
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.Pedido;
 import java.util.ArrayList;
 import java.util.List;
 import ar.nex.entity.Empresa;
 import ar.nex.entity.Repuesto;
-import ar.nex.service.exceptions.NonexistentEntityException;
+import ar.nex.jpa.exceptions.NonexistentEntityException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -45,6 +46,11 @@ public class RepuestoJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
+            EquipoModelo equipoModelo = repuesto.getEquipoModelo();
+            if (equipoModelo != null) {
+                equipoModelo = em.getReference(equipoModelo.getClass(), equipoModelo.getIdModelo());
+                repuesto.setEquipoModelo(equipoModelo);
+            }
             List<Pedido> attachedPedidoList = new ArrayList<Pedido>();
             for (Pedido pedidoListPedidoToAttach : repuesto.getPedidoList()) {
                 pedidoListPedidoToAttach = em.getReference(pedidoListPedidoToAttach.getClass(), pedidoListPedidoToAttach.getIdPedido());
@@ -58,6 +64,10 @@ public class RepuestoJpaController implements Serializable {
             }
             repuesto.setEmpresaList(attachedEmpresaList);
             em.persist(repuesto);
+            if (equipoModelo != null) {
+                equipoModelo.getRepuestoList().add(repuesto);
+                equipoModelo = em.merge(equipoModelo);
+            }
             for (Pedido pedidoListPedido : repuesto.getPedidoList()) {
                 pedidoListPedido.getRepuestoList().add(repuesto);
                 pedidoListPedido = em.merge(pedidoListPedido);
@@ -80,10 +90,16 @@ public class RepuestoJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Repuesto persistentRepuesto = em.find(Repuesto.class, repuesto.getIdRepuesto());
+            EquipoModelo equipoModeloOld = persistentRepuesto.getEquipoModelo();
+            EquipoModelo equipoModeloNew = repuesto.getEquipoModelo();
             List<Pedido> pedidoListOld = persistentRepuesto.getPedidoList();
             List<Pedido> pedidoListNew = repuesto.getPedidoList();
             List<Empresa> empresaListOld = persistentRepuesto.getEmpresaList();
             List<Empresa> empresaListNew = repuesto.getEmpresaList();
+            if (equipoModeloNew != null) {
+                equipoModeloNew = em.getReference(equipoModeloNew.getClass(), equipoModeloNew.getIdModelo());
+                repuesto.setEquipoModelo(equipoModeloNew);
+            }
             List<Pedido> attachedPedidoListNew = new ArrayList<Pedido>();
             for (Pedido pedidoListNewPedidoToAttach : pedidoListNew) {
                 pedidoListNewPedidoToAttach = em.getReference(pedidoListNewPedidoToAttach.getClass(), pedidoListNewPedidoToAttach.getIdPedido());
@@ -99,6 +115,14 @@ public class RepuestoJpaController implements Serializable {
             empresaListNew = attachedEmpresaListNew;
             repuesto.setEmpresaList(empresaListNew);
             repuesto = em.merge(repuesto);
+            if (equipoModeloOld != null && !equipoModeloOld.equals(equipoModeloNew)) {
+                equipoModeloOld.getRepuestoList().remove(repuesto);
+                equipoModeloOld = em.merge(equipoModeloOld);
+            }
+            if (equipoModeloNew != null && !equipoModeloNew.equals(equipoModeloOld)) {
+                equipoModeloNew.getRepuestoList().add(repuesto);
+                equipoModeloNew = em.merge(equipoModeloNew);
+            }
             for (Pedido pedidoListOldPedido : pedidoListOld) {
                 if (!pedidoListNew.contains(pedidoListOldPedido)) {
                     pedidoListOldPedido.getRepuestoList().remove(repuesto);
@@ -151,6 +175,11 @@ public class RepuestoJpaController implements Serializable {
                 repuesto.getIdRepuesto();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The repuesto with id " + id + " no longer exists.", enfe);
+            }
+            EquipoModelo equipoModelo = repuesto.getEquipoModelo();
+            if (equipoModelo != null) {
+                equipoModelo.getRepuestoList().remove(repuesto);
+                equipoModelo = em.merge(equipoModelo);
             }
             List<Pedido> pedidoList = repuesto.getPedidoList();
             for (Pedido pedidoListPedido : pedidoList) {

@@ -31,8 +31,8 @@ import javafx.util.Callback;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import ar.nex.service.PedidoJpaController;
-import ar.nex.service.RepuestoJpaController;
+import ar.nex.jpa.PedidoJpaController;
+import ar.nex.jpa.RepuestoJpaController;
 
 /**
  * FXML Controller class
@@ -102,7 +102,7 @@ public class PedidoController implements Initializable {
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colProveedor.setCellValueFactory(new PropertyValueFactory<>("empresa"));
         colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
-        colObeservacion.setCellValueFactory(new PropertyValueFactory<>("observacion"));
+        colObeservacion.setCellValueFactory(new PropertyValueFactory<>("info"));
         initCellAccion();
         initCellFecha();
     }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ar.nex.service;
+package ar.nex.jpa;
 
 import java.io.Serializable;
 import javax.persistence.Query;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import ar.nex.entity.Equipo;
 import ar.nex.entity.Marca;
-import ar.nex.service.exceptions.NonexistentEntityException;
+import ar.nex.jpa.exceptions.NonexistentEntityException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 

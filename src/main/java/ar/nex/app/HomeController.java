@@ -1,4 +1,4 @@
-package ar.nex.saefx;
+package ar.nex.app;
 
 import java.io.IOException;
 import java.net.URL;
@@ -52,7 +52,7 @@ public class HomeController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        homePane.getStylesheets().add("/styles/" + ui + ".css");
+        homePane.getStylesheets().add("/styles/" + ui + ".css");        
         homePane.setCenter(root);
     }
 }
