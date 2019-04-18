@@ -7,20 +7,30 @@ import ar.nex.entity.EquipoCompraVenta;
 import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.EquipoTipo;
 import ar.nex.entity.Marca;
+import ar.nex.pedido.RepuestoDialogController;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.TextFields;
 
 /**
  * FXML Controller class
@@ -88,21 +98,21 @@ public class EquipoAddController implements Initializable {
     private Label lblFechaCompra;
     @FXML
     private TextField boxMarca;
+
     @FXML
     private Button btnSelectMarca;
-
-    private EquipoService service;
-
-    private Long idCat = -1L, idMod, idTip, idMar, idEmp;
-
     @FXML
     private Button btnSelectCategoria;
     @FXML
     private Button btnSelectTipo;
     @FXML
-    private Button btnSelectModelo;
+    private Button btnAddModelo;
     @FXML
     private Label lblAnio1;
+
+    private EquipoService service;
+
+    private Long idCat = -1L, idMod, idTip, idMar, idEmp;
 
     /**
      * Initializes the controller class.
@@ -110,8 +120,6 @@ public class EquipoAddController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-         btnCancelar.setOnAction(e -> ((Node) (e.getSource())).getScene().getWindow().hide());
-         
         service = new EquipoService();
 
         boxCategoria.setText("-");
@@ -127,7 +135,11 @@ public class EquipoAddController implements Initializable {
         boxVendedor.setText("-");
         boxValorCompra.setText("0.0");
 
+        loadDataModelo();
+
         initFiltro();
+
+        initControls();
     }
 
     public void initFiltro() {
@@ -137,6 +149,18 @@ public class EquipoAddController implements Initializable {
         filtroEmpresa.getSelectionModel().select(0);
     }
 
+    private void initControls() {
+        System.out.println("ar.nex.equipo.EquipoAddController.initControls()");
+        try {
+            btnCancelar.setOnAction(e -> ((Node) (e.getSource())).getScene().getWindow().hide());
+
+            btnAddModelo.setOnAction(e -> addModelo(e));
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
     @FXML
     private void addEquipo(ActionEvent event) {
 
@@ -144,7 +168,7 @@ public class EquipoAddController implements Initializable {
 
         EquipoTipo t = service.getTipo().findEquipoTipo(idTip);
 
-        EquipoModelo m = service.getModelo().findEquipoModelo(idMod);
+        //EquipoModelo m = service.getModelo().findEquipoModelo(idMod);
 
         Marca ma = service.getMarca().findMarca(idMar);
 
@@ -167,7 +191,7 @@ public class EquipoAddController implements Initializable {
         e.setOtro(boxOtro.getText());
 
         e.setCategoria(c);
-        e.setModelo(m);
+        e.setModelo(modeloSelect);
         e.setTipo(t);
         e.setMarca(ma);
         e.setCompraVenta(cv);
@@ -195,10 +219,41 @@ public class EquipoAddController implements Initializable {
         boxTipo.setText(service.getTipo().findEquipoTipo(idTip).getNombre());
     }
 
-    @FXML
-    private void selectModelo(ActionEvent event) {
-        idMod = service.selectModelo();
-        boxModelo.setText(service.getModelo().findEquipoModelo(idMod).getNombre());
+    private EquipoModelo modeloSelect;
+
+    private final ObservableList<EquipoModelo> dataModelo = FXCollections.observableArrayList();
+
+    private void loadDataModelo() {
+        try {
+            this.dataModelo.clear();
+            List<EquipoModelo> lst = service.getModelo().findEquipoModeloEntities();
+            lst.forEach((item) -> {
+                this.dataModelo.add(item);
+            });
+
+            AutoCompletionBinding<EquipoModelo> autoModelo = TextFields.bindAutoCompletion(boxModelo, dataModelo);
+
+            autoModelo.setOnAutoCompleted(
+                    (AutoCompletionBinding.AutoCompletionEvent<EquipoModelo> event) -> {
+                        modeloSelect = event.getCompletion();
+                    }
+            );
+
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+    }
+
+    private void addModelo(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/equipo/ModeloDialog.fxml"));
+            ModeloDialogController controller = new ModeloDialogController(new EquipoModelo());
+            loader.setController(controller);
+
+            showDialog(new Scene(loader.load()), 1);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
     }
 
     @FXML
@@ -210,6 +265,30 @@ public class EquipoAddController implements Initializable {
     @FXML
     private void selectEmpresa() {
         EmpresaSelect empresa = (EmpresaSelect) filtroEmpresa.getSelectionModel().getSelectedItem();
-        idEmp = empresa.getId();     
+        idEmp = empresa.getId();
     }
+
+    private void showDialog(Scene scene, int i) {
+        System.out.println("ar.nex.equipo.EquipoAddController.showDialog()");
+        try {
+            Stage dialog = new Stage();
+
+            dialog.setScene(scene);
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.resizableProperty().setValue(Boolean.FALSE);
+
+            dialog.showAndWait();
+
+            switch (i) {
+                case 1:
+                    loadDataModelo();
+                    break;
+
+            }
+
+        } catch (Exception e) {
+            System.err.print(e);
+        }
+    }
+
 }

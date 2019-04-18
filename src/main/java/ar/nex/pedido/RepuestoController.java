@@ -56,8 +56,8 @@ public class RepuestoController implements Initializable {
     private ObservableList<Repuesto> data = FXCollections.observableArrayList();
     private FilteredList<Repuesto> filteredData = new FilteredList<>(data);
     private Repuesto select;
-    
-        @FXML
+
+    @FXML
     private TableView<Repuesto> table;
     @FXML
     private TableColumn<?, ?> colCodigo;
@@ -75,7 +75,7 @@ public class RepuestoController implements Initializable {
     private EntityManagerFactory factory;
     private RepuestoJpaController jpaService;
     private PedidoJpaController srvPedido;
-    
+
     private Repuesto repuesto;
 
     @Override
@@ -153,8 +153,8 @@ public class RepuestoController implements Initializable {
         List<Repuesto> lst = jpaService.findRepuestoEntities();
         for (Repuesto item : lst) {
             data.add(item);
-            table.setItems(data);
         }
+        table.setItems(data);
     }
 
     @FXML
@@ -270,7 +270,6 @@ public class RepuestoController implements Initializable {
         //
     }
 
-    
     public void add() {
         repuesto = new Repuesto();
         edit();
