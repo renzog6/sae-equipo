@@ -13,6 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -34,12 +37,17 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "EquipoModelo.findByDescripcion", query = "SELECT e FROM EquipoModelo e WHERE e.descripcion = :descripcion")})
 public class EquipoModelo implements Serializable {
 
+    @JoinTable(name = "ped_repuesto_eq_modelo", joinColumns = {
+        @JoinColumn(name = "id_modelo", referencedColumnName = "id_modelo")}, inverseJoinColumns = {
+        @JoinColumn(name = "id_repuesto", referencedColumnName = "id_repuesto")})
+    @ManyToMany
+    private List<Repuesto> repuestoList;
+
     @Column(name = "anio")
     private Integer anio;
     @Column(name = "info")
     private String info;
-    @OneToMany(mappedBy = "equipoModelo")
-    private List<Repuesto> repuestoList;
+
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -143,5 +151,6 @@ public class EquipoModelo implements Serializable {
     public void setRepuestoList(List<Repuesto> repuestoList) {
         this.repuestoList = repuestoList;
     }
-    
+
+
 }

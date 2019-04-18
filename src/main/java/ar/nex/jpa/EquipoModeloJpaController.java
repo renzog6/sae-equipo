@@ -68,13 +68,8 @@ public class EquipoModeloJpaController implements Serializable {
                 }
             }
             for (Repuesto repuestoListRepuesto : equipoModelo.getRepuestoList()) {
-                EquipoModelo oldEquipoModeloOfRepuestoListRepuesto = repuestoListRepuesto.getEquipoModelo();
-                repuestoListRepuesto.setEquipoModelo(equipoModelo);
+                repuestoListRepuesto.getEquipoModeloList().add(equipoModelo);
                 repuestoListRepuesto = em.merge(repuestoListRepuesto);
-                if (oldEquipoModeloOfRepuestoListRepuesto != null) {
-                    oldEquipoModeloOfRepuestoListRepuesto.getRepuestoList().remove(repuestoListRepuesto);
-                    oldEquipoModeloOfRepuestoListRepuesto = em.merge(oldEquipoModeloOfRepuestoListRepuesto);
-                }
             }
             em.getTransaction().commit();
         } finally {
@@ -128,19 +123,14 @@ public class EquipoModeloJpaController implements Serializable {
             }
             for (Repuesto repuestoListOldRepuesto : repuestoListOld) {
                 if (!repuestoListNew.contains(repuestoListOldRepuesto)) {
-                    repuestoListOldRepuesto.setEquipoModelo(null);
+                    repuestoListOldRepuesto.getEquipoModeloList().remove(equipoModelo);
                     repuestoListOldRepuesto = em.merge(repuestoListOldRepuesto);
                 }
             }
             for (Repuesto repuestoListNewRepuesto : repuestoListNew) {
                 if (!repuestoListOld.contains(repuestoListNewRepuesto)) {
-                    EquipoModelo oldEquipoModeloOfRepuestoListNewRepuesto = repuestoListNewRepuesto.getEquipoModelo();
-                    repuestoListNewRepuesto.setEquipoModelo(equipoModelo);
+                    repuestoListNewRepuesto.getEquipoModeloList().add(equipoModelo);
                     repuestoListNewRepuesto = em.merge(repuestoListNewRepuesto);
-                    if (oldEquipoModeloOfRepuestoListNewRepuesto != null && !oldEquipoModeloOfRepuestoListNewRepuesto.equals(equipoModelo)) {
-                        oldEquipoModeloOfRepuestoListNewRepuesto.getRepuestoList().remove(repuestoListNewRepuesto);
-                        oldEquipoModeloOfRepuestoListNewRepuesto = em.merge(oldEquipoModeloOfRepuestoListNewRepuesto);
-                    }
                 }
             }
             em.getTransaction().commit();
@@ -179,7 +169,7 @@ public class EquipoModeloJpaController implements Serializable {
             }
             List<Repuesto> repuestoList = equipoModelo.getRepuestoList();
             for (Repuesto repuestoListRepuesto : repuestoList) {
-                repuestoListRepuesto.setEquipoModelo(null);
+                repuestoListRepuesto.getEquipoModeloList().remove(equipoModelo);
                 repuestoListRepuesto = em.merge(repuestoListRepuesto);
             }
             em.remove(equipoModelo);

@@ -28,6 +28,7 @@ public class HomeController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        
     }
 
     @FXML
@@ -42,7 +43,7 @@ public class HomeController implements Initializable {
 
     @FXML
     private void goEquipo(MouseEvent event) {
-        loadUI("Equipo");
+        loadUI("equipo/Equipo");
     }
 
     public void loadUI(String ui) {

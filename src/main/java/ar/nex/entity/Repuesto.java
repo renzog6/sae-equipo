@@ -6,6 +6,7 @@
 package ar.nex.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -30,26 +31,27 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "ped_repuesto")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Repuesto.findAll", query = "SELECT r FROM Repuesto r")
-    , @NamedQuery(name = "Repuesto.findByIdRepuesto", query = "SELECT r FROM Repuesto r WHERE r.idRepuesto = :idRepuesto")
-    , @NamedQuery(name = "Repuesto.findByCodigo", query = "SELECT r FROM Repuesto r WHERE r.codigo = :codigo")
-    , @NamedQuery(name = "Repuesto.findByDescripcion", query = "SELECT r FROM Repuesto r WHERE r.descripcion = :descripcion")
-    , @NamedQuery(name = "Repuesto.findByMarca", query = "SELECT r FROM Repuesto r WHERE r.marca = :marca")
-    , @NamedQuery(name = "Repuesto.findByInfo", query = "SELECT r FROM Repuesto r WHERE r.info = :info")})
+    @NamedQuery(name = "Repuesto.findAll", query = "SELECT r FROM Repuesto r"),
+    @NamedQuery(name = "Repuesto.findByIdRepuesto", query = "SELECT r FROM Repuesto r WHERE r.idRepuesto = :idRepuesto"),
+    @NamedQuery(name = "Repuesto.findByCodigo", query = "SELECT r FROM Repuesto r WHERE r.codigo = :codigo"),
+    @NamedQuery(name = "Repuesto.findByDescripcion", query = "SELECT r FROM Repuesto r WHERE r.descripcion = :descripcion"),
+    @NamedQuery(name = "Repuesto.findByMarca", query = "SELECT r FROM Repuesto r WHERE r.marca = :marca"),
+    @NamedQuery(name = "Repuesto.findByInfo", query = "SELECT r FROM Repuesto r WHERE r.info = :info")})
 public class Repuesto implements Serializable {
+
+    @Column(name = "parte")
+    private String parte;
+    @ManyToMany(mappedBy = "repuestoList")
+    private List<EquipoModelo> equipoModeloList;
 
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "stock")
     private Double stock;
     @Column(name = "info")
     private String info;
-    
+
     @ManyToMany(mappedBy = "repuestoList")
     private List<Empresa> empresaList;
-    
-    @JoinColumn(name = "equipo_modelo", referencedColumnName = "id_modelo")
-    @ManyToOne
-    private EquipoModelo equipoModelo;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -68,6 +70,9 @@ public class Repuesto implements Serializable {
     private List<Pedido> pedidoList;
 
     public Repuesto() {
+        empresaList = new ArrayList<>();
+        equipoModeloList = new ArrayList<>();
+        pedidoList = new ArrayList<>();
     }
 
     public Repuesto(Long idRepuesto) {
@@ -165,13 +170,21 @@ public class Repuesto implements Serializable {
         this.empresaList = empresaList;
     }
 
-    public EquipoModelo getEquipoModelo() {
-        return equipoModelo;
+    public String getParte() {
+        return parte;
     }
 
-    public void setEquipoModelo(EquipoModelo equipoModelo) {
-        this.equipoModelo = equipoModelo;
+    public void setParte(String parte) {
+        this.parte = parte;
     }
 
-    
+    @XmlTransient
+    public List<EquipoModelo> getEquipoModeloList() {
+        return equipoModeloList;
+    }
+
+    public void setEquipoModeloList(List<EquipoModelo> equipoModeloList) {
+        this.equipoModeloList = equipoModeloList;
+    }
+
 }

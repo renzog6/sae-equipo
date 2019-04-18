@@ -60,7 +60,7 @@
                     <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../img/plus_64.png" />
+                                <Image url="@../../img/plus_64.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -69,7 +69,7 @@
                     <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../img/pencil_64.png" />
+                                <Image url="@../../img/pencil_64.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -78,7 +78,7 @@
                     <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../img/delete_64.png" />
+                                <Image url="@../../img/delete_64.png" />
                             </image>
                         </ImageView>
                     </graphic>
