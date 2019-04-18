@@ -13,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -52,6 +54,12 @@ public class Repuesto implements Serializable {
     private String obsercacion;
     @ManyToMany(mappedBy = "repuestoList")
     private List<Pedido> pedidoList;
+
+    @JoinTable(name = "ped_repuesto_empresa", joinColumns = {
+        @JoinColumn(name = "id_repuesto", referencedColumnName = "id_repuesto")}, inverseJoinColumns = {
+        @JoinColumn(name = "id_empresa", referencedColumnName = "id_empresa")})
+    @ManyToMany
+    private List<Empresa> empresaList;
 
     public Repuesto() {
     }
@@ -109,6 +117,15 @@ public class Repuesto implements Serializable {
         this.pedidoList = pedidoList;
     }
 
+    @XmlTransient
+    public List<Empresa> getEmpresaList() {
+        return empresaList;
+    }
+
+    public void setEmpresaList(List<Empresa> empresaList) {
+        this.empresaList = empresaList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -131,7 +148,7 @@ public class Repuesto implements Serializable {
 
     @Override
     public String toString() {
-        return "ar.nex.entity.Repuesto[ idRepuesto=" + idRepuesto + " ]";
+        return codigo;
     }
-    
+
 }

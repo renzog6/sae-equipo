@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -49,6 +50,13 @@ public class EquipoController implements Initializable {
     private Button btnUpdate;
     @FXML
     private Button btnDelete;
+
+    @FXML
+    private Label lblFCompra;
+    @FXML
+    private Label lblVendedor;
+    @FXML
+    private Label lblValor;
 
     ObservableList<Equipo> data = FXCollections.observableArrayList();
     FilteredList<Equipo> filteredData = new FilteredList<>(data);
@@ -207,6 +215,14 @@ public class EquipoController implements Initializable {
 
     @FXML
     private void showOnClick(MouseEvent event) {
+        try {
+            select = (Equipo) table.getSelectionModel().getSelectedItem();
+            lblFCompra.setText("Fecha Compra: " + select.getCompraVenta().getFechaCompra());
+            lblVendedor.setText("Vendedor: " + select.getCompraVenta().getVendedor());
+            lblValor.setText("Valor: $" + select.getCompraVenta().getValorCompra());
+        } catch (Exception e) {
+            
+        }
     }
 
     @FXML

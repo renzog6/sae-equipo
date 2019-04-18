@@ -95,7 +95,7 @@ public class EquipoAddController implements Initializable {
 
     private EquipoService service;
 
-    private Long idCat = -1L, idMod, idTip, idMar, idEmp;
+    private Long idCat = -1L, idMod = -1L, idTip = -1L, idMar = -1L, idEmp = -1L;
 
     @FXML
     private Button btnSelectCategoria;
@@ -140,39 +140,40 @@ public class EquipoAddController implements Initializable {
     @FXML
     private void addEquipo(ActionEvent event) {
 
-        EquipoCategoria c = service.getCategoria().findEquipoCategoria(idCat);
-
-        EquipoTipo t = service.getTipo().findEquipoTipo(idTip);
-
-        EquipoModelo m = service.getModelo().findEquipoModelo(idMod);
-
-        Marca ma = service.getMarca().findMarca(idMar);
-
-        Empresa emp = service.getEmpresa().findEmpresa(idEmp);
-
-        EquipoCompraVenta cv = new EquipoCompraVenta();//service.getCompraVenta().findEquipoCompraVenta(Long.valueOf(1));
-        Date fechaCompra = new Date();
-        cv.setFechaCompra(fechaCompra);
-        cv.setVendedor(boxVendedor.getText());
-        cv.setValorCompra(Double.valueOf(boxValorCompra.getText()));
-        service.getCompraVenta().create(cv);
-
-        Equipo e = new Equipo();
-        e.setEmpresa(emp);
-        e.setAnio(boxAnio.getText());
-        e.setChasis(boxChasis.getText());
-        e.setMotor(boxMotor.getText());
-        e.setPatente(boxPatente.getText());
-        e.setColor(boxColor.getText());
-        e.setOtro(boxOtro.getText());
-
-        e.setCategoria(c);
-        e.setModelo(m);
-        e.setTipo(t);
-        e.setMarca(ma);
-        e.setCompraVenta(cv);
-
         try {
+
+            EquipoCategoria c = service.getCategoria().findEquipoCategoria(idCat);
+
+            EquipoTipo t = service.getTipo().findEquipoTipo(idTip);
+
+            EquipoModelo m = service.getModelo().findEquipoModelo(idMod);
+
+            Marca ma = service.getMarca().findMarca(idMar);
+
+            Empresa emp = service.getEmpresa().findEmpresa(idEmp);
+
+            EquipoCompraVenta cv = new EquipoCompraVenta();//service.getCompraVenta().findEquipoCompraVenta(Long.valueOf(1));
+            Date fechaCompra = new Date();
+            cv.setFechaCompra(fechaCompra);
+            cv.setVendedor(boxVendedor.getText());
+            cv.setValorCompra(Double.valueOf(boxValorCompra.getText()));
+            service.getCompraVenta().create(cv);
+
+            Equipo e = new Equipo();
+            e.setEmpresa(emp);
+            e.setAnio(boxAnio.getText());
+            e.setChasis(boxChasis.getText());
+            e.setMotor(boxMotor.getText());
+            e.setPatente(boxPatente.getText());
+            e.setColor(boxColor.getText());
+            e.setOtro(boxOtro.getText());
+
+            e.setCategoria(c);
+            e.setModelo(m);
+            e.setTipo(t);
+            e.setMarca(ma);
+            e.setCompraVenta(cv);
+
             service.getEquipo().create(e);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -217,6 +218,6 @@ public class EquipoAddController implements Initializable {
     @FXML
     private void selectEmpresa() {
         EmpresaSelect empresa = (EmpresaSelect) filtroEmpresa.getSelectionModel().getSelectedItem();
-        idEmp = empresa.getId();     
+        idEmp = empresa.getId();
     }
 }

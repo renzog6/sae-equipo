@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.pedido.RepuestoController">
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.pedido.RepuestoController">
     <center>
 
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -88,15 +88,6 @@
                </font>
             </Label>
             <Separator layoutY="267.0" prefWidth="200.0" />
-            <Button fx:id="btnPedido" alignment="CENTER" contentDisplay="CENTER" layoutX="77.0" layoutY="270.0" mnemonicParsing="false" onAction="#AddToPedido">
-               <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/buy_64.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
                  
             </children>
         </AnchorPane>

@@ -18,6 +18,7 @@ import ar.nex.entity.Contacto;
 import ar.nex.entity.Empresa;
 import ar.nex.entity.Equipo;
 import ar.nex.entity.Pedido;
+import ar.nex.entity.Repuesto;
 import ar.nex.service.exceptions.IllegalOrphanException;
 import ar.nex.service.exceptions.NonexistentEntityException;
 import javax.persistence.EntityManager;
@@ -50,6 +51,9 @@ public class EmpresaJpaController implements Serializable {
         }
         if (empresa.getPedidoList() == null) {
             empresa.setPedidoList(new ArrayList<Pedido>());
+        }
+        if (empresa.getRepuestoList() == null) {
+            empresa.setRepuestoList(new ArrayList<Repuesto>());
         }
         List<String> illegalOrphanMessages = null;
         Direccion direccionOrphanCheck = empresa.getDireccion();
@@ -98,6 +102,12 @@ public class EmpresaJpaController implements Serializable {
                 attachedPedidoList.add(pedidoListPedidoToAttach);
             }
             empresa.setPedidoList(attachedPedidoList);
+            List<Repuesto> attachedRepuestoList = new ArrayList<Repuesto>();
+            for (Repuesto repuestoListRepuestoToAttach : empresa.getRepuestoList()) {
+                repuestoListRepuestoToAttach = em.getReference(repuestoListRepuestoToAttach.getClass(), repuestoListRepuestoToAttach.getIdRepuesto());
+                attachedRepuestoList.add(repuestoListRepuestoToAttach);
+            }
+            empresa.setRepuestoList(attachedRepuestoList);
             em.persist(empresa);
             if (direccion != null) {
                 direccion.setEmpresa(empresa);
@@ -129,6 +139,10 @@ public class EmpresaJpaController implements Serializable {
                     oldEmpresaOfPedidoListPedido = em.merge(oldEmpresaOfPedidoListPedido);
                 }
             }
+            for (Repuesto repuestoListRepuesto : empresa.getRepuestoList()) {
+                repuestoListRepuesto.getEmpresaList().add(empresa);
+                repuestoListRepuesto = em.merge(repuestoListRepuesto);
+            }
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -153,6 +167,8 @@ public class EmpresaJpaController implements Serializable {
             List<Equipo> equipoListNew = empresa.getEquipoList();
             List<Pedido> pedidoListOld = persistentEmpresa.getPedidoList();
             List<Pedido> pedidoListNew = empresa.getPedidoList();
+            List<Repuesto> repuestoListOld = persistentEmpresa.getRepuestoList();
+            List<Repuesto> repuestoListNew = empresa.getRepuestoList();
             List<String> illegalOrphanMessages = null;
             if (direccionNew != null && !direccionNew.equals(direccionOld)) {
                 Empresa oldEmpresaOfDireccion = direccionNew.getEmpresa();
@@ -161,14 +177,6 @@ public class EmpresaJpaController implements Serializable {
                         illegalOrphanMessages = new ArrayList<String>();
                     }
                     illegalOrphanMessages.add("The Direccion " + direccionNew + " already has an item of type Empresa whose direccion column cannot be null. Please make another selection for the direccion field.");
-                }
-            }
-            for (Equipo equipoListOldEquipo : equipoListOld) {
-                if (!equipoListNew.contains(equipoListOldEquipo)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain Equipo " + equipoListOldEquipo + " since its empresa field is not nullable.");
                 }
             }
             if (illegalOrphanMessages != null) {
@@ -206,6 +214,13 @@ public class EmpresaJpaController implements Serializable {
             }
             pedidoListNew = attachedPedidoListNew;
             empresa.setPedidoList(pedidoListNew);
+            List<Repuesto> attachedRepuestoListNew = new ArrayList<Repuesto>();
+            for (Repuesto repuestoListNewRepuestoToAttach : repuestoListNew) {
+                repuestoListNewRepuestoToAttach = em.getReference(repuestoListNewRepuestoToAttach.getClass(), repuestoListNewRepuestoToAttach.getIdRepuesto());
+                attachedRepuestoListNew.add(repuestoListNewRepuestoToAttach);
+            }
+            repuestoListNew = attachedRepuestoListNew;
+            empresa.setRepuestoList(repuestoListNew);
             empresa = em.merge(empresa);
             if (direccionOld != null && !direccionOld.equals(direccionNew)) {
                 direccionOld.setEmpresa(null);
@@ -239,6 +254,12 @@ public class EmpresaJpaController implements Serializable {
                     contactoListNewContacto = em.merge(contactoListNewContacto);
                 }
             }
+            for (Equipo equipoListOldEquipo : equipoListOld) {
+                if (!equipoListNew.contains(equipoListOldEquipo)) {
+                    equipoListOldEquipo.setEmpresa(null);
+                    equipoListOldEquipo = em.merge(equipoListOldEquipo);
+                }
+            }
             for (Equipo equipoListNewEquipo : equipoListNew) {
                 if (!equipoListOld.contains(equipoListNewEquipo)) {
                     Empresa oldEmpresaOfEquipoListNewEquipo = equipoListNewEquipo.getEmpresa();
@@ -267,6 +288,18 @@ public class EmpresaJpaController implements Serializable {
                     }
                 }
             }
+            for (Repuesto repuestoListOldRepuesto : repuestoListOld) {
+                if (!repuestoListNew.contains(repuestoListOldRepuesto)) {
+                    repuestoListOldRepuesto.getEmpresaList().remove(empresa);
+                    repuestoListOldRepuesto = em.merge(repuestoListOldRepuesto);
+                }
+            }
+            for (Repuesto repuestoListNewRepuesto : repuestoListNew) {
+                if (!repuestoListOld.contains(repuestoListNewRepuesto)) {
+                    repuestoListNewRepuesto.getEmpresaList().add(empresa);
+                    repuestoListNewRepuesto = em.merge(repuestoListNewRepuesto);
+                }
+            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -284,7 +317,7 @@ public class EmpresaJpaController implements Serializable {
         }
     }
 
-    public void destroy(Long id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Long id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -295,17 +328,6 @@ public class EmpresaJpaController implements Serializable {
                 empresa.getIdEmpresa();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The empresa with id " + id + " no longer exists.", enfe);
-            }
-            List<String> illegalOrphanMessages = null;
-            List<Equipo> equipoListOrphanCheck = empresa.getEquipoList();
-            for (Equipo equipoListOrphanCheckEquipo : equipoListOrphanCheck) {
-                if (illegalOrphanMessages == null) {
-                    illegalOrphanMessages = new ArrayList<String>();
-                }
-                illegalOrphanMessages.add("This Empresa (" + empresa + ") cannot be destroyed since the Equipo " + equipoListOrphanCheckEquipo + " in its equipoList field has a non-nullable empresa field.");
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             Direccion direccion = empresa.getDireccion();
             if (direccion != null) {
@@ -322,10 +344,20 @@ public class EmpresaJpaController implements Serializable {
                 contactoListContacto.getEmpresaList().remove(empresa);
                 contactoListContacto = em.merge(contactoListContacto);
             }
+            List<Equipo> equipoList = empresa.getEquipoList();
+            for (Equipo equipoListEquipo : equipoList) {
+                equipoListEquipo.setEmpresa(null);
+                equipoListEquipo = em.merge(equipoListEquipo);
+            }
             List<Pedido> pedidoList = empresa.getPedidoList();
             for (Pedido pedidoListPedido : pedidoList) {
                 pedidoListPedido.setEmpresa(null);
                 pedidoListPedido = em.merge(pedidoListPedido);
+            }
+            List<Repuesto> repuestoList = empresa.getRepuestoList();
+            for (Repuesto repuestoListRepuesto : repuestoList) {
+                repuestoListRepuesto.getEmpresaList().remove(empresa);
+                repuestoListRepuesto = em.merge(repuestoListRepuesto);
             }
             em.remove(empresa);
             em.getTransaction().commit();

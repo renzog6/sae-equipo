@@ -83,6 +83,9 @@
                         </ImageView>
                     </graphic>
                 </Button>
+            <Label fx:id="lblFCompra" layoutX="14.0" layoutY="21.0" prefHeight="20.0" prefWidth="200.0" text="Fecha Compra: " />
+            <Label fx:id="lblVendedor" layoutX="14.0" layoutY="50.0" prefHeight="20.0" prefWidth="200.0" text="Vendedor: " />
+            <Label fx:id="lblValor" layoutX="14.0" layoutY="79.0" prefHeight="20.0" prefWidth="200.0" text="Valor Compra $" />
                  
             </children>
         </AnchorPane>

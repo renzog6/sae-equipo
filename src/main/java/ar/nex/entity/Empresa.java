@@ -55,20 +55,25 @@ public class Empresa implements Serializable {
     private String observacion;
     @Column(name = "razon_social")
     private String razonSocial;
+
     @JoinTable(name = "empresa_rubro", joinColumns = {
         @JoinColumn(name = "id_empresa", referencedColumnName = "id_empresa")}, inverseJoinColumns = {
         @JoinColumn(name = "id_rubro", referencedColumnName = "id_rubro")})
     @ManyToMany
     private List<Rubro> rubroList;
+
     @ManyToMany(mappedBy = "empresaList")
     private List<Contacto> contactoList;
-    
+
+    @ManyToMany(mappedBy = "empresaList")
+    private List<Repuesto> repuestoList;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empresa")
     private List<Equipo> equipoList;
-    
+
     @OneToMany(mappedBy = "empresa")
     private List<Pedido> pedidoList;
-    
+
     @JoinColumn(name = "direccion_id", referencedColumnName = "id_direccion")
     @OneToOne(optional = false)
     private Direccion direccion;
@@ -156,6 +161,15 @@ public class Empresa implements Serializable {
         this.pedidoList = pedidoList;
     }
 
+    @XmlTransient
+    public List<Repuesto> getRepuestoList() {
+        return repuestoList;
+    }
+
+    public void setRepuestoList(List<Repuesto> repuestoList) {
+        this.repuestoList = repuestoList;
+    }
+
     public Direccion getDireccion() {
         return direccion;
     }
@@ -188,5 +202,5 @@ public class Empresa implements Serializable {
     public String toString() {
         return nombre;
     }
-    
+
 }

@@ -61,11 +61,13 @@ public class Pedido implements Serializable {
     private Date fechaInicio;
     @Column(name = "observacion")
     private String observacion;
+   
     @JoinTable(name = "ped_pedido_repuesto", joinColumns = {
         @JoinColumn(name = "id_pedido", referencedColumnName = "id_pedido")}, inverseJoinColumns = {
         @JoinColumn(name = "id_repuesto", referencedColumnName = "id_repuesto")})
     @ManyToMany
     private List<Repuesto> repuestoList;
+    
     @JoinColumn(name = "id_empresa", referencedColumnName = "id_empresa")
     @ManyToOne
     private Empresa empresa;
