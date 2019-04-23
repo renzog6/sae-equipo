@@ -14,15 +14,17 @@
 <BorderPane fx:id="bpRepuesto" minHeight="768.0" minWidth="1024.0" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.pedido.RepuestoController">
     <center>
 
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+        <AnchorPane minHeight="558.0" prefHeight="558.0">
             <children>
-                <TableView fx:id="table" layoutX="-9.0" layoutY="14.0" onMouseClicked="#showOnClick" prefHeight="358.0" prefWidth="417.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <TableView fx:id="table" layoutX="-9.0" layoutY="14.0" minHeight="558.0" onMouseClicked="#showOnClick" prefHeight="558.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
+                        <TableColumn fx:id="colEquipos" minWidth="50.0" prefWidth="100.0" text="Equipos" />
                         <TableColumn fx:id="colCodigo" minWidth="50.0" prefWidth="100.0" text="Codigo" />
                         <TableColumn fx:id="colDescripcion" prefWidth="102.0" text="Descripcion" />
-                        <TableColumn fx:id="colStock" prefWidth="102.0" text="Stock" />
-                        <TableColumn fx:id="colMarca" prefWidth="102.0" text="Marca" />
+                        <TableColumn fx:id="colParte" prefWidth="102.0" text="Parte" />
                         <TableColumn fx:id="colInfo" prefWidth="102.0" text="Info" />
+                        <TableColumn fx:id="colMarca" prefWidth="100.0" text="Marca" />                        
+                        <TableColumn fx:id="colStock" maxWidth="100.0" minWidth="80.0" prefWidth="100.0" text="Stock" />
                         <TableColumn fx:id="colAccion" maxWidth="100.0" minWidth="80.0" prefWidth="100.0" styleClass="colAccion" text="Accion" />
                     </columns>
                     <columnResizePolicy>
@@ -34,7 +36,7 @@
 
     </center>
     <top>          
-        <AnchorPane nodeOrientation="RIGHT_TO_LEFT" prefHeight="50.0" BorderPane.alignment="CENTER">
+        <AnchorPane minHeight="50.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="50.0" BorderPane.alignment="CENTER">
             <children>
                 <TextField fx:id="searchBox" layoutX="127.0" layoutY="13.0" onInputMethodTextChanged="#Search" onKeyReleased="#Search" prefHeight="25.0" prefWidth="206.0" promptText="Buscar" />
                 <Button fx:id="signOut" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="26.0" layoutY="13.0" mnemonicParsing="false" onAction="#goSignOut" text="Salir" />
@@ -47,7 +49,7 @@
         </AnchorPane>       
     </top>
    <bottom>
-        <AnchorPane fx:id="menuPane" minHeight="150.0" prefHeight="150.0" styleClass="menuPane" BorderPane.alignment="CENTER">
+        <AnchorPane fx:id="menuPane" minHeight="160.0" prefHeight="160.0" styleClass="menuPane" BorderPane.alignment="CENTER">
             <children>
              
                 <Button fx:id="btnAdd" contentDisplay="CENTER" layoutX="10.0" layoutY="210.0" mnemonicParsing="false" AnchorPane.bottomAnchor="110.0" AnchorPane.rightAnchor="10.0">
@@ -77,15 +79,23 @@
                         </ImageView>
                     </graphic>
                 </Button>
-            <Button fx:id="btnPedido" alignment="CENTER" contentDisplay="CENTER" layoutX="77.0" layoutY="270.0" mnemonicParsing="false" onAction="#AddToPedido">
-               <graphic>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/buy_64.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+            <Button fx:id="btnAddModelo" minHeight="30.0" minWidth="85.0" mnemonicParsing="false" text="+ Equipos" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="20.0" />
+            <Button fx:id="btnAddProvedor" minHeight="30.0" minWidth="85.0" mnemonicParsing="false" text="+ Proveedor" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="20.0" />
+            <Button fx:id="btnAddMarca" minHeight="30.0" minWidth="85.0" mnemonicParsing="false" text="+ Marcas" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" />
+            
+            <Label fx:id="lblModelo" layoutX="14.0" layoutY="21.0" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="130.0">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+            <Label fx:id="lblPedido" layoutX="14.0" layoutY="44.0" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="130.0">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+            <Label fx:id="lblCompra" text="Ultima compra:" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="130.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
                  
             </children>
         </AnchorPane>

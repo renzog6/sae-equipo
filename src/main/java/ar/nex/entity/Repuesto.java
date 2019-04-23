@@ -1,24 +1,21 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ar.nex.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -39,19 +36,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Repuesto.findByInfo", query = "SELECT r FROM Repuesto r WHERE r.info = :info")})
 public class Repuesto implements Serializable {
 
-    @Column(name = "parte")
-    private String parte;
-    @ManyToMany(mappedBy = "repuestoList")
-    private List<EquipoModelo> equipoModeloList;
-
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "stock")
-    private Double stock;
-    @Column(name = "info")
-    private String info;
-
-    @ManyToMany(mappedBy = "repuestoList")
-    private List<Empresa> empresaList;
+    @OneToMany(mappedBy = "repuesto")
+    private List<Pedido> pedidoList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -59,6 +45,13 @@ public class Repuesto implements Serializable {
     @Basic(optional = false)
     @Column(name = "id_repuesto")
     private Long idRepuesto;
+
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "stock")
+    private Double stock;
+    @Column(name = "info")
+    private String info;
+
     @Column(name = "codigo")
     private String codigo;
     @Column(name = "descripcion")
@@ -66,13 +59,19 @@ public class Repuesto implements Serializable {
     @Column(name = "marca")
     private String marca;
 
+    @Column(name = "parte")
+    private String parte;
+
     @ManyToMany(mappedBy = "repuestoList")
-    private List<Pedido> pedidoList;
+    private List<Empresa> empresaList;
+
+    @ManyToMany(mappedBy = "repuestoList")
+    private List<EquipoModelo> equipoModeloList;
 
     public Repuesto() {
         empresaList = new ArrayList<>();
         equipoModeloList = new ArrayList<>();
-        pedidoList = new ArrayList<>();
+        
     }
 
     public Repuesto(Long idRepuesto) {
@@ -111,15 +110,6 @@ public class Repuesto implements Serializable {
         this.marca = marca;
     }
 
-    @XmlTransient
-    public List<Pedido> getPedidoList() {
-        return pedidoList;
-    }
-
-    public void setPedidoList(List<Pedido> pedidoList) {
-        this.pedidoList = pedidoList;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -142,7 +132,7 @@ public class Repuesto implements Serializable {
 
     @Override
     public String toString() {
-        return "ar.nex.entity.Repuesto[ idRepuesto=" + idRepuesto + " ]";
+        return this.codigo + " - " + this.descripcion;
     }
 
     public Double getStock() {
@@ -185,6 +175,58 @@ public class Repuesto implements Serializable {
 
     public void setEquipoModeloList(List<EquipoModelo> equipoModeloList) {
         this.equipoModeloList = equipoModeloList;
+    }
+
+    public String listaModelo() {
+        String str = "";
+        List<EquipoModelo> list = this.getEquipoModeloList();
+        for (EquipoModelo object : list) {
+            str = str + " / " + object.getNombre();
+        }
+        return str;
+    }
+
+    public String listaProvedor() {
+        String str = "";
+        List<Empresa> list = this.getEmpresaList();
+        for (Empresa object : list) {
+            str = str + " / " + object.getNombre();
+        }
+        return str;
+    }
+
+    public Pedido getLastPedido(){
+        int i = this.getPedidoList().size();        
+        if(i >= 1){
+            return getPedidoList().get(i-1);
+        }
+        return new Pedido();
+    }
+    
+    public String listaPedido() {
+        String str = "N7N";
+        int i = this.getPedidoList().size();        
+        if(i >= 1){
+            str = getPedidoList().get(i-1).pedidoStringFull();
+        }
+        return str;
+    }
+
+    public StringProperty equipo_solo() {
+        StringProperty equipo_solo = new SimpleStringProperty("NN");        
+        if (equipoModeloList.size() >= 1) {
+            equipo_solo = new SimpleStringProperty(equipoModeloList.get(0).getNombre());
+        }
+        return equipo_solo;
+    }
+
+    @XmlTransient
+    public List<Pedido> getPedidoList() {
+        return pedidoList;
+    }
+
+    public void setPedidoList(List<Pedido> pedidoList) {
+        this.pedidoList = pedidoList;
     }
 
 }

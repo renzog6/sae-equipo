@@ -8,28 +8,46 @@
 
 <AnchorPane id="AnchorPane" prefHeight="500.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <Label contentDisplay="CENTER" layoutX="146.0" layoutY="14.0" text="Nuevo Repuesto" textAlignment="CENTER" underline="true">
+        <Label contentDisplay="CENTER" layoutX="130.0" layoutY="14.0" text="Nuevo Repuesto" textAlignment="CENTER" underline="true">
             <font>
-                <Font name="System Bold" size="14.0" />
+                <Font name="System Bold" size="18.0" />
             </font>
         </Label>
                 
-        <Label layoutX="20.0" layoutY="50.0" text="Codigo" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="50.0" />
-        <Label layoutX="20.0" layoutY="100.0" text="Descripcion" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="100.0" />
-        <Label layoutX="20.0" layoutY="150.0" text="Marca" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="150.0" />
-        <Label layoutX="20.0" layoutY="200.0" text="Provedor" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="200.0" />
-        <Label layoutX="20.0" layoutY="250.0" text="Info" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="250.0" />
-        <Label layoutX="20.0" layoutY="300.0" text="Equipo" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="300.0" />
+        <Label layoutX="20.0" layoutY="50.0" text="Codigo" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="65.0">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+        <Label layoutX="20.0" layoutY="100.0" text="Descripcion" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="110.0">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+        <Label layoutX="20.0" layoutY="150.0" text="Marca" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="160.0">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+        <Label layoutX="20.0" layoutY="200.0" text="Provedor" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="210.0">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+        <Label layoutX="20.0" layoutY="250.0" text="Info" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="260.0">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+        <Label layoutX="20.0" layoutY="300.0" text="Equipo" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="310.0">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
        
-        <TextField fx:id="boxCodigo" alignment="CENTER" layoutX="140.0" layoutY="55.0" prefWidth="180.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="55.0" />
-        <TextField fx:id="boxDescripcion" alignment="CENTER" layoutX="140.0" layoutY="105.0" prefWidth="180.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="105.0" />
-        <TextField fx:id="boxMarca" alignment="CENTER" layoutX="140.0" layoutY="155.0" prefWidth="180.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="155.0" />
-        <TextField fx:id="boxProvedor" alignment="CENTER" layoutX="140.0" layoutY="205.0" prefWidth="180.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="205.0" />
-        <TextField fx:id="boxInfo" alignment="CENTER" layoutX="140.0" layoutY="255.0" prefWidth="180.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="255.0" />
-        <TextField fx:id="boxModelo" alignment="CENTER" layoutX="140.0" layoutY="305.0" prefWidth="180.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="305.0" />
+        <TextField fx:id="boxCodigo" alignment="CENTER" layoutX="140.0" layoutY="55.0" prefHeight="30.0" prefWidth="200.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="55.0" />
+        <TextField fx:id="boxDescripcion" alignment="CENTER" layoutX="140.0" layoutY="105.0" prefHeight="30.0" prefWidth="200.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="105.0" />
+        <TextField fx:id="boxMarca" alignment="CENTER" layoutX="140.0" layoutY="155.0" prefHeight="30.0" prefWidth="200.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="155.0" />
+        <TextField fx:id="boxProvedor" alignment="CENTER" layoutX="140.0" layoutY="205.0" prefHeight="30.0" prefWidth="200.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="205.0" />
+        <TextField fx:id="boxInfo" alignment="CENTER" layoutX="140.0" layoutY="255.0" prefHeight="30.0" prefWidth="200.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="255.0" />
+        <TextField fx:id="boxModelo" alignment="CENTER" layoutX="140.0" layoutY="305.0" prefHeight="30.0" prefWidth="200.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="305.0" />
       
-        <Button fx:id="btnGuardar" layoutX="14.0" layoutY="361.0" mnemonicParsing="false" onAction="#guardar" prefHeight="30.0" prefWidth="80.0" text="Guardar" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" />
-        <Button fx:id="btnCancelar" layoutX="207.0" layoutY="361.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Cancelar" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+        <Button fx:id="btnGuardar" layoutX="14.0" layoutY="361.0" mnemonicParsing="false" onAction="#guardar" prefHeight="30.0" prefWidth="100.0" text="Guardar" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="30.0" />
+        <Button fx:id="btnCancelar" layoutX="207.0" layoutY="361.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Cancelar" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0" />
         
     </children>
 </AnchorPane>

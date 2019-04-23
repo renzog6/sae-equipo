@@ -1,10 +1,7 @@
 package ar.nex.entity;
 
 import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,8 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -21,7 +16,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -31,30 +25,24 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "ped_pedido")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Pedido.findAll", query = "SELECT p FROM Pedido p")
-    , @NamedQuery(name = "Pedido.findByIdPedido", query = "SELECT p FROM Pedido p WHERE p.idPedido = :idPedido")
-    , @NamedQuery(name = "Pedido.findByCantidad", query = "SELECT p FROM Pedido p WHERE p.cantidad = :cantidad")
-    , @NamedQuery(name = "Pedido.findByEstado", query = "SELECT p FROM Pedido p WHERE p.estado = :estado")
-    , @NamedQuery(name = "Pedido.findByFechaFin", query = "SELECT p FROM Pedido p WHERE p.fechaFin = :fechaFin")
-    , @NamedQuery(name = "Pedido.findByFechaInicio", query = "SELECT p FROM Pedido p WHERE p.fechaInicio = :fechaInicio")
-    , @NamedQuery(name = "Pedido.findByInfo", query = "SELECT p FROM Pedido p WHERE p.info = :info")})
+    @NamedQuery(name = "Pedido.findAll", query = "SELECT p FROM Pedido p"),
+    @NamedQuery(name = "Pedido.findByIdPedido", query = "SELECT p FROM Pedido p WHERE p.idPedido = :idPedido"),
+    @NamedQuery(name = "Pedido.findByCantidad", query = "SELECT p FROM Pedido p WHERE p.cantidad = :cantidad"),
+    @NamedQuery(name = "Pedido.findByEstado", query = "SELECT p FROM Pedido p WHERE p.estado = :estado"),
+    @NamedQuery(name = "Pedido.findByFechaFin", query = "SELECT p FROM Pedido p WHERE p.fechaFin = :fechaFin"),
+    @NamedQuery(name = "Pedido.findByFechaInicio", query = "SELECT p FROM Pedido p WHERE p.fechaInicio = :fechaInicio"),
+    @NamedQuery(name = "Pedido.findByInfo", query = "SELECT p FROM Pedido p WHERE p.info = :info")})
 public class Pedido implements Serializable {
 
-    @Column(name = "repuesto")
-    private BigInteger repuesto;
+    @JoinColumn(name = "repuesto", referencedColumnName = "id_repuesto")
+    @ManyToOne
+    private Repuesto repuesto;
+
     @Column(name = "info")
     private String info;
-    @JoinTable(name = "ped_repuesto_pedido", joinColumns = {
-        @JoinColumn(name = "id_pedido", referencedColumnName = "id_pedido")}, inverseJoinColumns = {
-        @JoinColumn(name = "id_repuesto", referencedColumnName = "id_repuesto")})
-    @ManyToMany
-    private List<Repuesto> repuestoList;
-
-    
 
     private static final long serialVersionUID = 1L;
-    
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -71,13 +59,15 @@ public class Pedido implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInicio;
 
-
     @JoinColumn(name = "id_empresa", referencedColumnName = "id_empresa")
     @ManyToOne
     private Empresa empresa;
 
     public Pedido() {
-        repuestoList = new ArrayList<>();
+    }
+
+    public Pedido(Repuesto r) {
+        this.repuesto = r;
     }
 
     public Pedido(Long idPedido) {
@@ -124,15 +114,6 @@ public class Pedido implements Serializable {
         this.fechaInicio = fechaInicio;
     }
 
-    @XmlTransient
-    public List<Repuesto> getRepuestoList() {
-        return repuestoList;
-    }
-
-    public void setRepuestoList(List<Repuesto> repuestoList) {
-        this.repuestoList = repuestoList;
-    }
-
     public Empresa getEmpresa() {
         return empresa;
     }
@@ -166,14 +147,6 @@ public class Pedido implements Serializable {
         return "ar.nex.entity.Pedido[ idPedido=" + idPedido + " ]";
     }
 
-    public BigInteger getRepuesto() {
-        return repuesto;
-    }
-
-    public void setRepuesto(BigInteger repuesto) {
-        this.repuesto = repuesto;
-    }
-
     public String getInfo() {
         return info;
     }
@@ -182,5 +155,16 @@ public class Pedido implements Serializable {
         this.info = info;
     }
 
-     
+    public String pedidoStringFull() {
+        return this.fechaInicio + " - " + this.cantidad + " - " + this.empresa.getNombre();
+    }
+
+    public Repuesto getRepuesto() {
+        return repuesto;
+    }
+
+    public void setRepuesto(Repuesto repuesto) {
+        this.repuesto = repuesto;
+    }
+
 }

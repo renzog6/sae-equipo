@@ -10,11 +10,11 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import ar.nex.entity.Pedido;
+import ar.nex.entity.Empresa;
 import java.util.ArrayList;
 import java.util.List;
-import ar.nex.entity.Empresa;
 import ar.nex.entity.EquipoModelo;
+import ar.nex.entity.Pedido;
 import ar.nex.entity.Repuesto;
 import ar.nex.jpa.exceptions.NonexistentEntityException;
 import javax.persistence.EntityManager;
@@ -36,25 +36,19 @@ public class RepuestoJpaController implements Serializable {
     }
 
     public void create(Repuesto repuesto) {
-        if (repuesto.getPedidoList() == null) {
-            repuesto.setPedidoList(new ArrayList<Pedido>());
-        }
         if (repuesto.getEmpresaList() == null) {
             repuesto.setEmpresaList(new ArrayList<Empresa>());
         }
         if (repuesto.getEquipoModeloList() == null) {
             repuesto.setEquipoModeloList(new ArrayList<EquipoModelo>());
         }
+        if (repuesto.getPedidoList() == null) {
+            repuesto.setPedidoList(new ArrayList<Pedido>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            List<Pedido> attachedPedidoList = new ArrayList<Pedido>();
-            for (Pedido pedidoListPedidoToAttach : repuesto.getPedidoList()) {
-                pedidoListPedidoToAttach = em.getReference(pedidoListPedidoToAttach.getClass(), pedidoListPedidoToAttach.getIdPedido());
-                attachedPedidoList.add(pedidoListPedidoToAttach);
-            }
-            repuesto.setPedidoList(attachedPedidoList);
             List<Empresa> attachedEmpresaList = new ArrayList<Empresa>();
             for (Empresa empresaListEmpresaToAttach : repuesto.getEmpresaList()) {
                 empresaListEmpresaToAttach = em.getReference(empresaListEmpresaToAttach.getClass(), empresaListEmpresaToAttach.getIdEmpresa());
@@ -67,11 +61,13 @@ public class RepuestoJpaController implements Serializable {
                 attachedEquipoModeloList.add(equipoModeloListEquipoModeloToAttach);
             }
             repuesto.setEquipoModeloList(attachedEquipoModeloList);
-            em.persist(repuesto);
-            for (Pedido pedidoListPedido : repuesto.getPedidoList()) {
-                pedidoListPedido.getRepuestoList().add(repuesto);
-                pedidoListPedido = em.merge(pedidoListPedido);
+            List<Pedido> attachedPedidoList = new ArrayList<Pedido>();
+            for (Pedido pedidoListPedidoToAttach : repuesto.getPedidoList()) {
+                pedidoListPedidoToAttach = em.getReference(pedidoListPedidoToAttach.getClass(), pedidoListPedidoToAttach.getIdPedido());
+                attachedPedidoList.add(pedidoListPedidoToAttach);
             }
+            repuesto.setPedidoList(attachedPedidoList);
+            em.persist(repuesto);
             for (Empresa empresaListEmpresa : repuesto.getEmpresaList()) {
                 empresaListEmpresa.getRepuestoList().add(repuesto);
                 empresaListEmpresa = em.merge(empresaListEmpresa);
@@ -79,6 +75,15 @@ public class RepuestoJpaController implements Serializable {
             for (EquipoModelo equipoModeloListEquipoModelo : repuesto.getEquipoModeloList()) {
                 equipoModeloListEquipoModelo.getRepuestoList().add(repuesto);
                 equipoModeloListEquipoModelo = em.merge(equipoModeloListEquipoModelo);
+            }
+            for (Pedido pedidoListPedido : repuesto.getPedidoList()) {
+                Repuesto oldRepuestoOfPedidoListPedido = pedidoListPedido.getRepuesto();
+                pedidoListPedido.setRepuesto(repuesto);
+                pedidoListPedido = em.merge(pedidoListPedido);
+                if (oldRepuestoOfPedidoListPedido != null) {
+                    oldRepuestoOfPedidoListPedido.getPedidoList().remove(pedidoListPedido);
+                    oldRepuestoOfPedidoListPedido = em.merge(oldRepuestoOfPedidoListPedido);
+                }
             }
             em.getTransaction().commit();
         } finally {
@@ -94,19 +99,12 @@ public class RepuestoJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Repuesto persistentRepuesto = em.find(Repuesto.class, repuesto.getIdRepuesto());
-            List<Pedido> pedidoListOld = persistentRepuesto.getPedidoList();
-            List<Pedido> pedidoListNew = repuesto.getPedidoList();
             List<Empresa> empresaListOld = persistentRepuesto.getEmpresaList();
             List<Empresa> empresaListNew = repuesto.getEmpresaList();
             List<EquipoModelo> equipoModeloListOld = persistentRepuesto.getEquipoModeloList();
             List<EquipoModelo> equipoModeloListNew = repuesto.getEquipoModeloList();
-            List<Pedido> attachedPedidoListNew = new ArrayList<Pedido>();
-            for (Pedido pedidoListNewPedidoToAttach : pedidoListNew) {
-                pedidoListNewPedidoToAttach = em.getReference(pedidoListNewPedidoToAttach.getClass(), pedidoListNewPedidoToAttach.getIdPedido());
-                attachedPedidoListNew.add(pedidoListNewPedidoToAttach);
-            }
-            pedidoListNew = attachedPedidoListNew;
-            repuesto.setPedidoList(pedidoListNew);
+            List<Pedido> pedidoListOld = persistentRepuesto.getPedidoList();
+            List<Pedido> pedidoListNew = repuesto.getPedidoList();
             List<Empresa> attachedEmpresaListNew = new ArrayList<Empresa>();
             for (Empresa empresaListNewEmpresaToAttach : empresaListNew) {
                 empresaListNewEmpresaToAttach = em.getReference(empresaListNewEmpresaToAttach.getClass(), empresaListNewEmpresaToAttach.getIdEmpresa());
@@ -121,19 +119,14 @@ public class RepuestoJpaController implements Serializable {
             }
             equipoModeloListNew = attachedEquipoModeloListNew;
             repuesto.setEquipoModeloList(equipoModeloListNew);
+            List<Pedido> attachedPedidoListNew = new ArrayList<Pedido>();
+            for (Pedido pedidoListNewPedidoToAttach : pedidoListNew) {
+                pedidoListNewPedidoToAttach = em.getReference(pedidoListNewPedidoToAttach.getClass(), pedidoListNewPedidoToAttach.getIdPedido());
+                attachedPedidoListNew.add(pedidoListNewPedidoToAttach);
+            }
+            pedidoListNew = attachedPedidoListNew;
+            repuesto.setPedidoList(pedidoListNew);
             repuesto = em.merge(repuesto);
-            for (Pedido pedidoListOldPedido : pedidoListOld) {
-                if (!pedidoListNew.contains(pedidoListOldPedido)) {
-                    pedidoListOldPedido.getRepuestoList().remove(repuesto);
-                    pedidoListOldPedido = em.merge(pedidoListOldPedido);
-                }
-            }
-            for (Pedido pedidoListNewPedido : pedidoListNew) {
-                if (!pedidoListOld.contains(pedidoListNewPedido)) {
-                    pedidoListNewPedido.getRepuestoList().add(repuesto);
-                    pedidoListNewPedido = em.merge(pedidoListNewPedido);
-                }
-            }
             for (Empresa empresaListOldEmpresa : empresaListOld) {
                 if (!empresaListNew.contains(empresaListOldEmpresa)) {
                     empresaListOldEmpresa.getRepuestoList().remove(repuesto);
@@ -156,6 +149,23 @@ public class RepuestoJpaController implements Serializable {
                 if (!equipoModeloListOld.contains(equipoModeloListNewEquipoModelo)) {
                     equipoModeloListNewEquipoModelo.getRepuestoList().add(repuesto);
                     equipoModeloListNewEquipoModelo = em.merge(equipoModeloListNewEquipoModelo);
+                }
+            }
+            for (Pedido pedidoListOldPedido : pedidoListOld) {
+                if (!pedidoListNew.contains(pedidoListOldPedido)) {
+                    pedidoListOldPedido.setRepuesto(null);
+                    pedidoListOldPedido = em.merge(pedidoListOldPedido);
+                }
+            }
+            for (Pedido pedidoListNewPedido : pedidoListNew) {
+                if (!pedidoListOld.contains(pedidoListNewPedido)) {
+                    Repuesto oldRepuestoOfPedidoListNewPedido = pedidoListNewPedido.getRepuesto();
+                    pedidoListNewPedido.setRepuesto(repuesto);
+                    pedidoListNewPedido = em.merge(pedidoListNewPedido);
+                    if (oldRepuestoOfPedidoListNewPedido != null && !oldRepuestoOfPedidoListNewPedido.equals(repuesto)) {
+                        oldRepuestoOfPedidoListNewPedido.getPedidoList().remove(pedidoListNewPedido);
+                        oldRepuestoOfPedidoListNewPedido = em.merge(oldRepuestoOfPedidoListNewPedido);
+                    }
                 }
             }
             em.getTransaction().commit();
@@ -187,11 +197,6 @@ public class RepuestoJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The repuesto with id " + id + " no longer exists.", enfe);
             }
-            List<Pedido> pedidoList = repuesto.getPedidoList();
-            for (Pedido pedidoListPedido : pedidoList) {
-                pedidoListPedido.getRepuestoList().remove(repuesto);
-                pedidoListPedido = em.merge(pedidoListPedido);
-            }
             List<Empresa> empresaList = repuesto.getEmpresaList();
             for (Empresa empresaListEmpresa : empresaList) {
                 empresaListEmpresa.getRepuestoList().remove(repuesto);
@@ -201,6 +206,11 @@ public class RepuestoJpaController implements Serializable {
             for (EquipoModelo equipoModeloListEquipoModelo : equipoModeloList) {
                 equipoModeloListEquipoModelo.getRepuestoList().remove(repuesto);
                 equipoModeloListEquipoModelo = em.merge(equipoModeloListEquipoModelo);
+            }
+            List<Pedido> pedidoList = repuesto.getPedidoList();
+            for (Pedido pedidoListPedido : pedidoList) {
+                pedidoListPedido.setRepuesto(null);
+                pedidoListPedido = em.merge(pedidoListPedido);
             }
             em.remove(repuesto);
             em.getTransaction().commit();
