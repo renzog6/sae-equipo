@@ -13,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -32,6 +34,12 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "EquipoTipo.findByIdTipo", query = "SELECT e FROM EquipoTipo e WHERE e.idTipo = :idTipo")
     , @NamedQuery(name = "EquipoTipo.findByNombre", query = "SELECT e FROM EquipoTipo e WHERE e.nombre = :nombre")})
 public class EquipoTipo implements Serializable {
+
+    @OneToMany(mappedBy = "idTipo")
+    private List<EquipoModelo> equipoModeloList;
+    @JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria")
+    @ManyToOne
+    private EquipoCategoria idCategoria;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -99,6 +107,23 @@ public class EquipoTipo implements Serializable {
     @Override
     public String toString() {
         return nombre;
+    }
+
+    @XmlTransient
+    public List<EquipoModelo> getEquipoModeloList() {
+        return equipoModeloList;
+    }
+
+    public void setEquipoModeloList(List<EquipoModelo> equipoModeloList) {
+        this.equipoModeloList = equipoModeloList;
+    }
+
+    public EquipoCategoria getIdCategoria() {
+        return idCategoria;
+    }
+
+    public void setIdCategoria(EquipoCategoria idCategoria) {
+        this.idCategoria = idCategoria;
     }
     
 }

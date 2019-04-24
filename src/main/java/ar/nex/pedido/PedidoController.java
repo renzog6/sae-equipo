@@ -33,6 +33,7 @@ import javax.persistence.Persistence;
 
 import ar.nex.jpa.PedidoJpaController;
 import ar.nex.jpa.RepuestoJpaController;
+import javafx.beans.value.ObservableValue;
 
 /**
  * FXML Controller class
@@ -57,6 +58,8 @@ public class PedidoController implements Initializable {
     @FXML
     private TableColumn colFecha;
     @FXML
+    private TableColumn<Pedido, String> colEquipo;
+    @FXML
     private TableColumn<?, ?> colRepuesto;
     @FXML
     private TableColumn<?, ?> colCantidad;
@@ -75,6 +78,8 @@ public class PedidoController implements Initializable {
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -89,15 +94,19 @@ public class PedidoController implements Initializable {
         filtroEstado.getSelectionModel().select(1);
     }
 
-    public void clearAll() {
-        System.out.println("ar.nex.util.PedidoController.clearAll()");
+    public void clearAll() {        
         data.clear();
         searchBox.clear();
         select = null;
     }
 
-    public void initTable() {
-        System.out.println("ar.nex.util.PedidoController.initTable()");
+    public void initTable() {        
+        colEquipo.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Pedido, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Pedido, String> data) {
+                return data.getValue().equipo_solo();
+            }
+        });
         colRepuesto.setCellValueFactory(new PropertyValueFactory<>("repuesto"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colProveedor.setCellValueFactory(new PropertyValueFactory<>("empresa"));

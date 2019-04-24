@@ -33,12 +33,12 @@ public class HomeController implements Initializable {
 
     @FXML
     private void goPedido(MouseEvent event) {
-        loadUI("Pedido");
+        loadUI("pedido/Pedido");
     }
 
     @FXML
     private void goRepuesto(MouseEvent event) {
-        loadUI("Repuesto");
+        loadUI("repuesto/Repuesto");
     }
 
     @FXML
@@ -53,7 +53,7 @@ public class HomeController implements Initializable {
         } catch (IOException ex) {
             Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        homePane.getStylesheets().add("/styles/" + ui + ".css");        
+        homePane.getStylesheets().add("/fxml/" + ui + ".css");        
         homePane.setCenter(root);
     }
 }

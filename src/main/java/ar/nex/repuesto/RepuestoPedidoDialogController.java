@@ -1,4 +1,4 @@
-package ar.nex.pedido;
+package ar.nex.repuesto;
 
 import ar.nex.entity.Empresa;
 import ar.nex.entity.EquipoModelo;
@@ -7,6 +7,7 @@ import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoService;
 import ar.nex.jpa.EmpresaJpaController;
 import ar.nex.jpa.PedidoJpaController;
+import ar.nex.pedido.EstadoPedido;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

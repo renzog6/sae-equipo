@@ -1,17 +1,19 @@
 package ar.nex.equipo;
 
 import ar.nex.entity.Equipo;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -20,8 +22,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.InputMethodEvent;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -44,15 +44,15 @@ public class EquipoController implements Initializable {
     @FXML
     private AnchorPane menuPane;
     @FXML
-    private Button btnAddNew;
+    private Button btnAdd;
     @FXML
-    private Button btnUpdate;
+    private Button btnEdit;
     @FXML
     private Button btnDelete;
 
     ObservableList<Equipo> data = FXCollections.observableArrayList();
     FilteredList<Equipo> filteredData = new FilteredList<>(data);
-    Equipo select;
+    Equipo equipoSelect;
 
     @FXML
     private TableView<Equipo> table;
@@ -77,10 +77,13 @@ public class EquipoController implements Initializable {
     @FXML
     private TableColumn colAccion;
 
-    private EquipoService srvEquipo;
+    private EquipoService jpaEquipo;
 
     /**
      * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -88,13 +91,16 @@ public class EquipoController implements Initializable {
         initSevice();
         initFiltro();
         loadData(0);
+
+        btnAdd.setOnAction(e -> this.add());
+        btnEdit.setOnAction(e -> this.edit());
     }
 
     public void clearAll() {
         System.out.println("ar.nex.equipo.EquipoController.clearAll()");
         data.clear();
         searchBox.clear();
-        select = null;
+        equipoSelect = null;
     }
 
     public void initTable() {
@@ -130,7 +136,7 @@ public class EquipoController implements Initializable {
                         btn.setOnAction(event -> {
                             Equipo itemSelect = getTableView().getItems().get(getIndex());
                             //Equipo newEquipo = dialog.addToEquipo(repuesto);
-                            //srvEquipo.create(newEquipo);
+                            //jpaEquipo.create(newEquipo);
                         });
                         setGraphic(btn);
                         setText(null);
@@ -142,9 +148,8 @@ public class EquipoController implements Initializable {
         colAccion.setCellFactory(cellFactory);
     }
 
-    public void initSevice() {
-        System.out.println("ar.nex.equipo.EquipoController.initSevices()");
-        srvEquipo = new EquipoService();
+    public void initSevice() {        
+        jpaEquipo = new EquipoService();
     }
 
     public void initFiltro() {
@@ -157,8 +162,8 @@ public class EquipoController implements Initializable {
         System.out.println("ar.nex.equipo.EquipoController.loadData()");
         clearAll();
 
-        List<Equipo> lst = srvEquipo.getEquipo().findEquipoEntities();
-        for (Equipo item : lst) {            
+        List<Equipo> lst = jpaEquipo.getEquipo().findEquipoEntities();
+        for (Equipo item : lst) {
             if ((item.getEmpresa().getIdEmpresa() == id) || (id == 0)) {
                 data.add(item);
             }
@@ -167,11 +172,26 @@ public class EquipoController implements Initializable {
     }
 
     @FXML
-    private void Search(InputMethodEvent event) {
-    }
-
-    @FXML
-    private void Search(KeyEvent event) {
+    private void Search() {
+        searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            filteredData.setPredicate((Predicate<? super Equipo>) user -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                if (user.getModelo().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (user.getTipo().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (user.getCategoria().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+        SortedList<Equipo> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+        table.setItems(sortedData);
     }
 
     @FXML
@@ -180,20 +200,30 @@ public class EquipoController implements Initializable {
         stage.close();
     }
 
-    @FXML
-    private void Add(ActionEvent event) {
+    private void add() {
+        equipoSelect = new Equipo();
+        edit();
+    }
+
+    private void edit() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/equipo/EquipoAdd.fxml"));
-            Parent root1 = (Parent) fxmlLoader.load();
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            //stage.initStyle(StageStyle.UNDECORATED);
-            stage.setTitle("Nuevo Equipo");
-            stage.setScene(new Scene(root1));
-            stage.showAndWait();
-            loadData(1);
-        } catch (Exception e) {
-            e.printStackTrace();
+            Stage dialog = new Stage();
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/equipo/EquipoDialog.fxml"));
+            EquipoDialogController controller = new EquipoDialogController(equipoSelect);
+            loader.setController(controller);
+
+            Scene scene = new Scene(loader.load());
+
+            dialog.setScene(scene);
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.resizableProperty().setValue(Boolean.FALSE);
+
+            dialog.showAndWait();
+            this.loadData(0);
+
+        } catch (IOException e) {
+            System.err.print(e);
         }
     }
 
@@ -207,6 +237,12 @@ public class EquipoController implements Initializable {
 
     @FXML
     private void showOnClick(MouseEvent event) {
+          try {
+            Equipo item = (Equipo) table.getSelectionModel().getSelectedItem();
+            equipoSelect = jpaEquipo.getEquipo().findEquipo(item.getIdEquipo());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @FXML

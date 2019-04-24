@@ -12,9 +12,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import ar.nex.entity.Equipo;
 import ar.nex.entity.EquipoCategoria;
-import ar.nex.jpa.exceptions.NonexistentEntityException;
 import java.util.ArrayList;
 import java.util.List;
+import ar.nex.entity.EquipoTipo;
+import ar.nex.jpa.exceptions.NonexistentEntityException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -37,6 +38,9 @@ public class EquipoCategoriaJpaController implements Serializable {
         if (equipoCategoria.getEquipoList() == null) {
             equipoCategoria.setEquipoList(new ArrayList<Equipo>());
         }
+        if (equipoCategoria.getEquipoTipoList() == null) {
+            equipoCategoria.setEquipoTipoList(new ArrayList<EquipoTipo>());
+        }
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -47,6 +51,12 @@ public class EquipoCategoriaJpaController implements Serializable {
                 attachedEquipoList.add(equipoListEquipoToAttach);
             }
             equipoCategoria.setEquipoList(attachedEquipoList);
+            List<EquipoTipo> attachedEquipoTipoList = new ArrayList<EquipoTipo>();
+            for (EquipoTipo equipoTipoListEquipoTipoToAttach : equipoCategoria.getEquipoTipoList()) {
+                equipoTipoListEquipoTipoToAttach = em.getReference(equipoTipoListEquipoTipoToAttach.getClass(), equipoTipoListEquipoTipoToAttach.getIdTipo());
+                attachedEquipoTipoList.add(equipoTipoListEquipoTipoToAttach);
+            }
+            equipoCategoria.setEquipoTipoList(attachedEquipoTipoList);
             em.persist(equipoCategoria);
             for (Equipo equipoListEquipo : equipoCategoria.getEquipoList()) {
                 EquipoCategoria oldCategoriaOfEquipoListEquipo = equipoListEquipo.getCategoria();
@@ -55,6 +65,15 @@ public class EquipoCategoriaJpaController implements Serializable {
                 if (oldCategoriaOfEquipoListEquipo != null) {
                     oldCategoriaOfEquipoListEquipo.getEquipoList().remove(equipoListEquipo);
                     oldCategoriaOfEquipoListEquipo = em.merge(oldCategoriaOfEquipoListEquipo);
+                }
+            }
+            for (EquipoTipo equipoTipoListEquipoTipo : equipoCategoria.getEquipoTipoList()) {
+                EquipoCategoria oldIdCategoriaOfEquipoTipoListEquipoTipo = equipoTipoListEquipoTipo.getIdCategoria();
+                equipoTipoListEquipoTipo.setIdCategoria(equipoCategoria);
+                equipoTipoListEquipoTipo = em.merge(equipoTipoListEquipoTipo);
+                if (oldIdCategoriaOfEquipoTipoListEquipoTipo != null) {
+                    oldIdCategoriaOfEquipoTipoListEquipoTipo.getEquipoTipoList().remove(equipoTipoListEquipoTipo);
+                    oldIdCategoriaOfEquipoTipoListEquipoTipo = em.merge(oldIdCategoriaOfEquipoTipoListEquipoTipo);
                 }
             }
             em.getTransaction().commit();
@@ -73,6 +92,8 @@ public class EquipoCategoriaJpaController implements Serializable {
             EquipoCategoria persistentEquipoCategoria = em.find(EquipoCategoria.class, equipoCategoria.getIdCategoria());
             List<Equipo> equipoListOld = persistentEquipoCategoria.getEquipoList();
             List<Equipo> equipoListNew = equipoCategoria.getEquipoList();
+            List<EquipoTipo> equipoTipoListOld = persistentEquipoCategoria.getEquipoTipoList();
+            List<EquipoTipo> equipoTipoListNew = equipoCategoria.getEquipoTipoList();
             List<Equipo> attachedEquipoListNew = new ArrayList<Equipo>();
             for (Equipo equipoListNewEquipoToAttach : equipoListNew) {
                 equipoListNewEquipoToAttach = em.getReference(equipoListNewEquipoToAttach.getClass(), equipoListNewEquipoToAttach.getIdEquipo());
@@ -80,6 +101,13 @@ public class EquipoCategoriaJpaController implements Serializable {
             }
             equipoListNew = attachedEquipoListNew;
             equipoCategoria.setEquipoList(equipoListNew);
+            List<EquipoTipo> attachedEquipoTipoListNew = new ArrayList<EquipoTipo>();
+            for (EquipoTipo equipoTipoListNewEquipoTipoToAttach : equipoTipoListNew) {
+                equipoTipoListNewEquipoTipoToAttach = em.getReference(equipoTipoListNewEquipoTipoToAttach.getClass(), equipoTipoListNewEquipoTipoToAttach.getIdTipo());
+                attachedEquipoTipoListNew.add(equipoTipoListNewEquipoTipoToAttach);
+            }
+            equipoTipoListNew = attachedEquipoTipoListNew;
+            equipoCategoria.setEquipoTipoList(equipoTipoListNew);
             equipoCategoria = em.merge(equipoCategoria);
             for (Equipo equipoListOldEquipo : equipoListOld) {
                 if (!equipoListNew.contains(equipoListOldEquipo)) {
@@ -95,6 +123,23 @@ public class EquipoCategoriaJpaController implements Serializable {
                     if (oldCategoriaOfEquipoListNewEquipo != null && !oldCategoriaOfEquipoListNewEquipo.equals(equipoCategoria)) {
                         oldCategoriaOfEquipoListNewEquipo.getEquipoList().remove(equipoListNewEquipo);
                         oldCategoriaOfEquipoListNewEquipo = em.merge(oldCategoriaOfEquipoListNewEquipo);
+                    }
+                }
+            }
+            for (EquipoTipo equipoTipoListOldEquipoTipo : equipoTipoListOld) {
+                if (!equipoTipoListNew.contains(equipoTipoListOldEquipoTipo)) {
+                    equipoTipoListOldEquipoTipo.setIdCategoria(null);
+                    equipoTipoListOldEquipoTipo = em.merge(equipoTipoListOldEquipoTipo);
+                }
+            }
+            for (EquipoTipo equipoTipoListNewEquipoTipo : equipoTipoListNew) {
+                if (!equipoTipoListOld.contains(equipoTipoListNewEquipoTipo)) {
+                    EquipoCategoria oldIdCategoriaOfEquipoTipoListNewEquipoTipo = equipoTipoListNewEquipoTipo.getIdCategoria();
+                    equipoTipoListNewEquipoTipo.setIdCategoria(equipoCategoria);
+                    equipoTipoListNewEquipoTipo = em.merge(equipoTipoListNewEquipoTipo);
+                    if (oldIdCategoriaOfEquipoTipoListNewEquipoTipo != null && !oldIdCategoriaOfEquipoTipoListNewEquipoTipo.equals(equipoCategoria)) {
+                        oldIdCategoriaOfEquipoTipoListNewEquipoTipo.getEquipoTipoList().remove(equipoTipoListNewEquipoTipo);
+                        oldIdCategoriaOfEquipoTipoListNewEquipoTipo = em.merge(oldIdCategoriaOfEquipoTipoListNewEquipoTipo);
                     }
                 }
             }
@@ -131,6 +176,11 @@ public class EquipoCategoriaJpaController implements Serializable {
             for (Equipo equipoListEquipo : equipoList) {
                 equipoListEquipo.setCategoria(null);
                 equipoListEquipo = em.merge(equipoListEquipo);
+            }
+            List<EquipoTipo> equipoTipoList = equipoCategoria.getEquipoTipoList();
+            for (EquipoTipo equipoTipoListEquipoTipo : equipoTipoList) {
+                equipoTipoListEquipoTipo.setIdCategoria(null);
+                equipoTipoListEquipoTipo = em.merge(equipoTipoListEquipoTipo);
             }
             em.remove(equipoCategoria);
             em.getTransaction().commit();

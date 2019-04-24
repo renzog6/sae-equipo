@@ -1,4 +1,4 @@
-package ar.nex.pedido;
+package ar.nex.repuesto;
 
 import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.Repuesto;

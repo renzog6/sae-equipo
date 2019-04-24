@@ -1,8 +1,6 @@
-package ar.nex.pedido;
+package ar.nex.repuesto;
 
-import ar.nex.entity.Pedido;
 import ar.nex.entity.Repuesto;
-import ar.nex.jpa.PedidoJpaController;
 import ar.nex.jpa.RepuestoJpaController;
 import ar.nex.util.DialogController;
 import java.io.IOException;
@@ -212,49 +210,6 @@ public class RepuestoController implements Initializable {
     }
 
     @FXML
-    private void Add(ActionEvent event) {
-        System.out.println("ar.nex.util.RepuestoController.Add()");
-        try {
-            Repuesto item = new Repuesto();
-//            item.setCodigo(boxCodigo.getText());
-//            item.setDescripcion(boxDescripcion.getText());
-//            item.setMarca(boxMarca.getText());
-//            item.setInfo(boxInfo.getText());
-
-            jpaService.create(item);
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        dialog.showSuccess("New Added Successfully!!!");
-        loadData();
-    }
-
-    @FXML
-    private void Update(ActionEvent event) {
-        System.out.println("ar.nex.util.RepuestoController.Update()");
-        try {
-            String msg = "Confirma Actualizar " + selectRepuesto.toString() + " a ";
-//            if (dialog.confirmDialog(msg)) {
-//                selectRepuesto.setCodigo(boxCodigo.getText());
-//                selectRepuesto.setDescripcion(boxDescripcion.getText());
-//                selectRepuesto.setMarca(boxMarca.getText());
-//                selectRepuesto.setInfo(boxInfo.getText());
-//                jpaService.edit(selectRepuesto);
-//                dialog.showSuccess("Se Actualizo Correctamente!!!");
-//            } else {
-//                boxCodigo.clear();
-//                boxDescripcion.clear();
-//            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        loadData();
-
-    }
-
-    @FXML
     private void Delete(ActionEvent event) {
         try {
             if (dialog.confirmDialog("Confimar Eliminar : " + selectRepuesto.toString() + "???")) {
@@ -285,7 +240,7 @@ public class RepuestoController implements Initializable {
 
             lblModelo.setText(selectRepuesto.listaModelo());
             lblPedido.setText(selectRepuesto.listaProvedor());
-            lblCompra.setText("Ultima compra: " + selectRepuesto.listaPedido());
+            lblCompra.setText("Ultima compra: " + selectRepuesto.getLastPedido().pedidoStringFull());
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -297,7 +252,7 @@ public class RepuestoController implements Initializable {
         try {
             Stage dialog = new Stage();
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RepuestoPedidoDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoPedidoDialog.fxml"));
             RepuestoPedidoDialogController controller = new RepuestoPedidoDialogController(selectRepuesto);
             loader.setController(controller);
 
@@ -325,7 +280,7 @@ public class RepuestoController implements Initializable {
         try {
             Stage dialog = new Stage();
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RepuestoDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoDialog.fxml"));
             RepuestoDialogController controller = new RepuestoDialogController(selectRepuesto);
             loader.setController(controller);
 
@@ -347,7 +302,7 @@ public class RepuestoController implements Initializable {
         try {
             Stage dialog = new Stage();
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RepuestoEquipoModeloDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoEquipoModeloDialog.fxml"));
             RepuestoEquipoModeloDialogController controller = new RepuestoEquipoModeloDialogController(selectRepuesto);
             loader.setController(controller);
 

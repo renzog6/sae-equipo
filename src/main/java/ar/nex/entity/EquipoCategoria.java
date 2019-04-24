@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ar.nex.entity;
 
 import java.io.Serializable;
@@ -33,6 +28,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "EquipoCategoria.findByNombre", query = "SELECT e FROM EquipoCategoria e WHERE e.nombre = :nombre")})
 public class EquipoCategoria implements Serializable {
 
+    @OneToMany(mappedBy = "idCategoria")
+    private List<EquipoTipo> equipoTipoList;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,8 +43,13 @@ public class EquipoCategoria implements Serializable {
     private List<Equipo> equipoList;
 
     public EquipoCategoria() {
+        this.nombre = null;
     }
-
+    
+    public EquipoCategoria(String nombre) {
+        this.nombre = nombre;
+    }
+    
     public EquipoCategoria(Long idCategoria) {
         this.idCategoria = idCategoria;
     }
@@ -99,6 +102,15 @@ public class EquipoCategoria implements Serializable {
     @Override
     public String toString() {
         return nombre;
+    }
+
+    @XmlTransient
+    public List<EquipoTipo> getEquipoTipoList() {
+        return equipoTipoList;
+    }
+
+    public void setEquipoTipoList(List<EquipoTipo> equipoTipoList) {
+        this.equipoTipoList = equipoTipoList;
     }
     
 }

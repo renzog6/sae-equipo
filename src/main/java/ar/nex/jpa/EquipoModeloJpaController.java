@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import ar.nex.entity.EquipoTipo;
 import ar.nex.entity.Equipo;
 import ar.nex.entity.EquipoModelo;
 import java.util.ArrayList;
@@ -45,6 +46,11 @@ public class EquipoModeloJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
+            EquipoTipo idTipo = equipoModelo.getIdTipo();
+            if (idTipo != null) {
+                idTipo = em.getReference(idTipo.getClass(), idTipo.getIdTipo());
+                equipoModelo.setIdTipo(idTipo);
+            }
             List<Equipo> attachedEquipoList = new ArrayList<Equipo>();
             for (Equipo equipoListEquipoToAttach : equipoModelo.getEquipoList()) {
                 equipoListEquipoToAttach = em.getReference(equipoListEquipoToAttach.getClass(), equipoListEquipoToAttach.getIdEquipo());
@@ -58,6 +64,10 @@ public class EquipoModeloJpaController implements Serializable {
             }
             equipoModelo.setRepuestoList(attachedRepuestoList);
             em.persist(equipoModelo);
+            if (idTipo != null) {
+                idTipo.getEquipoModeloList().add(equipoModelo);
+                idTipo = em.merge(idTipo);
+            }
             for (Equipo equipoListEquipo : equipoModelo.getEquipoList()) {
                 EquipoModelo oldModeloOfEquipoListEquipo = equipoListEquipo.getModelo();
                 equipoListEquipo.setModelo(equipoModelo);
@@ -85,10 +95,16 @@ public class EquipoModeloJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             EquipoModelo persistentEquipoModelo = em.find(EquipoModelo.class, equipoModelo.getIdModelo());
+            EquipoTipo idTipoOld = persistentEquipoModelo.getIdTipo();
+            EquipoTipo idTipoNew = equipoModelo.getIdTipo();
             List<Equipo> equipoListOld = persistentEquipoModelo.getEquipoList();
             List<Equipo> equipoListNew = equipoModelo.getEquipoList();
             List<Repuesto> repuestoListOld = persistentEquipoModelo.getRepuestoList();
             List<Repuesto> repuestoListNew = equipoModelo.getRepuestoList();
+            if (idTipoNew != null) {
+                idTipoNew = em.getReference(idTipoNew.getClass(), idTipoNew.getIdTipo());
+                equipoModelo.setIdTipo(idTipoNew);
+            }
             List<Equipo> attachedEquipoListNew = new ArrayList<Equipo>();
             for (Equipo equipoListNewEquipoToAttach : equipoListNew) {
                 equipoListNewEquipoToAttach = em.getReference(equipoListNewEquipoToAttach.getClass(), equipoListNewEquipoToAttach.getIdEquipo());
@@ -104,6 +120,14 @@ public class EquipoModeloJpaController implements Serializable {
             repuestoListNew = attachedRepuestoListNew;
             equipoModelo.setRepuestoList(repuestoListNew);
             equipoModelo = em.merge(equipoModelo);
+            if (idTipoOld != null && !idTipoOld.equals(idTipoNew)) {
+                idTipoOld.getEquipoModeloList().remove(equipoModelo);
+                idTipoOld = em.merge(idTipoOld);
+            }
+            if (idTipoNew != null && !idTipoNew.equals(idTipoOld)) {
+                idTipoNew.getEquipoModeloList().add(equipoModelo);
+                idTipoNew = em.merge(idTipoNew);
+            }
             for (Equipo equipoListOldEquipo : equipoListOld) {
                 if (!equipoListNew.contains(equipoListOldEquipo)) {
                     equipoListOldEquipo.setModelo(null);
@@ -161,6 +185,11 @@ public class EquipoModeloJpaController implements Serializable {
                 equipoModelo.getIdModelo();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The equipoModelo with id " + id + " no longer exists.", enfe);
+            }
+            EquipoTipo idTipo = equipoModelo.getIdTipo();
+            if (idTipo != null) {
+                idTipo.getEquipoModeloList().remove(equipoModelo);
+                idTipo = em.merge(idTipo);
             }
             List<Equipo> equipoList = equipoModelo.getEquipoList();
             for (Equipo equipoListEquipo : equipoList) {

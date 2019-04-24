@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ar.nex.entity;
 
 import java.io.Serializable;
@@ -16,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -36,6 +32,10 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "EquipoModelo.findByNombre", query = "SELECT e FROM EquipoModelo e WHERE e.nombre = :nombre")
     , @NamedQuery(name = "EquipoModelo.findByDescripcion", query = "SELECT e FROM EquipoModelo e WHERE e.descripcion = :descripcion")})
 public class EquipoModelo implements Serializable {
+
+    @JoinColumn(name = "id_tipo", referencedColumnName = "id_tipo")
+    @ManyToOne
+    private EquipoTipo idTipo;
 
     @JoinTable(name = "ped_repuesto_eq_modelo", joinColumns = {
         @JoinColumn(name = "id_modelo", referencedColumnName = "id_modelo")}, inverseJoinColumns = {
@@ -150,6 +150,14 @@ public class EquipoModelo implements Serializable {
 
     public void setRepuestoList(List<Repuesto> repuestoList) {
         this.repuestoList = repuestoList;
+    }
+
+    public EquipoTipo getIdTipo() {
+        return idTipo;
+    }
+
+    public void setIdTipo(EquipoTipo idTipo) {
+        this.idTipo = idTipo;
     }
 
 

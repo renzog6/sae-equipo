@@ -1,7 +1,11 @@
 package ar.nex.entity;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -156,7 +160,8 @@ public class Pedido implements Serializable {
     }
 
     public String pedidoStringFull() {
-        return this.fechaInicio + " - " + this.cantidad + " - " + this.empresa.getNombre();
+        DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
+        return fd.format(this.fechaInicio) + " - " + this.cantidad + " - " + this.empresa.getNombre();
     }
 
     public Repuesto getRepuesto() {
@@ -167,4 +172,11 @@ public class Pedido implements Serializable {
         this.repuesto = repuesto;
     }
 
+      public StringProperty equipo_solo() {
+        StringProperty equipo_solo = new SimpleStringProperty("NN");        
+        if (repuesto != null && repuesto.getEquipoModeloList().size() >= 1) {
+            equipo_solo = new SimpleStringProperty(repuesto.getEquipoModeloList().get(0).toString());
+        }
+        return equipo_solo;
+    }
 }

@@ -2,7 +2,6 @@ package ar.nex.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -35,6 +34,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Repuesto.findByMarca", query = "SELECT r FROM Repuesto r WHERE r.marca = :marca"),
     @NamedQuery(name = "Repuesto.findByInfo", query = "SELECT r FROM Repuesto r WHERE r.info = :info")})
 public class Repuesto implements Serializable {
+
+    @ManyToMany(mappedBy = "repuestoList")
+    private List<Equipo> equipoList;
 
     @OneToMany(mappedBy = "repuesto")
     private List<Pedido> pedidoList;
@@ -202,15 +204,6 @@ public class Repuesto implements Serializable {
         }
         return new Pedido();
     }
-    
-    public String listaPedido() {
-        String str = "N7N";
-        int i = this.getPedidoList().size();        
-        if(i >= 1){
-            str = getPedidoList().get(i-1).pedidoStringFull();
-        }
-        return str;
-    }
 
     public StringProperty equipo_solo() {
         StringProperty equipo_solo = new SimpleStringProperty("NN");        
@@ -227,6 +220,15 @@ public class Repuesto implements Serializable {
 
     public void setPedidoList(List<Pedido> pedidoList) {
         this.pedidoList = pedidoList;
+    }
+
+    @XmlTransient
+    public List<Equipo> getEquipoList() {
+        return equipoList;
+    }
+
+    public void setEquipoList(List<Equipo> equipoList) {
+        this.equipoList = equipoList;
     }
 
 }

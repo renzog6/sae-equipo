@@ -12,12 +12,12 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="768.0" minWidth="1024.0" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.EquipoController">
+<BorderPane fx:id="bpEquipo" minHeight="768.0" minWidth="1024.0" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.EquipoController">
+    
     <center>
-
-        <AnchorPane minHeight="300.0" minWidth="500.0">
+        <AnchorPane minHeight="558.0" minWidth="558.0">
             <children>
-                <TableView fx:id="table" layoutX="-9.0" layoutY="14.0" onMouseClicked="#showOnClick" prefHeight="263.0" prefWidth="665.0" AnchorPane.bottomAnchor="-183.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <TableView fx:id="table" layoutX="-9.0" layoutY="14.0" minHeight="558.0" onMouseClicked="#showOnClick" prefHeight="558.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
                         <TableColumn fx:id="colCategoria" prefWidth="187.0" text="Categoria" />
                         <TableColumn fx:id="colTipo" prefWidth="187.0" text="Tipo" />
@@ -36,27 +36,28 @@
                 </TableView>
             </children>
         </AnchorPane>
-
     </center>
+    
     <top>          
         <AnchorPane nodeOrientation="RIGHT_TO_LEFT" prefHeight="50.0" BorderPane.alignment="CENTER">
             <children>
                 <TextField fx:id="searchBox" layoutX="127.0" layoutY="13.0" onInputMethodTextChanged="#Search" onKeyReleased="#Search" prefHeight="25.0" prefWidth="206.0" promptText="Buscar" />
                 <Button fx:id="signOut" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="26.0" layoutY="13.0" mnemonicParsing="false" onAction="#goSignOut" text="Salir" />
-            <Label layoutX="508.0" layoutY="12.0" nodeOrientation="LEFT_TO_RIGHT" text="Lista de Equipos:" AnchorPane.rightAnchor="20.0">
-               <font>
-                  <Font name="System Bold" size="18.0" />
-               </font>
-            </Label>
-            <ComboBox fx:id="filtroEmpresa" layoutX="294.0" layoutY="13.0" onAction="#filtroEmpresa" prefWidth="150.0" AnchorPane.rightAnchor="170.0" />
+                <Label layoutX="508.0" layoutY="12.0" nodeOrientation="LEFT_TO_RIGHT" text="Lista de Equipos:" AnchorPane.rightAnchor="20.0">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+                <ComboBox fx:id="filtroEmpresa" layoutX="294.0" layoutY="13.0" onAction="#filtroEmpresa" prefWidth="150.0" AnchorPane.rightAnchor="170.0" />
             </children>
         </AnchorPane>       
     </top>
-   <bottom>
+    
+    <bottom>
         <AnchorPane fx:id="menuPane" minHeight="150.0" styleClass="menuPane" BorderPane.alignment="CENTER">
             <children>
              
-                <Button fx:id="btnAddNew" contentDisplay="CENTER" layoutX="609.0" layoutY="312.0" mnemonicParsing="false" onAction="#Add" AnchorPane.bottomAnchor="110.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                <Button fx:id="btnAdd" contentDisplay="CENTER" layoutX="609.0" layoutY="312.0" mnemonicParsing="false" AnchorPane.bottomAnchor="110.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -65,7 +66,7 @@
                         </ImageView>
                     </graphic>
                 </Button>                        
-                <Button fx:id="btnUpdate" alignment="CENTER" contentDisplay="CENTER" layoutX="609.0" layoutY="359.0" mnemonicParsing="false" onAction="#Update" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="10.0">
+                <Button fx:id="btnEdit" alignment="CENTER" contentDisplay="CENTER" layoutX="609.0" layoutY="359.0" mnemonicParsing="false" AnchorPane.bottomAnchor="60.0" AnchorPane.rightAnchor="10.0">
                     <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -74,7 +75,7 @@
                         </ImageView>
                     </graphic>
                 </Button>                        
-                <Button fx:id="btnDelete" contentDisplay="CENTER" layoutX="609.0" layoutY="405.0" mnemonicParsing="false" onAction="#Delete" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                <Button fx:id="btnDelete" contentDisplay="CENTER" layoutX="609.0" layoutY="405.0" mnemonicParsing="false"  AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
                     <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -86,6 +87,6 @@
                  
             </children>
         </AnchorPane>
-   </bottom>
+    </bottom>
    
 </BorderPane>
