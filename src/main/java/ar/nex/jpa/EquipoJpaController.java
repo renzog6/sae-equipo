@@ -18,9 +18,10 @@ import ar.nex.entity.Marca;
 import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.EquipoTipo;
 import ar.nex.entity.Repuesto;
-import ar.nex.jpa.exceptions.NonexistentEntityException;
 import java.util.ArrayList;
 import java.util.List;
+import ar.nex.entity.StockDetalle;
+import ar.nex.jpa.exceptions.NonexistentEntityException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -42,6 +43,9 @@ public class EquipoJpaController implements Serializable {
     public void create(Equipo equipo) {
         if (equipo.getRepuestoList() == null) {
             equipo.setRepuestoList(new ArrayList<Repuesto>());
+        }
+        if (equipo.getStockDetalleList() == null) {
+            equipo.setStockDetalleList(new ArrayList<StockDetalle>());
         }
         EntityManager em = null;
         try {
@@ -83,6 +87,12 @@ public class EquipoJpaController implements Serializable {
                 attachedRepuestoList.add(repuestoListRepuestoToAttach);
             }
             equipo.setRepuestoList(attachedRepuestoList);
+            List<StockDetalle> attachedStockDetalleList = new ArrayList<StockDetalle>();
+            for (StockDetalle stockDetalleListStockDetalleToAttach : equipo.getStockDetalleList()) {
+                stockDetalleListStockDetalleToAttach = em.getReference(stockDetalleListStockDetalleToAttach.getClass(), stockDetalleListStockDetalleToAttach.getIdStock());
+                attachedStockDetalleList.add(stockDetalleListStockDetalleToAttach);
+            }
+            equipo.setStockDetalleList(attachedStockDetalleList);
             em.persist(equipo);
             if (categoria != null) {
                 categoria.getEquipoList().add(equipo);
@@ -112,6 +122,15 @@ public class EquipoJpaController implements Serializable {
                 repuestoListRepuesto.getEquipoList().add(equipo);
                 repuestoListRepuesto = em.merge(repuestoListRepuesto);
             }
+            for (StockDetalle stockDetalleListStockDetalle : equipo.getStockDetalleList()) {
+                Equipo oldEquipoOfStockDetalleListStockDetalle = stockDetalleListStockDetalle.getEquipo();
+                stockDetalleListStockDetalle.setEquipo(equipo);
+                stockDetalleListStockDetalle = em.merge(stockDetalleListStockDetalle);
+                if (oldEquipoOfStockDetalleListStockDetalle != null) {
+                    oldEquipoOfStockDetalleListStockDetalle.getStockDetalleList().remove(stockDetalleListStockDetalle);
+                    oldEquipoOfStockDetalleListStockDetalle = em.merge(oldEquipoOfStockDetalleListStockDetalle);
+                }
+            }
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -140,6 +159,8 @@ public class EquipoJpaController implements Serializable {
             EquipoTipo tipoNew = equipo.getTipo();
             List<Repuesto> repuestoListOld = persistentEquipo.getRepuestoList();
             List<Repuesto> repuestoListNew = equipo.getRepuestoList();
+            List<StockDetalle> stockDetalleListOld = persistentEquipo.getStockDetalleList();
+            List<StockDetalle> stockDetalleListNew = equipo.getStockDetalleList();
             if (categoriaNew != null) {
                 categoriaNew = em.getReference(categoriaNew.getClass(), categoriaNew.getIdCategoria());
                 equipo.setCategoria(categoriaNew);
@@ -171,6 +192,13 @@ public class EquipoJpaController implements Serializable {
             }
             repuestoListNew = attachedRepuestoListNew;
             equipo.setRepuestoList(repuestoListNew);
+            List<StockDetalle> attachedStockDetalleListNew = new ArrayList<StockDetalle>();
+            for (StockDetalle stockDetalleListNewStockDetalleToAttach : stockDetalleListNew) {
+                stockDetalleListNewStockDetalleToAttach = em.getReference(stockDetalleListNewStockDetalleToAttach.getClass(), stockDetalleListNewStockDetalleToAttach.getIdStock());
+                attachedStockDetalleListNew.add(stockDetalleListNewStockDetalleToAttach);
+            }
+            stockDetalleListNew = attachedStockDetalleListNew;
+            equipo.setStockDetalleList(stockDetalleListNew);
             equipo = em.merge(equipo);
             if (categoriaOld != null && !categoriaOld.equals(categoriaNew)) {
                 categoriaOld.getEquipoList().remove(equipo);
@@ -230,6 +258,23 @@ public class EquipoJpaController implements Serializable {
                 if (!repuestoListOld.contains(repuestoListNewRepuesto)) {
                     repuestoListNewRepuesto.getEquipoList().add(equipo);
                     repuestoListNewRepuesto = em.merge(repuestoListNewRepuesto);
+                }
+            }
+            for (StockDetalle stockDetalleListOldStockDetalle : stockDetalleListOld) {
+                if (!stockDetalleListNew.contains(stockDetalleListOldStockDetalle)) {
+                    stockDetalleListOldStockDetalle.setEquipo(null);
+                    stockDetalleListOldStockDetalle = em.merge(stockDetalleListOldStockDetalle);
+                }
+            }
+            for (StockDetalle stockDetalleListNewStockDetalle : stockDetalleListNew) {
+                if (!stockDetalleListOld.contains(stockDetalleListNewStockDetalle)) {
+                    Equipo oldEquipoOfStockDetalleListNewStockDetalle = stockDetalleListNewStockDetalle.getEquipo();
+                    stockDetalleListNewStockDetalle.setEquipo(equipo);
+                    stockDetalleListNewStockDetalle = em.merge(stockDetalleListNewStockDetalle);
+                    if (oldEquipoOfStockDetalleListNewStockDetalle != null && !oldEquipoOfStockDetalleListNewStockDetalle.equals(equipo)) {
+                        oldEquipoOfStockDetalleListNewStockDetalle.getStockDetalleList().remove(stockDetalleListNewStockDetalle);
+                        oldEquipoOfStockDetalleListNewStockDetalle = em.merge(oldEquipoOfStockDetalleListNewStockDetalle);
+                    }
                 }
             }
             em.getTransaction().commit();
@@ -295,6 +340,11 @@ public class EquipoJpaController implements Serializable {
             for (Repuesto repuestoListRepuesto : repuestoList) {
                 repuestoListRepuesto.getEquipoList().remove(equipo);
                 repuestoListRepuesto = em.merge(repuestoListRepuesto);
+            }
+            List<StockDetalle> stockDetalleList = equipo.getStockDetalleList();
+            for (StockDetalle stockDetalleListStockDetalle : stockDetalleList) {
+                stockDetalleListStockDetalle.setEquipo(null);
+                stockDetalleListStockDetalle = em.merge(stockDetalleListStockDetalle);
             }
             em.remove(equipo);
             em.getTransaction().commit();

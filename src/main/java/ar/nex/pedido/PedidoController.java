@@ -1,6 +1,7 @@
 package ar.nex.pedido;
 
 import ar.nex.entity.Pedido;
+import ar.nex.equipo.EquipoDialogController;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,7 +34,11 @@ import javax.persistence.Persistence;
 
 import ar.nex.jpa.PedidoJpaController;
 import ar.nex.jpa.RepuestoJpaController;
+import java.io.IOException;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
 
 /**
  * FXML Controller class
@@ -49,9 +54,9 @@ public class PedidoController implements Initializable {
     @FXML
     private Button signOut;
 
-    ObservableList<Pedido> data = FXCollections.observableArrayList();
-    FilteredList<Pedido> filteredData = new FilteredList<>(data);
-    Pedido select;
+    private final ObservableList<Pedido> data = FXCollections.observableArrayList();
+    private FilteredList<Pedido> filteredData = new FilteredList<>(data);
+    private Pedido pedidoSelect;
 
     @FXML
     private TableView<Pedido> table;
@@ -78,6 +83,7 @@ public class PedidoController implements Initializable {
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
@@ -94,13 +100,13 @@ public class PedidoController implements Initializable {
         filtroEstado.getSelectionModel().select(1);
     }
 
-    public void clearAll() {        
+    public void clearAll() {
         data.clear();
         searchBox.clear();
-        select = null;
+        pedidoSelect = null;
     }
 
-    public void initTable() {        
+    public void initTable() {
         colEquipo.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Pedido, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Pedido, String> data) {
@@ -133,9 +139,8 @@ public class PedidoController implements Initializable {
                         setText(null);
                     } else {
                         btn.setOnAction(event -> {
-                            Pedido repuesto = getTableView().getItems().get(getIndex());
-                            //Pedido newPedido = dialog.addToPedido(repuesto);
-                            //srvPedido.create(newPedido);
+                            pedidoSelect = getTableView().getItems().get(getIndex());
+                            reciboPedido();
                         });
                         setGraphic(btn);
                         setText(null);
@@ -199,9 +204,10 @@ public class PedidoController implements Initializable {
                     return true;
                 }
                 String lowerCaseFilter = newValue.toLowerCase();
-//                if (item.getRepuesto().getCodigo().toLowerCase().contains(lowerCaseFilter)) {
-//                    return true;
-//                } else if (item.getEmpresa().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                if (item.getRepuesto().getCodigo().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                //if (item.getEmpresa().getNombre().toLowerCase().contains(lowerCaseFilter)) {
 //                    return true;
 //                }
                 if (item.getEmpresa().getNombre().toLowerCase().contains(lowerCaseFilter)) {
@@ -225,4 +231,21 @@ public class PedidoController implements Initializable {
     private void showOnClick(MouseEvent event) {
     }
 
+    private void reciboPedido() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/pedido/PedidoReciboDialog.fxml"));
+            PedidoReciboDialogController controller = new PedidoReciboDialogController(pedidoSelect);
+            loader.setController(controller);
+
+            Stage dialog = new Stage();
+            dialog.setScene(new Scene(loader.load()));
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.resizableProperty().setValue(Boolean.FALSE);
+            dialog.showAndWait();
+
+            this.loadData();
+        } catch (IOException e) {
+            System.err.print(e);
+        }
+    }
 }

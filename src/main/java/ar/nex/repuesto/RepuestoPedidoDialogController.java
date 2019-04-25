@@ -1,7 +1,6 @@
 package ar.nex.repuesto;
 
 import ar.nex.entity.Empresa;
-import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.Pedido;
 import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoService;
@@ -36,7 +35,7 @@ import org.controlsfx.control.textfield.TextFields;
 public class RepuestoPedidoDialogController implements Initializable {
     
     public RepuestoPedidoDialogController(Repuesto r) {
-        this.respuesto = r;
+        this.repuesto = r;
     }
     
     @FXML
@@ -57,7 +56,7 @@ public class RepuestoPedidoDialogController implements Initializable {
     @FXML
     private Button btnCancelar;
     
-    private final Repuesto respuesto;
+    private final Repuesto repuesto;
 
     /**
      * Initializes the controll
@@ -81,14 +80,14 @@ public class RepuestoPedidoDialogController implements Initializable {
                 }
             });
             
-            lblCodigo.setText("Codigo: " + respuesto.toString());
+            lblCodigo.setText("Codigo: " + repuesto.toString());
             
             DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
             boxFecha.setText(fd.format(new Date()));
 
             //boxProvedor.setPromptText(respuesto.getLastPedido().getEmpresa().toString());
-            lblProvedor.setText("Ultimo Provedor: " + respuesto.getLastPedido().getEmpresa().toString());
-            provedorSelect = respuesto.getLastPedido().getEmpresa();
+            lblProvedor.setText("Ultimo Provedor: " + repuesto.getPedidoList().get(repuesto.getPedidoList().size()-1).pedidoStringFull());             
+            provedorSelect = repuesto.getPedidoList().get(repuesto.getPedidoList().size()-1).getEmpresa();
             
             btnGuardar.setOnAction(e -> guardar(e));
             btnCancelar.setOnAction(e -> cancelar(e));
@@ -127,12 +126,12 @@ public class RepuestoPedidoDialogController implements Initializable {
     @FXML
     private void guardar(ActionEvent event) {
         try {
-            Pedido pedido = new Pedido(respuesto);
+            Pedido pedido = new Pedido(repuesto);
             
             DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
             pedido.setFechaInicio(fd.parse(boxFecha.getText()));
             
-            pedido.setCantidad(Integer.parseInt(boxCantidad.getText()));
+            pedido.setCantidad(Double.valueOf(boxCantidad.getText()));
             pedido.setEmpresa(provedorSelect);
             pedido.setInfo(boxInfo.getText());
             

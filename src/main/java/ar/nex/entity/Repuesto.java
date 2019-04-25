@@ -35,6 +35,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Repuesto.findByInfo", query = "SELECT r FROM Repuesto r WHERE r.info = :info")})
 public class Repuesto implements Serializable {
 
+    @OneToMany(mappedBy = "repuesto")
+    private List<StockDetalle> stockDetalleList;
+
     @ManyToMany(mappedBy = "repuestoList")
     private List<Equipo> equipoList;
 
@@ -197,14 +200,6 @@ public class Repuesto implements Serializable {
         return str;
     }
 
-    public Pedido getLastPedido(){
-        int i = this.getPedidoList().size();        
-        if(i >= 1){
-            return getPedidoList().get(i-1);
-        }
-        return new Pedido();
-    }
-
     public StringProperty equipo_solo() {
         StringProperty equipo_solo = new SimpleStringProperty("NN");        
         if (equipoModeloList.size() >= 1) {
@@ -229,6 +224,15 @@ public class Repuesto implements Serializable {
 
     public void setEquipoList(List<Equipo> equipoList) {
         this.equipoList = equipoList;
+    }
+
+    @XmlTransient
+    public List<StockDetalle> getStockDetalleList() {
+        return stockDetalleList;
+    }
+
+    public void setStockDetalleList(List<StockDetalle> stockDetalleList) {
+        this.stockDetalleList = stockDetalleList;
     }
 
 }

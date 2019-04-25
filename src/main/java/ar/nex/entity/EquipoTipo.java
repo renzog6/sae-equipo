@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ar.nex.entity;
 
 import java.io.Serializable;
@@ -30,9 +25,9 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "eq_tipo")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "EquipoTipo.findAll", query = "SELECT e FROM EquipoTipo e")
-    , @NamedQuery(name = "EquipoTipo.findByIdTipo", query = "SELECT e FROM EquipoTipo e WHERE e.idTipo = :idTipo")
-    , @NamedQuery(name = "EquipoTipo.findByNombre", query = "SELECT e FROM EquipoTipo e WHERE e.nombre = :nombre")})
+    @NamedQuery(name = "EquipoTipo.findAll", query = "SELECT e FROM EquipoTipo e"),
+    @NamedQuery(name = "EquipoTipo.findByIdTipo", query = "SELECT e FROM EquipoTipo e WHERE e.idTipo = :idTipo"),
+    @NamedQuery(name = "EquipoTipo.findByNombre", query = "SELECT e FROM EquipoTipo e WHERE e.nombre = :nombre")})
 public class EquipoTipo implements Serializable {
 
     @OneToMany(mappedBy = "idTipo")
@@ -53,6 +48,10 @@ public class EquipoTipo implements Serializable {
     private List<Equipo> equipoList;
 
     public EquipoTipo() {
+    }
+
+    public EquipoTipo(String nombre) {
+        this.nombre = nombre;
     }
 
     public EquipoTipo(Long idTipo) {
@@ -125,5 +124,5 @@ public class EquipoTipo implements Serializable {
     public void setIdCategoria(EquipoCategoria idCategoria) {
         this.idCategoria = idCategoria;
     }
-    
+
 }

@@ -15,7 +15,7 @@
         <slf4j.version>1.7.12</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>ar.nex.saefx.MainApp</mainClass>         
+        <mainClass>ar.nex.app.MainApp</mainClass>         
     </properties>
 
     <organization>
@@ -24,11 +24,7 @@
     </organization>
 
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
-        </resources>
+
         <finalName>SaeFx</finalName>
         <plugins>
             <plugin>
@@ -38,24 +34,8 @@
                 <configuration>                
                     <!-- only required if signing the jar file -->
                     <vendor>Zero6</vendor>
-                    <mainClass>ar.nex.saefx.MainApp</mainClass>
-                    
-                    <needMenu>true</needMenu>
-                    <needShortcut>true</needShortcut>
-                    <verbose>true</verbose>
-                    <bundler>EXE</bundler>
-                    
-                    <title>SaeFx</title>
-                    <keyStoreAlias>saefxkey</keyStoreAlias>
-                    <keyStorePassword>saefxkey123</keyStorePassword>
-                    <allPermissions>true</allPermissions>
-                    <overwriteKeyStore>true</overwriteKeyStore>
-                    <certDomain>VM</certDomain>
-                    <certState>SF</certState>
-                    <certCountry>AR</certCountry>
-                    <keyStore>c:\java\.keystore</keyStore>
-                    <certOrg>Zero6</certOrg>
-                    <certOrgUnit>Zero6</certOrgUnit>
+                    <mainClass>ar.nex.app.MainApp</mainClass>                              
+                    <title>SaeFx</title>        
                 </configuration>
             </plugin>                     
         </plugins>

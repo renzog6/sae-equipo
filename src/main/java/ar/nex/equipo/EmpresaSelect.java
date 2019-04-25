@@ -13,8 +13,8 @@ public enum EmpresaSelect {
     RCM(2, "RCM S.A."),
     OTRA(3, "Otra Empresa");
 
-    private long id;
-    private String nombre;
+    private final long id;
+    private final String nombre;
 
     private EmpresaSelect(long id, String nombre) {
         this.id = id;

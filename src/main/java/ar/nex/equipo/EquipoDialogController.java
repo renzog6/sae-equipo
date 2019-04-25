@@ -23,7 +23,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -112,7 +111,8 @@ public class EquipoDialogController implements Initializable {
         ObservableList list = FXCollections.observableArrayList(EmpresaSelect.values());
         list.add(0, "Elegir Empresa");
         filtroEmpresa.getItems().addAll(list);
-        filtroEmpresa.getSelectionModel().select(0);
+        int i = (int) (equipo.getEmpresa() != null? equipo.getEmpresa().getIdEmpresa() : 0);       
+        filtroEmpresa.getSelectionModel().select(i+1);        
     }
 
     private void initControls() {
@@ -129,7 +129,7 @@ public class EquipoDialogController implements Initializable {
             categoriaSelect = equipo.getCategoria() != null ? equipo.getCategoria() : new EquipoCategoria("NN");
             boxCategoria.setText(categoriaSelect.getNombre());
 
-            tipoSelect = equipo.getTipo();
+            tipoSelect = equipo.getTipo() != null ? equipo.getTipo() : new EquipoTipo("NN");
             boxTipo.setText(tipoSelect.getNombre());
 
             modeloSelect = equipo.getModelo();
@@ -228,7 +228,7 @@ public class EquipoDialogController implements Initializable {
             EquipoCategoriaDialogController controller = new EquipoCategoriaDialogController(new EquipoCategoria());
             loader.setController(controller);
 
-            showDialog(new Scene(loader.load()), 1);
+            showDialog(new Scene(loader.load()), 3);
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -264,7 +264,7 @@ public class EquipoDialogController implements Initializable {
             EquipoTipoDialogController controller = new EquipoTipoDialogController(new EquipoTipo());
             loader.setController(controller);
 
-            showDialog(new Scene(loader.load()), 1);
+            showDialog(new Scene(loader.load()), 2);
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -336,7 +336,7 @@ public class EquipoDialogController implements Initializable {
             MarcaDialogController controller = new MarcaDialogController(new Marca());
             loader.setController(controller);
 
-            showDialog(new Scene(loader.load()), 1);
+            showDialog(new Scene(loader.load()), 4);
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -365,9 +365,16 @@ public class EquipoDialogController implements Initializable {
                 case 1:
                     loadDataModelo();
                     break;
-
+                case 2:
+                    loadDataTipo();
+                    break;
+                case 3:
+                    loadDataCategoria();
+                    break;
+                case 4:
+                    loadDataMarca();
+                    break;
             }
-
         } catch (Exception e) {
             System.err.print(e);
         }

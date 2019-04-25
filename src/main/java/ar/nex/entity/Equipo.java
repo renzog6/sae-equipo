@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -35,6 +36,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Equipo.findByColor", query = "SELECT e FROM Equipo e WHERE e.color = :color"),
     @NamedQuery(name = "Equipo.findByOtro", query = "SELECT e FROM Equipo e WHERE e.otro = :otro")})
 public class Equipo implements Serializable {
+
+    @OneToMany(mappedBy = "equipo")
+    private List<StockDetalle> stockDetalleList;
 
     @JoinTable(name = "ped_repuesto_equipo", joinColumns = {
         @JoinColumn(name = "id_equipo", referencedColumnName = "id_equipo")}, inverseJoinColumns = {
@@ -228,5 +232,15 @@ public class Equipo implements Serializable {
 
     public void setRepuestoList(List<Repuesto> repuestoList) {
         this.repuestoList = repuestoList;
+    }
+
+
+    @XmlTransient
+    public List<StockDetalle> getStockDetalleList() {
+        return stockDetalleList;
+    }
+
+    public void setStockDetalleList(List<StockDetalle> stockDetalleList) {
+        this.stockDetalleList = stockDetalleList;
     }
 }

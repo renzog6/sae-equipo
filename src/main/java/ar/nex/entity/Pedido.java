@@ -38,6 +38,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Pedido.findByInfo", query = "SELECT p FROM Pedido p WHERE p.info = :info")})
 public class Pedido implements Serializable {
 
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "cantidad")
+    private Double cantidad;
+
     @JoinColumn(name = "repuesto", referencedColumnName = "id_repuesto")
     @ManyToOne
     private Repuesto repuesto;
@@ -52,8 +56,6 @@ public class Pedido implements Serializable {
     @Basic(optional = false)
     @Column(name = "id_pedido")
     private Long idPedido;
-    @Column(name = "cantidad")
-    private Integer cantidad;
     @Column(name = "estado")
     private Integer estado;
     @Column(name = "fecha_fin")
@@ -86,13 +88,6 @@ public class Pedido implements Serializable {
         this.idPedido = idPedido;
     }
 
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
 
     public Integer getEstado() {
         return estado;
@@ -178,5 +173,13 @@ public class Pedido implements Serializable {
             equipo_solo = new SimpleStringProperty(repuesto.getEquipoModeloList().get(0).toString());
         }
         return equipo_solo;
+    }
+
+    public Double getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Double cantidad) {
+        this.cantidad = cantidad;
     }
 }

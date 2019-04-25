@@ -240,7 +240,7 @@ public class RepuestoController implements Initializable {
 
             lblModelo.setText(selectRepuesto.listaModelo());
             lblPedido.setText(selectRepuesto.listaProvedor());
-            lblCompra.setText("Ultima compra: " + selectRepuesto.getLastPedido().pedidoStringFull());
+            lblCompra.setText("Ultima compra: " + selectRepuesto.getPedidoList().get(selectRepuesto.getPedidoList().size()-1).pedidoStringFull());
         } catch (Exception e) {
             System.out.println(e);
         }
