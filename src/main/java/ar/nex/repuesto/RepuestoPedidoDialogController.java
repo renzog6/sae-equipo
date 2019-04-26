@@ -86,7 +86,7 @@ public class RepuestoPedidoDialogController implements Initializable {
             boxFecha.setText(fd.format(new Date()));
 
             //boxProvedor.setPromptText(respuesto.getLastPedido().getEmpresa().toString());
-            lblProvedor.setText("Ultimo Provedor: " + repuesto.getPedidoList().get(repuesto.getPedidoList().size()-1).pedidoStringFull());             
+            lblProvedor.setText("Ultimo Provedor: " + repuesto.getPedidoList().get(repuesto.getPedidoList().size()-1).getEmpresa().getNombre());             
             provedorSelect = repuesto.getPedidoList().get(repuesto.getPedidoList().size()-1).getEmpresa();
             
             btnGuardar.setOnAction(e -> guardar(e));

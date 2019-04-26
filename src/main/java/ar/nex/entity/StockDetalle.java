@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ar.nex.entity;
 
 import java.io.Serializable;
@@ -37,6 +32,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "StockDetalle.findByInfo", query = "SELECT s FROM StockDetalle s WHERE s.info = :info")})
 public class StockDetalle implements Serializable {
 
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "cantidad")
+    private Double cantidad;
+    @Column(name = "estado")
+    private Integer estado;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -61,6 +62,10 @@ public class StockDetalle implements Serializable {
     public StockDetalle() {
     }
 
+    public StockDetalle(Date fecha) {
+        this.fecha = fecha;
+    }
+    
     public StockDetalle(Long idStock) {
         this.idStock = idStock;
     }
@@ -144,6 +149,22 @@ public class StockDetalle implements Serializable {
     @Override
     public String toString() {
         return "ar.nex.entity.StockDetalle[ idStock=" + idStock + " ]";
+    }
+
+    public Double getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Double cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public Integer getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Integer estado) {
+        this.estado = estado;
     }
     
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="bpPedido" minHeight="768.0" minWidth="1024.0" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.pedido.PedidoController">
+<BorderPane fx:id="bpStockDetalle" minHeight="768.0" minWidth="1024.0" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.pedido.StockDetalleController">
    
     <center>
         <AnchorPane minHeight="558.0" prefHeight="558.0">
@@ -20,12 +20,10 @@
                 <TableView fx:id="table" layoutX="-9.0" layoutY="14.0" minHeight="558.0" onMouseClicked="#showOnClick" prefHeight="558.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
                         <TableColumn fx:id="colFecha" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Fecha" />
-                        <TableColumn fx:id="colEquipo" prefWidth="102.0" text="Equipo" />
+                        <TableColumn fx:id="colDetalle" prefWidth="102.0" text="Detalle" />
                         <TableColumn fx:id="colRepuesto" prefWidth="102.0" text="Repuesto" />
-                        <TableColumn fx:id="colCantidad" maxWidth="90.0" minWidth="70.0" text="Cantidad" />
-                        <TableColumn fx:id="colProveedor" prefWidth="102.0" text="Proveedor" />
-                        <TableColumn fx:id="colEstado" maxWidth="100.0" minWidth="70.0" text="Estado" />
-                        <TableColumn fx:id="colObeservacion" prefWidth="102.0" text="Obeservacion" />
+                        <TableColumn fx:id="colEquipo" prefWidth="102.0" text="Equipo" />                                                
+                        <TableColumn fx:id="colInfo" prefWidth="102.0" text="Info" />
                         <TableColumn fx:id="colAccion" maxWidth="100.0" minWidth="80.0" prefWidth="100.0" styleClass="colAccion" text="Accion" />
                     </columns>
                     <columnResizePolicy>
@@ -46,7 +44,7 @@
                         <Font name="System Bold" size="18.0" />
                     </font>
                 </Label>
-                <ComboBox fx:id="filtroEstado" onAction="#filtroEstado" layoutX="350.0" layoutY="13.0" prefWidth="150.0" />
+                <ComboBox fx:id="filtroEstado" layoutX="350.0" layoutY="13.0" prefWidth="150.0" />
             </children>
         </AnchorPane>       
     </top>

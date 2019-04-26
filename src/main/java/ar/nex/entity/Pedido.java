@@ -56,8 +56,10 @@ public class Pedido implements Serializable {
     @Basic(optional = false)
     @Column(name = "id_pedido")
     private Long idPedido;
+    
     @Column(name = "estado")
     private Integer estado;
+    
     @Column(name = "fecha_fin")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaFin;

@@ -74,7 +74,7 @@ public class PedidoReciboDialogController implements Initializable {
                 }
             });
 
-            lblCodigo.setText("Codigo: " + pedido.getRepuesto().toString() + "Cantidad Pedida: " + pedido.getCantidad().toString());
+            lblCodigo.setText("Codigo: " + pedido.getRepuesto().toString());
 
             DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
             boxFecha.setText(fd.format(new Date()));

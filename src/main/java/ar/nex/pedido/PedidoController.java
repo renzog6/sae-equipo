@@ -38,6 +38,8 @@ import java.io.IOException;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 
 /**
@@ -55,7 +57,7 @@ public class PedidoController implements Initializable {
     private Button signOut;
 
     private final ObservableList<Pedido> data = FXCollections.observableArrayList();
-    private FilteredList<Pedido> filteredData = new FilteredList<>(data);
+    private final FilteredList<Pedido> filteredData = new FilteredList<>(data);
     private Pedido pedidoSelect;
 
     @FXML
@@ -71,7 +73,7 @@ public class PedidoController implements Initializable {
     @FXML
     private TableColumn<?, ?> colProveedor;
     @FXML
-    private TableColumn<?, ?> colEstado;
+    private TableColumn colEstado;
     @FXML
     private TableColumn<?, ?> colObeservacion;
     @FXML
@@ -92,12 +94,8 @@ public class PedidoController implements Initializable {
         System.out.println("ar.nex.repuesto.PedidoController.initialize()");
         initTable();
         initService();
-        loadData();
-
-        ObservableList list = FXCollections.observableArrayList(EstadoPedido.values());
-        list.add(0, "Todos");
-        filtroEstado.getItems().addAll(list);
-        filtroEstado.getSelectionModel().select(1);
+        loadData(EstadoPedido.PENDIENTE);
+        initFiltroEstado();
     }
 
     public void clearAll() {
@@ -116,10 +114,10 @@ public class PedidoController implements Initializable {
         colRepuesto.setCellValueFactory(new PropertyValueFactory<>("repuesto"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colProveedor.setCellValueFactory(new PropertyValueFactory<>("empresa"));
-        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
         colObeservacion.setCellValueFactory(new PropertyValueFactory<>("info"));
         initCellAccion();
         initCellFecha();
+        initCellEstado();
     }
 
     public void initCellAccion() {
@@ -178,6 +176,43 @@ public class PedidoController implements Initializable {
         colFecha.setCellFactory(cellFactory);
     }
 
+    public void initCellEstado() {
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
+        Callback<TableColumn<Pedido, Integer>, TableCell<Pedido, Integer>> cellFactory
+                = //
+                (final TableColumn<Pedido, Integer> param) -> {
+                    final TableCell<Pedido, Integer> cell = new TableCell<Pedido, Integer>() {
+
+                @Override
+                public void updateItem(Integer item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || (item == null)) {
+                        setGraphic(null);
+                        setText(null);
+                    } else {
+                        switch (item) {
+                            case 1:
+                                setGraphic(new ImageView(new Image("@../../img/warning_32.png")));
+                                break;
+                            case 2:
+                                setGraphic(new ImageView(new Image("@../../img/tick_32.png")));
+                                break;
+                            case 3:
+                                setGraphic(new ImageView(new Image("@../../img/block_32.png")));
+                                break;
+                            default:
+                                setGraphic(null);
+                        }
+
+                    }
+                }
+            };
+                    return cell;
+                };
+
+        colEstado.setCellFactory(cellFactory);
+    }
+
     public void initService() {
         System.out.println("ar.nex.util.PedidoController.initService()");
         factory = Persistence.createEntityManagerFactory("SaeFxPU");
@@ -185,15 +220,28 @@ public class PedidoController implements Initializable {
         srvPedido = new PedidoJpaController(factory);
     }
 
-    public void loadData() {
-        System.out.println("ar.nex.util.PedidoController.loadData()");
+    private void initFiltroEstado() {
+        ObservableList list = FXCollections.observableArrayList(EstadoPedido.values());
+        filtroEstado = null;
+        filtroEstado.getItems().addAll(list);
+        filtroEstado.getSelectionModel().select(1);
+    }
+
+    @FXML
+    private void filtroEstado() {
+        loadData((EstadoPedido) filtroEstado.getSelectionModel().getSelectedItem());
+    }
+
+    public void loadData(EstadoPedido estado) {
         clearAll();
 
         List<Pedido> lst = srvPedido.findPedidoEntities();
-        for (Pedido item : lst) {
-            data.add(item);
-            table.setItems(data);
-        }
+        lst.forEach((item) -> {
+            if ((item.getEstado() == estado.getValue()) || (estado == EstadoPedido.TODOS)) {
+                data.add(item);
+            }
+        });
+        table.setItems(data);
     }
 
     @FXML
@@ -243,7 +291,8 @@ public class PedidoController implements Initializable {
             dialog.resizableProperty().setValue(Boolean.FALSE);
             dialog.showAndWait();
 
-            this.loadData();
+            this.initFiltroEstado();
+            this.loadData(EstadoPedido.PENDIENTE);
         } catch (IOException e) {
             System.err.print(e);
         }

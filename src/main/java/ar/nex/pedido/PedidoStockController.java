@@ -14,11 +14,12 @@ public class PedidoStockController {
     }
     
     
-    private Pedido pedido;
+    private final Pedido pedido;
     private StockDetalle stock;
     
     public void inStock(){
         System.out.println("ar.nex.pedido.PedidoStockController.inStock()");
+        stock = new StockDetalle(pedido.getFechaInicio());
         
     }
     

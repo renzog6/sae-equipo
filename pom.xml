@@ -22,6 +22,14 @@
         <!-- Used as the 'Vendor' for JNLP generation -->
         <name>Zero6</name>
     </organization>
+    
+    <developers>
+        <developer>
+            <name>Renzo O. Gorosito</name>
+            <email>renzog6@gmail.com</email>
+            <organization>Zero6</organization>     
+        </developer>
+    </developers>
 
     <build>
 

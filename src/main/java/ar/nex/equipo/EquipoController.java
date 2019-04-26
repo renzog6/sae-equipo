@@ -247,8 +247,7 @@ public class EquipoController implements Initializable {
 
     @FXML
     private void filtroEmpresa() {
-        EmpresaSelect empresa = (EmpresaSelect) filtroEmpresa.getSelectionModel().getSelectedItem();
-        System.out.println("ar.nex.equipo.EquipoController.cambiarEmpresa()" + empresa);
+        EmpresaSelect empresa = (EmpresaSelect) filtroEmpresa.getSelectionModel().getSelectedItem();        
         loadData(empresa.getId());
     }
 }
