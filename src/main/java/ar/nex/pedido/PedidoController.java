@@ -221,8 +221,7 @@ public class PedidoController implements Initializable {
     }
 
     private void initFiltroEstado() {
-        ObservableList list = FXCollections.observableArrayList(EstadoPedido.values());
-        filtroEstado = null;
+        ObservableList list = FXCollections.observableArrayList(EstadoPedido.values());        
         filtroEstado.getItems().addAll(list);
         filtroEstado.getSelectionModel().select(1);
     }

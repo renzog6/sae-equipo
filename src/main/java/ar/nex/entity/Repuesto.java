@@ -3,6 +3,7 @@ package ar.nex.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javax.persistence.Basic;
@@ -16,6 +17,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -35,6 +37,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Repuesto.findByInfo", query = "SELECT r FROM Repuesto r WHERE r.info = :info")})
 public class Repuesto implements Serializable {
 
+    @Transient
+    private static final Logger logger = Logger.getLogger(Repuesto.class.getSimpleName());
+    private static final long serialVersionUID = 1L;
+
     @OneToMany(mappedBy = "repuesto")
     private List<StockDetalle> stockDetalleList;
 
@@ -44,7 +50,6 @@ public class Repuesto implements Serializable {
     @OneToMany(mappedBy = "repuesto")
     private List<Pedido> pedidoList;
 
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -76,7 +81,7 @@ public class Repuesto implements Serializable {
     public Repuesto() {
         empresaList = new ArrayList<>();
         equipoModeloList = new ArrayList<>();
-        
+
     }
 
     public Repuesto(Long idRepuesto) {
@@ -201,7 +206,7 @@ public class Repuesto implements Serializable {
     }
 
     public StringProperty equipo_solo() {
-        StringProperty equipo_solo = new SimpleStringProperty("NN");        
+        StringProperty equipo_solo = new SimpleStringProperty("NN");
         if (equipoModeloList.size() >= 1) {
             equipo_solo = new SimpleStringProperty(equipoModeloList.get(0).getNombre());
         }

@@ -31,6 +31,8 @@
     <class>ar.nex.entity.CerealVariedad</class>
     <class>ar.nex.entity.PedStockDetalle</class>
     <class>ar.nex.entity.StockDetalle</class>
+    <class>ar.nex.app.XPersona</class>
+    <class>ar.nex.app.XTrabajo</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/test"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

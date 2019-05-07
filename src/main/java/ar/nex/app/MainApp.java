@@ -7,20 +7,24 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
 public class MainApp extends Application {
 
     @Override
-    public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Home.fxml"));
-        
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/fxml/Home.css");
-        
-        stage.setTitle("App by HellNeX");
-        stage.setScene(scene);
-        stage.setMaximized(true);
-        stage.show();
+    public void start(Stage stage) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Home.fxml"));
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add("/fxml/Home.css");
+
+            stage.setTitle("App by HellNeX");
+            stage.setScene(scene);
+            stage.setMaximized(true);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**

@@ -1,10 +1,7 @@
 package ar.nex.app;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -20,15 +17,17 @@ import javafx.scene.layout.BorderPane;
 public class HomeController implements Initializable {
 
     @FXML
-    private BorderPane homePane;
+    private BorderPane bpHome;
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        
+
     }
 
     @FXML
@@ -47,13 +46,15 @@ public class HomeController implements Initializable {
     }
 
     public void loadUI(String ui) {
-        Parent root = null;
+        System.out.println("ar.nex.app.HomeController.loadUI() : " + ui);
         try {
+            Parent root = null;
             root = FXMLLoader.load(getClass().getResource("/fxml/" + ui + ".fxml"));
-        } catch (IOException ex) {
-            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
+            bpHome.getStylesheets().add("/fxml/" + ui + ".css");
+            bpHome.setCenter(root);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        homePane.getStylesheets().add("/fxml/" + ui + ".css");        
-        homePane.setCenter(root);
     }
 }
+
