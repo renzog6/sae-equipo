@@ -1,9 +1,7 @@
 package ar.nex.equipo;
 
 import ar.nex.entity.EquipoCategoria;
-import ar.nex.entity.EquipoModelo;
 import ar.nex.jpa.EquipoCategoriaJpaController;
-import ar.nex.jpa.EquipoModeloJpaController;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;

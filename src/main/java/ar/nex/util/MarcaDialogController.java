@@ -1,9 +1,7 @@
 package ar.nex.util;
 
-import ar.nex.entity.EquipoTipo;
 import ar.nex.entity.Marca;
 import ar.nex.equipo.EquipoService;
-import ar.nex.jpa.EquipoTipoJpaController;
 import ar.nex.jpa.MarcaJpaController;
 import java.net.URL;
 import java.util.ResourceBundle;

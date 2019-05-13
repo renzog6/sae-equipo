@@ -1,11 +1,16 @@
 package ar.nex.repuesto;
 
+import ar.nex.entity.Empresa;
 import ar.nex.entity.EquipoModelo;
+import ar.nex.entity.Marca;
 import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoService;
+import ar.nex.jpa.EmpresaJpaController;
 import ar.nex.jpa.EquipoModeloJpaController;
+import ar.nex.jpa.MarcaJpaController;
 import ar.nex.jpa.RepuestoJpaController;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -51,6 +56,8 @@ public class RepuestoDialogController implements Initializable {
     private TextField boxInfo;
     @FXML
     private TextField boxModelo;
+    @FXML
+    private TextField boxParte;
 
     private Repuesto repuesto;
 
@@ -66,6 +73,8 @@ public class RepuestoDialogController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         initControls();
+        loadDataProvedor();
+        loadDataMarca();
         loadDataModelo();
         initBoxs();
     }
@@ -79,8 +88,8 @@ public class RepuestoDialogController implements Initializable {
         });
 
         btnCancelar.setOnAction(e -> cancelar(e));
-        
-        if(repuesto.getIdRepuesto() != null){
+
+        if (repuesto.getIdRepuesto() != null) {
             boxMarca.setDisable(true);
             boxModelo.setDisable(true);
             boxProvedor.setDisable(true);
@@ -92,6 +101,7 @@ public class RepuestoDialogController implements Initializable {
         boxDescripcion.setText(repuesto.getDescripcion());
         boxMarca.setText(repuesto.getMarca());
         boxInfo.setText(repuesto.getInfo());
+        boxParte.setText(repuesto.getParte());
     }
 
     private void cancelar(ActionEvent e) {
@@ -105,14 +115,23 @@ public class RepuestoDialogController implements Initializable {
             repuesto.setCodigo(boxCodigo.getText());
             repuesto.setDescripcion(boxDescripcion.getText());
             repuesto.setInfo(boxInfo.getText());
+            repuesto.setParte(boxParte.getText());
+            repuesto.setStock(0.0);
 
             jpaRepuesto = new RepuestoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
             if (repuesto.getIdRepuesto() != null) {
                 jpaRepuesto.edit(repuesto);
             } else {
-                repuesto.setMarca("marca");
-                //repuesto.setEmpresaList(null);
-                repuesto.getEquipoModeloList().add(modeloSelect);
+                repuesto.setMarca(marcaSelect.toString());
+
+                List<Empresa> lstProveedor = new ArrayList<>();
+                lstProveedor.add(provedorSelect);
+                repuesto.setEmpresaList(lstProveedor);
+
+                List<EquipoModelo> lstModelo = new ArrayList<>();
+                lstModelo.add(modeloSelect);
+                repuesto.setModeloList(lstModelo);
+
                 jpaRepuesto.create(repuesto);
             }
 
@@ -123,6 +142,58 @@ public class RepuestoDialogController implements Initializable {
         }
     }
 
+    private Empresa provedorSelect;
+
+    private final ObservableList<Empresa> dataProvedor = FXCollections.observableArrayList();
+
+    private void loadDataProvedor() {
+        try {
+            this.dataProvedor.clear();
+            EmpresaJpaController jpaProvedor = new EquipoService().getEmpresa();
+            List<Empresa> lst = jpaProvedor.findEmpresaEntities();
+            lst.forEach((item) -> {
+                this.dataProvedor.add(item);
+            });
+
+            AutoCompletionBinding<Empresa> autoProvedor = TextFields.bindAutoCompletion(boxProvedor, dataProvedor);
+
+            autoProvedor.setOnAutoCompleted(
+                    (AutoCompletionBinding.AutoCompletionEvent<Empresa> event) -> {
+                        provedorSelect = event.getCompletion();
+                    }
+            );
+
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+    }
+
+        private Marca marcaSelect;
+
+    private final ObservableList<Marca> dataMarca = FXCollections.observableArrayList();
+
+    private void loadDataMarca() {
+        try {
+            this.dataMarca.clear();
+            MarcaJpaController jpaMarca = new EquipoService().getMarca();
+            List<Marca> lst = jpaMarca.findMarcaEntities();
+            lst.forEach((item) -> {
+                this.dataMarca.add(item);
+            });
+
+            AutoCompletionBinding<Marca> autoMarca = TextFields.bindAutoCompletion(boxMarca, dataMarca);
+
+            autoMarca.setOnAutoCompleted(
+                    (AutoCompletionBinding.AutoCompletionEvent<Marca> event) -> {
+                        marcaSelect = event.getCompletion();
+                    }
+            );
+
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+    }
+    
     private EquipoModelo modeloSelect;
 
     private final ObservableList<EquipoModelo> dataModelo = FXCollections.observableArrayList();

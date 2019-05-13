@@ -1,6 +1,9 @@
 package ar.nex.repuesto;
 
+import ar.nex.entity.Empresa;
+import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.Repuesto;
+import ar.nex.equipo.EquipoController;
 import ar.nex.jpa.RepuestoJpaController;
 import ar.nex.util.DialogController;
 import java.io.IOException;
@@ -8,6 +11,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +24,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -43,6 +51,17 @@ public class RepuestoController implements Initializable {
 
     public RepuestoController() {
         this.filteredData = new FilteredList<>(data);
+    }
+
+    public Parent getRoot() {
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getResource("/fxml/repuesto/Repuesto.fxml"));
+            root.setStyle("/fxml/repuesto/Repuesto.css");
+        } catch (IOException ex) {
+            Logger.getLogger(EquipoController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return root;
     }
 
     private DialogController dialog;
@@ -116,20 +135,26 @@ public class RepuestoController implements Initializable {
 
     public void initTable() {
         System.out.println("ar.nex.util.RepuestoController.initTable()");
-        // colEquipos.setCellValueFactory(new PropertyValueFactory<>("equipo_solo"));
         colEquipos.setCellValueFactory(new Callback<CellDataFeatures<Repuesto, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(CellDataFeatures<Repuesto, String> data) {
-                return data.getValue().equipo_solo();
+                    return new SimpleStringProperty(listaModelo(data.getValue()));               
             }
-        });
+        }
+        );
 
-        colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
-        colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
-        colParte.setCellValueFactory(new PropertyValueFactory<>("parte"));
-        colInfo.setCellValueFactory(new PropertyValueFactory<>("info"));
-        colMarca.setCellValueFactory(new PropertyValueFactory<>("marca"));
-        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        colCodigo.setCellValueFactory(
+                new PropertyValueFactory<>("codigo"));
+        colDescripcion.setCellValueFactory(
+                new PropertyValueFactory<>("descripcion"));
+        colParte.setCellValueFactory(
+                new PropertyValueFactory<>("parte"));
+        colInfo.setCellValueFactory(
+                new PropertyValueFactory<>("info"));
+        colMarca.setCellValueFactory(
+                new PropertyValueFactory<>("marca"));
+        colStock.setCellValueFactory(
+                new PropertyValueFactory<>("stock"));
 
         initCellAccion();
     }
@@ -164,9 +189,9 @@ public class RepuestoController implements Initializable {
         colAccion.setCellFactory(cellFactory);
     }
 
-    public void initService() {        
+    public void initService() {
         factory = Persistence.createEntityManagerFactory("SaeFxPU");
-        jpaService = new RepuestoJpaController(factory);        
+        jpaService = new RepuestoJpaController(factory);
     }
 
     public void loadData() {
@@ -174,9 +199,9 @@ public class RepuestoController implements Initializable {
         clearAll();
         selectRepuesto = null;
         List<Repuesto> lst = jpaService.findRepuestoEntities();
-        for (Repuesto item : lst) {
+        lst.forEach((item) -> {
             data.add(item);
-        }
+        });
         table.setItems(data);
     }
 
@@ -238,19 +263,52 @@ public class RepuestoController implements Initializable {
             Repuesto item = (Repuesto) table.getSelectionModel().getSelectedItem();
             selectRepuesto = jpaService.findRepuesto(item.getIdRepuesto());
 
-            lblModelo.setText(selectRepuesto.listaModelo());
-            lblPedido.setText(selectRepuesto.listaProvedor());
-            lblCompra.setText("Ultima compra: " + selectRepuesto.getPedidoList().get(selectRepuesto.getPedidoList().size()-1).pedidoStringFull());
+            lblModelo.setText(listaModelo(selectRepuesto));
+            lblPedido.setText(listaProvedor(selectRepuesto));
+            if (selectRepuesto.getPedidoList().size() >= 1) {
+                lblCompra.setText("Ultima compra: " + selectRepuesto.getPedidoList().get(selectRepuesto.getPedidoList().size() - 1).toString());
+            } else {
+                lblCompra.setText("Ultima compra: sin registro");
+            }
         } catch (Exception e) {
             System.out.println(e);
+            e.printStackTrace();
         }
+    }
+
+    private String listaModelo(Repuesto r) {
+        String list = null;
+        if (!r.getModeloList().isEmpty()) {
+            for (EquipoModelo item : r.getModeloList()) {
+                if (list == null) {
+                    list = item.getNombre();
+                } else {
+                    list = list + " / " + item.getNombre();
+                }
+            }
+        }
+        return list;
+    }
+
+    private String listaProvedor(Repuesto r) {
+        String list = null;
+        if (!r.getEmpresaList().isEmpty()) {
+            for (Empresa item : r.getEmpresaList()) {
+                if (list == null) {
+                    list = item.getNombre();
+                } else {
+                    list = list + " / " + item.getNombre();
+                }
+            }
+        }
+        return list;
     }
 
     @FXML
     private void addToPedido() {
         System.out.println("ar.nex.pedido.RepuestoController.AddToPedido()");
         try {
-            Stage dialog = new Stage();
+            Stage dlg = new Stage();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoPedidoDialog.fxml"));
             RepuestoPedidoDialogController controller = new RepuestoPedidoDialogController(selectRepuesto);
@@ -258,11 +316,11 @@ public class RepuestoController implements Initializable {
 
             Scene scene = new Scene(loader.load());
 
-            dialog.setScene(scene);
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.resizableProperty().setValue(Boolean.FALSE);
+            dlg.setScene(scene);
+            dlg.initModality(Modality.APPLICATION_MODAL);
+            dlg.resizableProperty().setValue(Boolean.FALSE);
 
-            dialog.showAndWait();
+            dlg.showAndWait();
             this.loadData();
 
         } catch (IOException e) {
@@ -278,7 +336,7 @@ public class RepuestoController implements Initializable {
     public void edit() {
         System.out.println("ar.nex.pedido.RepuestoController.edit()");
         try {
-            Stage dialog = new Stage();
+            Stage dlg = new Stage();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoDialog.fxml"));
             RepuestoDialogController controller = new RepuestoDialogController(selectRepuesto);
@@ -286,11 +344,11 @@ public class RepuestoController implements Initializable {
 
             Scene scene = new Scene(loader.load());
 
-            dialog.setScene(scene);
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.resizableProperty().setValue(Boolean.FALSE);
+            dlg.setScene(scene);
+            dlg.initModality(Modality.APPLICATION_MODAL);
+            dlg.resizableProperty().setValue(Boolean.FALSE);
 
-            dialog.showAndWait();
+            dlg.showAndWait();
             this.loadData();
 
         } catch (IOException e) {
@@ -300,7 +358,7 @@ public class RepuestoController implements Initializable {
 
     public void addModelo() {
         try {
-            Stage dialog = new Stage();
+            Stage dlg = new Stage();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoEquipoModeloDialog.fxml"));
             RepuestoEquipoModeloDialogController controller = new RepuestoEquipoModeloDialogController(selectRepuesto);
@@ -308,11 +366,11 @@ public class RepuestoController implements Initializable {
 
             Scene scene = new Scene(loader.load());
 
-            dialog.setScene(scene);
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.resizableProperty().setValue(Boolean.FALSE);
+            dlg.setScene(scene);
+            dlg.initModality(Modality.APPLICATION_MODAL);
+            dlg.resizableProperty().setValue(Boolean.FALSE);
 
-            dialog.showAndWait();
+            dlg.showAndWait();
             this.loadData();
 
         } catch (IOException e) {

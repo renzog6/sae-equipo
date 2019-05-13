@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -46,7 +46,7 @@
                         <Font name="System Bold" size="18.0" />
                     </font>
                 </Label>
-                <ComboBox fx:id="filtroEstado" onAction="#filtroEstado" layoutX="350.0" layoutY="13.0" prefWidth="150.0" />
+                <ComboBox fx:id="filtroEstado" layoutX="350.0" layoutY="13.0" onAction="#filtroEstado" prefWidth="150.0" />
             </children>
         </AnchorPane>       
     </top>
@@ -82,21 +82,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btnAddModelo" minHeight="30.0" minWidth="85.0" mnemonicParsing="false" text="+ Equipos" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="20.0" />
-                <Button fx:id="btnAddProvedor" minHeight="30.0" minWidth="85.0" mnemonicParsing="false" text="+ Proveedor" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="20.0" />
-                <Button fx:id="btnAddMarca" minHeight="30.0" minWidth="85.0" mnemonicParsing="false" text="+ Marcas" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" />
-            
-                <Label fx:id="lblModelo" layoutX="14.0" layoutY="21.0" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="130.0">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Label>
-                <Label fx:id="lblPedido" layoutX="14.0" layoutY="44.0" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="130.0">
-                    <font>
-                        <Font size="14.0" />
-                    </font>
-                </Label>
-                <Label fx:id="lblCompra" text="Ultima compra:" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="130.0">
+                <Label fx:id="lblCompra" layoutX="35.0" layoutY="25.0" text="Ultima compra:" AnchorPane.bottomAnchor="115.0" AnchorPane.leftAnchor="35.0">
                     <font>
                         <Font size="14.0" />
                     </font>

@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -14,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -34,6 +37,20 @@ import javafx.util.Callback;
  * @author Renzo
  */
 public class EquipoController implements Initializable {
+
+    public EquipoController() {
+    }
+
+    public Parent getRoot() {
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getResource("/fxml/equipo/Equipo.fxml"));
+            root.setStyle("/fxml/equipo/Equipo.css");
+        } catch (IOException ex) {
+            Logger.getLogger(EquipoController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return root;
+    }
 
     @FXML
     private ComboBox filtroEmpresa;
@@ -148,7 +165,7 @@ public class EquipoController implements Initializable {
         colAccion.setCellFactory(cellFactory);
     }
 
-    public void initSevice() {        
+    public void initSevice() {
         jpaEquipo = new EquipoService();
     }
 
@@ -237,7 +254,7 @@ public class EquipoController implements Initializable {
 
     @FXML
     private void showOnClick(MouseEvent event) {
-          try {
+        try {
             Equipo item = (Equipo) table.getSelectionModel().getSelectedItem();
             equipoSelect = jpaEquipo.getEquipo().findEquipo(item.getIdEquipo());
         } catch (Exception e) {
@@ -247,7 +264,7 @@ public class EquipoController implements Initializable {
 
     @FXML
     private void filtroEmpresa() {
-        EmpresaSelect empresa = (EmpresaSelect) filtroEmpresa.getSelectionModel().getSelectedItem();        
+        EmpresaSelect empresa = (EmpresaSelect) filtroEmpresa.getSelectionModel().getSelectedItem();
         loadData(empresa.getId());
     }
 }

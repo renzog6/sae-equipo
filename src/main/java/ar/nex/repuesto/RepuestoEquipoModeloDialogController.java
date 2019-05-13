@@ -85,7 +85,7 @@ public class RepuestoEquipoModeloDialogController implements Initializable {
     @FXML
     private void guardar(ActionEvent event) {
         try {
-            repuesto.getEquipoModeloList().add(modeloSelect);
+            repuesto.getModeloList().add(modeloSelect);
 
             RepuestoJpaController jpaRepuesto = new RepuestoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
             jpaRepuesto.edit(repuesto);

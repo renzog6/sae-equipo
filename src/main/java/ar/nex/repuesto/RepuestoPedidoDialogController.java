@@ -108,16 +108,13 @@ public class RepuestoPedidoDialogController implements Initializable {
             List<Empresa> lst = jpaProvedor.findEmpresaEntities();
             lst.forEach((item) -> {
                 this.dataProvedor.add(item);
-            });
-            
-            AutoCompletionBinding<Empresa> autoProvedor = TextFields.bindAutoCompletion(boxProvedor, dataProvedor);
-            
+            });            
+            AutoCompletionBinding<Empresa> autoProvedor = TextFields.bindAutoCompletion(boxProvedor, dataProvedor);            
             autoProvedor.setOnAutoCompleted(
                     (AutoCompletionBinding.AutoCompletionEvent<Empresa> event) -> {
                         provedorSelect = event.getCompletion();
                     }
-            );
-            
+            );            
         } catch (Exception e) {
             System.err.println(e);
         }
@@ -126,7 +123,8 @@ public class RepuestoPedidoDialogController implements Initializable {
     @FXML
     private void guardar(ActionEvent event) {
         try {
-            Pedido pedido = new Pedido(repuesto);
+            Pedido pedido = new Pedido();
+            pedido.setRepuesto(repuesto);
             
             DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
             pedido.setFechaInicio(fd.parse(boxFecha.getText()));

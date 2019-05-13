@@ -1,8 +1,8 @@
 package ar.nex.pedido;
 
+
 import ar.nex.entity.Pedido;
 import ar.nex.jpa.PedidoJpaController;
-import ar.nex.jpa.RepuestoJpaController;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -86,7 +86,8 @@ public class PedidoReciboDialogController implements Initializable {
             ObservableList list = FXCollections.observableArrayList(EstadoPedido.values());
             filtroEstado.getItems().addAll(list);
             filtroEstado.getSelectionModel().select(EstadoPedido.COMPLETO.getValue());
-
+            System.out.println("ar.nex.pedido.PedidoReciboDialogController.initControls() :" + pedido.getRepuesto().getStock());
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,8 +105,9 @@ public class PedidoReciboDialogController implements Initializable {
             pedido.setEstado(filtroEstado.getSelectionModel().getSelectedIndex());
 
             PedidoJpaController jpaPedido = new PedidoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
-            if (pedido.getIdPedido() != null) {
+            if (pedido.getIdPedido() != null) {                
                 jpaPedido.edit(pedido);
+                System.out.println("ar.nex.pedido.PedidoReciboDialogController.guardar() : " + pedido.getRepuesto().getStock());
                 new PedidoStockController(pedido).inStock();
             } else {
                 //jpaPedido.create(pedido);

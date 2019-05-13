@@ -1,2 +1,2 @@
-# saefx
-SAE - Java FX
+# sae-equipo
+Modulo de SAE App
