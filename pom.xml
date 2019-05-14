@@ -54,28 +54,12 @@
             <version>1-1</version>
             <type>jar</type>
         </dependency>     
-        <dependency>
-            <groupId>ar.nex</groupId>
-            <artifactId>sae-util</artifactId>
-            <version>1-1</version>
-            <type>jar</type>
-        </dependency>   
-
-        <!-- xXx xXx xXx xXx Deploy by renzog6 xXx xXx xXx xXx-->               
+        <!-- xXx xXx xXx xXx Deploy by renzog6 xXx xXx xXx xXx-->          
+             
         <dependency>
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-javafx</artifactId>
             <version>5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.5.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
@@ -87,6 +71,16 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.41</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>javax.persistence</artifactId>
+            <version>2.1.0</version>
         </dependency>
     </dependencies>
     

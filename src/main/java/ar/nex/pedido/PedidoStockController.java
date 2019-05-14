@@ -1,11 +1,10 @@
 package ar.nex.pedido;
 
 import ar.nex.entity.Pedido;
-import ar.nex.entity.Repuesto;
 import ar.nex.entity.RepuestoStockDetalle;
+import ar.nex.equipo.EquipoUtils;
 import ar.nex.jpa.RepuestoJpaController;
 import ar.nex.service.JpaService;
-import ar.nex.util.DialogController;
 import javax.persistence.Persistence;
 
 /**
@@ -32,7 +31,7 @@ public class PedidoStockController {
             jpaRepuesto.edit(pedido.getRepuesto());
 
         } catch (Exception e) {
-            DialogController.showException(e);
+            EquipoUtils.showException(e);
         }
     }
 

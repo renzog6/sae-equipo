@@ -1,6 +1,6 @@
 package ar.nex.equipo;
 
-import ar.nex.util.MarcaDialogController;
+import ar.nex.marca.MarcaDialogController;
 import ar.nex.entity.Empresa;
 import ar.nex.entity.Equipo;
 import ar.nex.entity.EquipoCategoria;

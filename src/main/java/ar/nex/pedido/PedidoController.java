@@ -1,10 +1,10 @@
 package ar.nex.pedido;
 
-import ar.nex.entity.Equipo;
 import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.Pedido;
 import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoController;
+import ar.nex.equipo.EquipoUtils;
 import ar.nex.jpa.PedidoJpaController;
 import ar.nex.jpa.RepuestoJpaController;
 import java.net.URL;
@@ -37,7 +37,6 @@ import javafx.util.Callback;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import ar.nex.util.DialogController;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -260,7 +259,7 @@ public class PedidoController implements Initializable {
 
             colEstado.setCellFactory(cellFactory);
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            EquipoUtils.showException(ex);
         }
     }
 

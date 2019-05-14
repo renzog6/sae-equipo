@@ -1,6 +1,7 @@
-package ar.nex.util;
+package ar.nex.marca;
 
 import ar.nex.entity.Marca;
+import ar.nex.equipo.EquipoUtils;
 import ar.nex.jpa.MarcaJpaController;
 import java.net.URL;
 import java.util.List;
@@ -25,7 +26,7 @@ import javax.persistence.Persistence;
 
 public class MarcaController implements Initializable {
 
-    private DialogController dialog;
+    private EquipoUtils dialog;
 
     @FXML
     private TextField boxNombre;

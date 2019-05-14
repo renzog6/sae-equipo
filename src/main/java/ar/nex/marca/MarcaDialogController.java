@@ -1,4 +1,4 @@
-package ar.nex.util;
+package ar.nex.marca;
 
 import ar.nex.entity.Marca;
 import ar.nex.equipo.EquipoService;

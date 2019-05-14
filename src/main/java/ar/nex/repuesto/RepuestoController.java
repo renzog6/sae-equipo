@@ -4,8 +4,9 @@ import ar.nex.entity.Empresa;
 import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoController;
+import ar.nex.equipo.EquipoUtils;
 import ar.nex.jpa.RepuestoJpaController;
-import ar.nex.util.DialogController;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -14,7 +15,6 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -64,7 +64,7 @@ public class RepuestoController implements Initializable {
         return root;
     }
 
-    private DialogController dialog;
+    private EquipoUtils dlg;
 
     @FXML
     private TextField searchBox;
@@ -237,9 +237,9 @@ public class RepuestoController implements Initializable {
     @FXML
     private void Delete(ActionEvent event) {
         try {
-            if (dialog.confirmDialog("Confimar Eliminar : " + selectRepuesto.toString() + "???")) {
+            if (dlg.confirmDialog("Confimar Eliminar : " + selectRepuesto.toString() + "???")) {
                 jpaService.destroy(selectRepuesto.getIdRepuesto());
-                dialog.showSuccess("Se Elimino Correctamente!!!");
+                dlg.showSuccess("Se Elimino Correctamente!!!");
             }
 //            } else {
 //                boxCodigo.clear();
