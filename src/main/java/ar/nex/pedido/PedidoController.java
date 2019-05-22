@@ -4,7 +4,7 @@ import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.Pedido;
 import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoController;
-import ar.nex.equipo.EquipoUtils;
+import ar.nex.util.EquipoUtils;
 import ar.nex.jpa.PedidoJpaController;
 import ar.nex.jpa.RepuestoJpaController;
 import java.net.URL;
@@ -78,7 +78,7 @@ public class PedidoController implements Initializable {
     private TextField searchBox;
     @FXML
     private Button signOut;
-    
+
     @FXML
     private Label lblCompra;
 
@@ -130,7 +130,7 @@ public class PedidoController implements Initializable {
         pedidoSelect = null;
     }
 
-      private String listaModelo(Repuesto r) {
+    private String listaModelo(Repuesto r) {
         String list = null;
         if (!r.getModeloList().isEmpty()) {
             for (EquipoModelo item : r.getModeloList()) {
@@ -143,11 +143,11 @@ public class PedidoController implements Initializable {
         }
         return list;
     }
-      
+
     public void initTable() {
         colEquipo.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Pedido, String>, ObservableValue<String>>() {
             @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<Pedido, String> data) {              
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Pedido, String> data) {
                 return new SimpleStringProperty(listaModelo(data.getValue().getRepuesto()));
             }
         });
@@ -298,18 +298,14 @@ public class PedidoController implements Initializable {
     @FXML
     private void Search() {
         searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            filteredData.setPredicate((Predicate<? super Pedido>) item -> {
+            filteredData.setPredicate((Predicate<? super Pedido>) (Pedido item) -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
                 String lowerCaseFilter = newValue.toLowerCase();
                 if (item.getRepuesto().getCodigo().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
-                }
-                //if (item.getEmpresa().getNombre().toLowerCase().contains(lowerCaseFilter)) {
-//                    return true;
-//                }
-                if (item.getEmpresa().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                } else if (item.getEmpresa().getNombre().toLowerCase().contains(lowerCaseFilter)) {
                     return true;
                 }
                 return false;
@@ -327,9 +323,9 @@ public class PedidoController implements Initializable {
     }
 
     @FXML
-    private void showOnClick(MouseEvent event) {        
-           try {
-            Pedido item = (Pedido) table.getSelectionModel().getSelectedItem();            
+    private void showOnClick(MouseEvent event) {
+        try {
+            Pedido item = (Pedido) table.getSelectionModel().getSelectedItem();
             if (item.getRepuesto().getPedidoList().size() >= 1) {
                 lblCompra.setText("Ultima compra: " + item.getRepuesto().getPedidoList().get(item.getRepuesto().getPedidoList().size() - 1).toString());
             } else {
@@ -337,7 +333,7 @@ public class PedidoController implements Initializable {
             }
         } catch (Exception e) {
             System.out.println(e);
-            
+
         }
     }
 

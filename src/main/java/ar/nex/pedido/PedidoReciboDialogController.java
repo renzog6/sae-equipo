@@ -1,6 +1,7 @@
 package ar.nex.pedido;
 
 
+import ar.nex.repuesto.RepuestoStockController;
 import ar.nex.entity.Pedido;
 import ar.nex.jpa.PedidoJpaController;
 import java.net.URL;
@@ -108,7 +109,7 @@ public class PedidoReciboDialogController implements Initializable {
             if (pedido.getIdPedido() != null) {                
                 jpaPedido.edit(pedido);
                 System.out.println("ar.nex.pedido.PedidoReciboDialogController.guardar() : " + pedido.getRepuesto().getStock());
-                new PedidoStockController(pedido).inStock();
+                new RepuestoStockController().inStock(pedido);
             } else {
                 //jpaPedido.create(pedido);
                 System.out.println("ar.nex.pedido.PedidoReciboDialogController.guardar() : VERRRRRRRRRRRRRRRRRRRRRRR");

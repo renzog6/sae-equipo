@@ -68,6 +68,8 @@ public class EquipoDialogController implements Initializable {
     private TextField boxValorCompra;
     @FXML
     private TextField boxMarca;
+    @FXML
+    private TextField boxNombre;
 
     @FXML
     private Button btnGuardar;
@@ -111,12 +113,15 @@ public class EquipoDialogController implements Initializable {
         ObservableList list = FXCollections.observableArrayList(EmpresaSelect.values());
         list.add(0, "Elegir Empresa");
         filtroEmpresa.getItems().addAll(list);
-        int i = (int) (equipo.getEmpresa() != null? equipo.getEmpresa().getIdEmpresa() : 0);       
-        filtroEmpresa.getSelectionModel().select(i+1);        
+        if (equipo.getEmpresa() != null) {
+            idEmp = equipo.getEmpresa().getIdEmpresa();
+            filtroEmpresa.getSelectionModel().select(equipo.getEmpresa().getIdEmpresa().intValue() + 1);
+        }else{
+            filtroEmpresa.getSelectionModel().select(1);
+        }
     }
 
     private void initControls() {
-        System.out.println("ar.nex.equipo.EquipoAddController.initControls()");
         try {
             btnCancelar.setOnAction(e -> ((Node) (e.getSource())).getScene().getWindow().hide());
             btnGuardar.setOnAction(e -> guardar(e));
@@ -132,10 +137,10 @@ public class EquipoDialogController implements Initializable {
             tipoSelect = equipo.getTipo() != null ? equipo.getTipo() : new EquipoTipo("NN");
             boxTipo.setText(tipoSelect.getNombre());
 
-            modeloSelect = equipo.getModelo();
+            modeloSelect = equipo.getModelo() != null ? equipo.getModelo() : new EquipoModelo("NN");
             boxModelo.setText(modeloSelect.getNombre());
 
-            marcaSelect = equipo.getMarca();
+            marcaSelect = equipo.getMarca() != null ? equipo.getMarca() : new Marca("NN");
             boxMarca.setText(marcaSelect.getNombre());
 
             boxColor.setText(equipo.getColor());
@@ -144,13 +149,13 @@ public class EquipoDialogController implements Initializable {
             boxChasis.setText(equipo.getChasis());
             boxMotor.setText(equipo.getMotor());
             boxPatente.setText(equipo.getPatente());
+            boxNombre.setText(equipo.getNombre());
 
             boxFechaCompra.setText("-");
             boxVendedor.setText("-");
             boxValorCompra.setText("0.0");
 
         } catch (Exception e) {
-            System.out.println(e);
             e.printStackTrace();
         }
     }
@@ -175,6 +180,7 @@ public class EquipoDialogController implements Initializable {
             equipo.setPatente(boxPatente.getText());
             equipo.setColor(boxColor.getText());
             equipo.setOtro(boxOtro.getText());
+            equipo.setNombre(boxNombre.getText());
 
             equipo.setCategoria(categoriaSelect);
             equipo.setTipo(tipoSelect);
@@ -230,7 +236,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 3);
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

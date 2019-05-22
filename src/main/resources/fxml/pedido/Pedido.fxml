@@ -3,6 +3,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -37,16 +39,21 @@
     </center>
     
     <top>          
-        <AnchorPane nodeOrientation="RIGHT_TO_LEFT" prefHeight="50.0" BorderPane.alignment="CENTER">
+        <AnchorPane prefHeight="50.0" BorderPane.alignment="CENTER">
             <children>
-                <TextField fx:id="searchBox" layoutX="127.0" layoutY="13.0" onInputMethodTextChanged="#Search" onKeyReleased="#Search" prefHeight="25.0" prefWidth="206.0" promptText="Buscar" />
-                <Button fx:id="signOut" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="26.0" layoutY="13.0" mnemonicParsing="false" onAction="#goSignOut" text="Salir" />
-                <Label layoutX="508.0" layoutY="12.0" nodeOrientation="LEFT_TO_RIGHT" text="Lista de Pedidos">
+                <TextField fx:id="searchBox" layoutX="127.0" layoutY="13.0" onInputMethodTextChanged="#Search" onKeyReleased="#Search" prefHeight="30.0" prefWidth="200.0" promptText="Buscar" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="10.0" />
+                <Label layoutX="508.0" layoutY="12.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" text="Lista de Pedidos" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="10.0">
                     <font>
                         <Font name="System Bold" size="18.0" />
                     </font>
                 </Label>
-                <ComboBox fx:id="filtroEstado" layoutX="350.0" layoutY="13.0" onAction="#filtroEstado" prefWidth="150.0" />
+                <ComboBox fx:id="filtroEstado" layoutX="350.0" layoutY="13.0" onAction="#filtroEstado" prefHeight="30.0" prefWidth="150.0" AnchorPane.rightAnchor="360.0" AnchorPane.topAnchor="10.0" />
+            <MenuButton mnemonicParsing="false" prefHeight="30.0" prefWidth="100.0" text="Menu" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Action 1" />
+                  <MenuItem mnemonicParsing="false" text="Action 2" />
+               </items>
+            </MenuButton>
             </children>
         </AnchorPane>       
     </top>

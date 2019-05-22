@@ -4,7 +4,7 @@ import ar.nex.entity.Empresa;
 import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoController;
-import ar.nex.equipo.EquipoUtils;
+import ar.nex.util.EquipoUtils;
 import ar.nex.jpa.RepuestoJpaController;
 
 import java.io.IOException;
@@ -138,7 +138,7 @@ public class RepuestoController implements Initializable {
         colEquipos.setCellValueFactory(new Callback<CellDataFeatures<Repuesto, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(CellDataFeatures<Repuesto, String> data) {
-                    return new SimpleStringProperty(listaModelo(data.getValue()));               
+                return new SimpleStringProperty(listaModelo(data.getValue()));
             }
         }
         );

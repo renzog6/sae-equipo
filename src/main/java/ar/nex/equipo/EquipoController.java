@@ -20,6 +20,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -94,6 +96,9 @@ public class EquipoController implements Initializable {
     @FXML
     private TableColumn colAccion;
 
+    @FXML
+    private MenuButton mbMenu;
+
     private EquipoService jpaEquipo;
 
     /**
@@ -104,6 +109,7 @@ public class EquipoController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        initMenu();
         initTable();
         initSevice();
         initFiltro();
@@ -111,6 +117,15 @@ public class EquipoController implements Initializable {
 
         btnAdd.setOnAction(e -> this.add());
         btnEdit.setOnAction(e -> this.edit());
+    }
+
+    private void initMenu() {
+        MenuItem item = new MenuItem("Repuestos     ");
+        mbMenu.getItems().add(item);
+        item = new MenuItem("Pedidos        ");
+        mbMenu.getItems().add(item);
+        item = new MenuItem("Stock Repuestos");
+        mbMenu.getItems().add(item);
     }
 
     public void clearAll() {
@@ -176,16 +191,20 @@ public class EquipoController implements Initializable {
     }
 
     public void loadData(long id) {
-        System.out.println("ar.nex.equipo.EquipoController.loadData()");
-        clearAll();
-
-        List<Equipo> lst = jpaEquipo.getEquipo().findEquipoEntities();
-        for (Equipo item : lst) {
-            if ((item.getEmpresa().getIdEmpresa() == id) || (id == 0)) {
-                data.add(item);
+        try {
+            clearAll();
+            List<Equipo> lst = jpaEquipo.getEquipo().findEquipoEntities();
+            for (Equipo item : lst) {
+                if ((item.getEmpresa().getIdEmpresa() == id) || (id == 0)) {
+                    data.add(item);
+                }
             }
+            table.setItems(data);
+        } catch (Exception e) {
+            System.out.println("ar.nex.equipo.EquipoController.loadData()");
+            e.printStackTrace();
         }
-        table.setItems(data);
+
     }
 
     @FXML
