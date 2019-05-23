@@ -4,7 +4,7 @@ import ar.nex.entity.Empresa;
 import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoController;
-import ar.nex.util.EquipoUtils;
+import ar.nex.util.DialogController;
 import ar.nex.jpa.RepuestoJpaController;
 
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class RepuestoController implements Initializable {
         return root;
     }
 
-    private EquipoUtils dlg;
+    private DialogController dlg;
 
     @FXML
     private TextField searchBox;

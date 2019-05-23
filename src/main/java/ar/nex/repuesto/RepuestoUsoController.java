@@ -1,12 +1,10 @@
 package ar.nex.repuesto;
 
 import ar.nex.entity.Equipo;
-import ar.nex.entity.Pedido;
-import ar.nex.entity.Repuesto;
 import ar.nex.entity.RepuestoStockDetalle;
 import ar.nex.equipo.EquipoController;
-import ar.nex.equipo.EquipoDialogController;
 import ar.nex.equipo.EquipoService;
+import ar.nex.util.DialogController;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -27,6 +25,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -46,6 +45,7 @@ import javafx.util.Callback;
 public class RepuestoUsoController implements Initializable {
 
     public RepuestoUsoController() {
+        this.filteredEquipo = new FilteredList<>(dataEquipo);
     }
 
     public Parent getRoot() {
@@ -67,9 +67,12 @@ public class RepuestoUsoController implements Initializable {
     @FXML
     private Button btnMas;
     @FXML
-    private Button btnMenos;
-    @FXML
     private Button btnEditar;
+
+    @FXML
+    private Label lblEquipoSelect;
+    @FXML
+    private Label lblRepuestoSelect;
 
     ObservableList<Equipo> dataEquipo = FXCollections.observableArrayList();
     FilteredList<Equipo> filteredEquipo = new FilteredList<>(dataEquipo);
@@ -116,7 +119,7 @@ public class RepuestoUsoController implements Initializable {
         loadDataEquipo();
         initTableStockDetalle();
 
-        btnMas.setOnAction(e -> this.edit());
+        btnMas.setOnAction(e -> this.add());
         btnEditar.setOnAction(e -> this.edit());
     }
 
@@ -171,7 +174,7 @@ public class RepuestoUsoController implements Initializable {
         initCellFecha();
     }
 
-    public void initCellFecha() {
+    private void initCellFecha() {
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         Callback<TableColumn<RepuestoStockDetalle, Date>, TableCell<RepuestoStockDetalle, Date>> cellFactory
                 = //
@@ -225,38 +228,40 @@ public class RepuestoUsoController implements Initializable {
 
     @FXML
     private void onTableEquipo(MouseEvent event) {
-        System.out.println("ar.nex.repuesto.RepuestoUsoController.onTableEquipo()");
         try {
-            Equipo item = (Equipo) tableEquipo.getSelectionModel().getSelectedItem();
-            equipoSelect = jpaEquipo.getEquipo().findEquipo(item.getIdEquipo());
+            //Equipo item = (Equipo) tableEquipo.getSelectionModel().getSelectedItem();
+            equipoSelect = (Equipo) tableEquipo.getSelectionModel().getSelectedItem(); //jpaEquipo.getEquipo().findEquipo(item.getIdEquipo());
             loadDataStockDetalle(equipoSelect.getRepuestoStockDetalleList());
+            lblEquipoSelect.setText(equipoSelect.getTipo().getNombre() + " "
+                    + equipoSelect.getMarca().getNombre() + " "
+                    + equipoSelect.getModelo().getNombre() + " - "
+                    + equipoSelect.getAnio());
         } catch (Exception e) {
             System.out.println(e);
         }
     }
 
     private void add() {
-        equipoSelect = new Equipo();
-        edit();
-    }
-
-    private void edit() {
         try {
-            Stage dialog = new Stage();
+            if (stockDetalleSelect == null) {
+                DialogController.errorDialog("Uso Repuesto", "Debe selecionar un Equipo");
+            } else {
+                Stage dialog = new Stage();
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoUsoDialog.fxml"));
-            RepuestoUsoDialog controller = new RepuestoUsoDialog(equipoSelect);
-            loader.setController(controller);
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoUsoDialog.fxml"));
+                RepuestoUsoAddController controller = new RepuestoUsoAddController(equipoSelect);
+                loader.setController(controller);
 
-            Scene scene = new Scene(loader.load());
+                Scene scene = new Scene(loader.load());
 
-            dialog.setScene(scene);
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.resizableProperty().setValue(Boolean.FALSE);
+                dialog.setScene(scene);
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.resizableProperty().setValue(Boolean.FALSE);
 
-            dialog.showAndWait();
-            loadDataEquipo();
-
+                dialog.showAndWait();
+                loadDataEquipo();
+                loadDataStockDetalle(dataStockDetalle);
+            }
         } catch (IOException e) {
             System.err.print(e);
             e.printStackTrace();
@@ -264,8 +269,37 @@ public class RepuestoUsoController implements Initializable {
     }
 
     @FXML
-    private void onTableRepuesto(MouseEvent event
-    ) {
+    private void onTableRepuesto(MouseEvent event) {
+        stockDetalleSelect = (RepuestoStockDetalle) tableStockDetalle.getSelectionModel().getSelectedItem();
+        lblRepuestoSelect.setText("Repuesto: "
+                + stockDetalleSelect.getRepuesto().toString() + " [ Stock: "
+                + stockDetalleSelect.getRepuesto().getStock() + " ]");
     }
 
+    private void edit() {
+        try {
+            if (stockDetalleSelect == null) {
+                DialogController.errorDialog("Uso Repuesto", "Debe selecionar un Repuesto");
+            } else {
+                Stage dialog = new Stage();
+
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoUsoEdit.fxml"));
+                RepuestoUsoEditController controller = new RepuestoUsoEditController(stockDetalleSelect);
+                loader.setController(controller);
+
+                Scene scene = new Scene(loader.load());
+
+                dialog.setScene(scene);
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.resizableProperty().setValue(Boolean.FALSE);
+
+                dialog.showAndWait();
+                loadDataEquipo();
+                loadDataStockDetalle(dataStockDetalle);
+            }
+        } catch (IOException e) {
+            System.err.print(e);
+            e.printStackTrace();
+        }
+    }
 }

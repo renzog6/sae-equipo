@@ -3,13 +3,14 @@ package ar.nex.repuesto;
 import ar.nex.entity.Equipo;
 import ar.nex.entity.Repuesto;
 import ar.nex.entity.RepuestoStockDetalle;
-import ar.nex.util.EquipoUtils;
+import ar.nex.util.DialogController;
 import ar.nex.jpa.RepuestoJpaController;
-import ar.nex.util.DateValidator;
+import ar.nex.util.DateUtils;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -31,24 +32,20 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import javax.persistence.Persistence;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
-import org.controlsfx.validation.ValidationSupport;
-import org.controlsfx.validation.Validator;
 
 /**
  * FXML Controller class
  *
  * @author Renzo
  */
-public class RepuestoUsoDialog implements Initializable {
+public class RepuestoUsoAddController implements Initializable {
 
-    public RepuestoUsoDialog(Equipo equipo) {
+    public RepuestoUsoAddController(Equipo equipo) {
         this.equipo = equipo;
     }
 
@@ -77,6 +74,8 @@ public class RepuestoUsoDialog implements Initializable {
     @FXML
     private TableView<RepuestoStockDetalle> tableStockDetalle;
     @FXML
+    private TableColumn<?, ?> colFecha;
+    @FXML
     private TableColumn<?, ?> colRepuesto;
     @FXML
     private TableColumn<?, ?> colCantidad;
@@ -94,6 +93,8 @@ public class RepuestoUsoDialog implements Initializable {
     private final ObservableList<Repuesto> dataRepuesto = FXCollections.observableArrayList();
     private RepuestoJpaController jpaRepuesto;
 
+    private DateUtils dateUtil;
+
     /**
      * Initializes the controller class.
      *
@@ -102,12 +103,12 @@ public class RepuestoUsoDialog implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        dateUtil = new DateUtils();
         boxFecha.setValue(LocalDate.now());
         initServices();
         initTableStockDetalle();
         loadDataRepuesto();
         InitControls();
-        setValidation();
     }
 
     private void initServices() {
@@ -115,6 +116,7 @@ public class RepuestoUsoDialog implements Initializable {
     }
 
     private void initTableStockDetalle() {
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         colRepuesto.setCellValueFactory(new PropertyValueFactory<>("repuesto"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colInfo.setCellValueFactory(new PropertyValueFactory<>("info"));
@@ -184,17 +186,16 @@ public class RepuestoUsoDialog implements Initializable {
     }
 
     public boolean validate() {
-        DateValidator date = new DateValidator();
-        if (!date.validate(boxFecha.getValue().toString())) {
-            EquipoUtils.showSuccess("Requiere una Fecha Valida.");
+        if (!dateUtil.validate(boxFecha.getValue().toString())) {
+            DialogController.showSuccess("Requiere una Fecha Valida.");
             return false;
         }
         if (boxRepuesto.getText().isEmpty()) {
-            EquipoUtils.showSuccess("Requiere un Repuesto.");
+            DialogController.showSuccess("Requiere un Repuesto.");
             return false;
         }
         if (boxCantidad.getText().isEmpty()) {
-            EquipoUtils.showSuccess("Requiere una Cantidad.");
+            DialogController.showSuccess("Requiere una Cantidad.");
             return false;
         }
 
@@ -207,7 +208,7 @@ public class RepuestoUsoDialog implements Initializable {
                 RepuestoStockDetalle uso = new RepuestoStockDetalle();
                 uso.setEquipo(equipo);
                 uso.setRepuesto(repuestoSelect);
-                uso.setFecha(fd.parse(boxFecha.getValue().toString()));
+                uso.setFecha(dateUtil.convertToDateViaSqlDate(boxFecha.getValue()));
                 uso.setCantidad(Double.valueOf(boxCantidad.getText()));
                 uso.setInfo(boxInfo.getText());
                 uso.setDetalle("Usado en:");
@@ -216,7 +217,7 @@ public class RepuestoUsoDialog implements Initializable {
                 resetControls();
             }
         } catch (Exception ex) {
-            EquipoUtils.showException(ex);
+            DialogController.showException(ex);
         }
     }
 
@@ -225,7 +226,7 @@ public class RepuestoUsoDialog implements Initializable {
             dataStockDetalle.add(rsd);
             tableStockDetalle.setItems(dataStockDetalle);
         } catch (Exception ex) {
-            EquipoUtils.showException(ex);
+            DialogController.showException(ex);
         }
     }
 
@@ -260,22 +261,17 @@ public class RepuestoUsoDialog implements Initializable {
 
             colAction.setCellFactory(cellFactory);
         } catch (Exception ex) {
-            EquipoUtils.showException(ex);
+            DialogController.showException(ex);
         }
-    }
-
-    private void setValidation() {
-
     }
 
     private void guardar(ActionEvent event) {
         try {
-
             dataStockDetalle.forEach((item) -> {
                 new RepuestoStockController().outStock(item);
             });
         } catch (Exception ex) {
-            EquipoUtils.showException(ex);
+            DialogController.showException(ex);
         }
         ((Node) (event.getSource())).getScene().getWindow().hide();
     }

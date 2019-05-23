@@ -4,9 +4,10 @@ import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.Pedido;
 import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoController;
-import ar.nex.util.EquipoUtils;
+import ar.nex.util.DialogController;
 import ar.nex.jpa.PedidoJpaController;
 import ar.nex.jpa.RepuestoJpaController;
+import ar.nex.repuesto.RepuestoPedidoDialogController;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -107,7 +108,6 @@ public class PedidoController implements Initializable {
 
     private EntityManagerFactory factory;
     private PedidoJpaController srvPedido;
-    private RepuestoJpaController srvRepuesto;
 
     /**
      * Initializes the controller class.
@@ -259,7 +259,7 @@ public class PedidoController implements Initializable {
 
             colEstado.setCellFactory(cellFactory);
         } catch (Exception ex) {
-            EquipoUtils.showException(ex);
+            DialogController.showException(ex);
         }
     }
 
@@ -355,4 +355,5 @@ public class PedidoController implements Initializable {
             System.err.print(e);
         }
     }
+
 }

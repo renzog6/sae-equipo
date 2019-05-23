@@ -1,10 +1,8 @@
 package ar.nex.repuesto;
 
-import ar.nex.entity.Equipo;
 import ar.nex.entity.Pedido;
-import ar.nex.entity.Repuesto;
 import ar.nex.entity.RepuestoStockDetalle;
-import ar.nex.util.EquipoUtils;
+import ar.nex.util.DialogController;
 import ar.nex.jpa.RepuestoJpaController;
 import ar.nex.jpa.RepuestoStockDetalleJpaController;
 import javax.persistence.Persistence;
@@ -15,15 +13,21 @@ import javax.persistence.Persistence;
  */
 public class RepuestoStockController {
 
-    public RepuestoStockController() {                
-    }    
+    private final RepuestoStockDetalleJpaController jpaStockDetalle;
+
+    public RepuestoStockController() {
+        jpaStockDetalle = new RepuestoStockDetalleJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
+    }
+
+    private RepuestoJpaController jpaRepuesto() {
+        return new RepuestoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
+    }
 
     public void inStock(Pedido pedido) {
-        System.out.println("ar.nex.pedido.PedidoStockController.inStock()");
         try {
             pedido.getRepuesto().setStock(pedido.getCantidad() + pedido.getRepuesto().getStock());
-            RepuestoJpaController jpaRepuesto = new RepuestoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
-            jpaRepuesto.edit(pedido.getRepuesto());
+            //RepuestoJpaController jpaRepuesto = new RepuestoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
+            jpaRepuesto().edit(pedido.getRepuesto());
 
             RepuestoStockDetalle stock = new RepuestoStockDetalle();
             stock.setFecha(pedido.getFechaFin());
@@ -31,27 +35,50 @@ public class RepuestoStockController {
             stock.setCantidad(pedido.getCantidad());
             stock.setRepuesto(pedido.getRepuesto());
             stock.setEstado(1);
-            RepuestoStockDetalleJpaController jpaStock = new RepuestoStockDetalleJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
-            jpaStock.create(stock);
+
+            jpaStockDetalle.create(stock);
 
         } catch (Exception ex) {
-            EquipoUtils.showException(ex);
+            DialogController.showException(ex);
         }
     }
 
     public void outStock(RepuestoStockDetalle stockDetalle) {
-        System.out.println("ar.nex.repuesto.RepuestoStockController.outStock() " + stockDetalle.toString());
         try {
-            RepuestoJpaController jpaRepuesto = new RepuestoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
-            stockDetalle.getRepuesto().setStock(stockDetalle.getRepuesto().getStock()-stockDetalle.getCantidad());
-            jpaRepuesto.edit(stockDetalle.getRepuesto());
-            
-            RepuestoStockDetalleJpaController jpaStockDetalle = new RepuestoStockDetalleJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
+            //RepuestoJpaController jpaRepuesto = new RepuestoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
+            stockDetalle.getRepuesto().setStock(stockDetalle.getRepuesto().getStock() - stockDetalle.getCantidad());
+            jpaRepuesto().edit(stockDetalle.getRepuesto());
+
             jpaStockDetalle.create(stockDetalle);
-            
         } catch (Exception ex) {
-            //EquipoUtils.showException(ex);
-            ex.printStackTrace();
+            DialogController.showException(ex);
+        }
+    }
+
+    public void editarStock(RepuestoStockDetalle stockDetalle, Double nuevaCantidad) {
+        try {
+            if (stockDetalle.getCantidad() > nuevaCantidad) {
+                stockDetalle.getRepuesto().setStock(stockDetalle.getRepuesto().getStock() + (nuevaCantidad - stockDetalle.getCantidad()));
+            } else {
+                stockDetalle.getRepuesto().setStock(stockDetalle.getRepuesto().getStock() + (stockDetalle.getCantidad() - nuevaCantidad));
+            }
+            stockDetalle.setCantidad(nuevaCantidad);
+            jpaRepuesto().edit(stockDetalle.getRepuesto());
+            jpaStockDetalle.edit(stockDetalle);
+        } catch (Exception ex) {
+            DialogController.showException(ex);
+        }
+    }
+
+    public void borrarStock(RepuestoStockDetalle stockDetalle) {
+        try {
+            stockDetalle.getRepuesto().setStock(stockDetalle.getCantidad() + stockDetalle.getRepuesto().getStock());
+            //RepuestoJpaController jpaRepuesto = new RepuestoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
+            jpaRepuesto().edit(stockDetalle.getRepuesto());
+
+            jpaStockDetalle.destroy(stockDetalle.getIdStock());
+        } catch (Exception ex) {
+            DialogController.showException(ex);
         }
     }
 }

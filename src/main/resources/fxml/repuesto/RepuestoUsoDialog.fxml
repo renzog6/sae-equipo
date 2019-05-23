@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="bpUsoDialog" minHeight="600.0" minWidth="1024.0" prefHeight="600.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" >
+<BorderPane fx:id="bpUsoDialog" minHeight="600.0" minWidth="1024.0" prefHeight="600.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <top>
         <AnchorPane minHeight="60.0" prefHeight="162.0" prefWidth="1024.0" BorderPane.alignment="CENTER">
             <children>
@@ -41,7 +41,7 @@
                     </font>
                 </Label>  
                                 
-                <DatePicker fx:id="boxFecha" layoutX="81.0" layoutY="55.0" prefHeight="30.0" prefWidth="150.0" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="80.0" />                
+                <DatePicker fx:id="boxFecha" layoutX="81.0" layoutY="55.0" prefHeight="30.0" prefWidth="150.0" style="-fx-alignment: center;" AnchorPane.leftAnchor="30.0" AnchorPane.topAnchor="80.0" />                
                 <TextField fx:id="boxRepuesto" layoutX="80.0" layoutY="114.0" prefHeight="30.0" prefWidth="350.0" promptText="Buscar..." AnchorPane.leftAnchor="200.0" AnchorPane.topAnchor="80.0" />                
                 <TextField fx:id="boxCantidad" layoutX="535.0" layoutY="114.0" prefHeight="30.0" prefWidth="80.0" AnchorPane.leftAnchor="580.0" AnchorPane.topAnchor="80.0" />
                 <TextField fx:id="boxInfo" layoutX="545.0" layoutY="124.0" prefHeight="30.0" prefWidth="250.0" AnchorPane.leftAnchor="690.0" AnchorPane.topAnchor="80.0" />                         
@@ -60,8 +60,9 @@
             <children>
                 <TableView fx:id="tableStockDetalle" layoutX="-9.0" layoutY="14.0" prefHeight="358.0" prefWidth="417.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
+                        <TableColumn fx:id="colFecha" prefWidth="500.0" text="Fecha" /> 
                         <TableColumn fx:id="colRepuesto" prefWidth="500.0" text="Repuesto" />                        
-                        <TableColumn fx:id="colCantidad"  prefWidth="100.0" text="Cantidad" />
+                        <TableColumn fx:id="colCantidad" prefWidth="100.0" text="Cantidad" />
                         <TableColumn fx:id="colInfo" prefWidth="100.0" text="Info" />
                         <TableColumn fx:id="colAction" maxWidth="200.0" minWidth="50.0" prefWidth="50.0" text="Action" />
                     </columns>
