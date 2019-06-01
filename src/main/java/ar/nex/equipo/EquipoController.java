@@ -1,6 +1,8 @@
 package ar.nex.equipo;
 
 import ar.nex.entity.Equipo;
+import ar.nex.export.EquipoToExel;
+import ar.nex.util.DialogController;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -120,7 +122,8 @@ public class EquipoController implements Initializable {
     }
 
     private void initMenu() {
-        MenuItem item = new MenuItem("Repuestos     ");
+        MenuItem item = new MenuItem("[- Exportar a Excel -]");
+        item.setOnAction(e -> export());
         mbMenu.getItems().add(item);
         item = new MenuItem("Pedidos        ");
         mbMenu.getItems().add(item);
@@ -129,7 +132,6 @@ public class EquipoController implements Initializable {
     }
 
     public void clearAll() {
-        System.out.println("ar.nex.equipo.EquipoController.clearAll()");
         data.clear();
         searchBox.clear();
         equipoSelect = null;
@@ -201,8 +203,8 @@ public class EquipoController implements Initializable {
             }
             table.setItems(data);
         } catch (Exception e) {
-            System.out.println("ar.nex.equipo.EquipoController.loadData()");
-            e.printStackTrace();
+            clearAll();
+            DialogController.showException(e);
         }
 
     }
@@ -285,5 +287,9 @@ public class EquipoController implements Initializable {
     private void filtroEmpresa() {
         EmpresaSelect empresa = (EmpresaSelect) filtroEmpresa.getSelectionModel().getSelectedItem();
         loadData(empresa.getId());
+    }
+
+    private void export(){
+        new EquipoToExel().export(data,  filtroEmpresa.getSelectionModel().getSelectedItem().toString());
     }
 }

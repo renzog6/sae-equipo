@@ -8,6 +8,7 @@ import ar.nex.entity.EquipoCompraVenta;
 import ar.nex.entity.EquipoModelo;
 import ar.nex.entity.EquipoTipo;
 import ar.nex.entity.Marca;
+import ar.nex.util.DialogController;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
@@ -156,7 +157,7 @@ public class EquipoDialogController implements Initializable {
             boxValorCompra.setText("0.0");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            DialogController.showException(e); 
         }
     }
 
@@ -236,7 +237,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 3);
         } catch (IOException e) {
-            e.printStackTrace();
+            DialogController.showException(e); 
         }
     }
 
@@ -272,7 +273,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 2);
         } catch (IOException e) {
-            System.out.println(e);
+            DialogController.showException(e); 
         }
     }
 
@@ -296,7 +297,7 @@ public class EquipoDialogController implements Initializable {
                     }
             );
         } catch (Exception e) {
-            System.err.println(e);
+            DialogController.showException(e); 
         }
     }
 
@@ -307,8 +308,8 @@ public class EquipoDialogController implements Initializable {
             loader.setController(controller);
 
             showDialog(new Scene(loader.load()), 1);
-        } catch (IOException e) {
-            System.out.println(e);
+        } catch (IOException e) {            
+            DialogController.showException(e); 
         }
     }
 
@@ -344,7 +345,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 4);
         } catch (IOException e) {
-            System.out.println(e);
+            DialogController.showException(e); 
         }
     }
 
@@ -382,7 +383,7 @@ public class EquipoDialogController implements Initializable {
                     break;
             }
         } catch (Exception e) {
-            System.err.print(e);
+            DialogController.showException(e); 
         }
     }
 

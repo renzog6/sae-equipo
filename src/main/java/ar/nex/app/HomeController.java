@@ -60,7 +60,6 @@ public class HomeController implements Initializable {
     }
     
     public void loadUI(String ui) {
-        System.out.println("ar.nex.app.HomeController.loadUI() : " + ui);
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/" + ui + ".fxml"));
             bpHome.getStylesheets().add("/fxml/" + ui + ".css");

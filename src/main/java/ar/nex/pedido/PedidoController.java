@@ -6,8 +6,6 @@ import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoController;
 import ar.nex.util.DialogController;
 import ar.nex.jpa.PedidoJpaController;
-import ar.nex.jpa.RepuestoJpaController;
-import ar.nex.repuesto.RepuestoPedidoDialogController;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -102,6 +100,8 @@ public class PedidoController implements Initializable {
     @FXML
     private TableColumn colEstado;
     @FXML
+    private TableColumn<Pedido, Date> colFLlego;
+    @FXML
     private TableColumn<?, ?> colObeservacion;
     @FXML
     private TableColumn colAccion;
@@ -131,15 +131,22 @@ public class PedidoController implements Initializable {
     }
 
     private String listaModelo(Repuesto r) {
-        String list = null;
-        if (!r.getModeloList().isEmpty()) {
-            for (EquipoModelo item : r.getModeloList()) {
-                if (list == null) {
-                    list = item.getNombre();
+        String list = "-";
+        try {
+            if (!r.getModeloList().isEmpty()) {
+                if (r.getModeloList().size() >= 3) {
+                    list = "[ Varios ]";
                 } else {
-                    list = list + " / " + item.getNombre();
+                    EquipoModelo item = r.getModeloList().get(0);
+                    list = item.getTipo().getNombre() + " " + item.getNombre();
+                    if (r.getModeloList().size() >= 2) {
+                        item = r.getModeloList().get(1);
+                        list = list + " / " + item.getTipo().getNombre() + " " + item.getNombre();
+                    }
                 }
             }
+        } catch (Exception e) {            
+            list = "NN";
         }
         return list;
     }
@@ -220,6 +227,30 @@ public class PedidoController implements Initializable {
                 };
 
         colFecha.setCellFactory(cellFactory);
+
+        colFLlego.setCellValueFactory(new PropertyValueFactory<>("fechaFin"));
+        Callback<TableColumn<Pedido, Date>, TableCell<Pedido, Date>> cellFactoryLlego
+                = //
+                (final TableColumn<Pedido, Date> param) -> {
+                    final TableCell<Pedido, Date> cell = new TableCell<Pedido, Date>() {
+
+                @Override
+                public void updateItem(Date item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || (item == null)) {
+                        setGraphic(null);
+                        setText(null);
+                    } else {
+                        DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
+                        setText(fd.format(item));
+                        setGraphic(null);
+                    }
+                }
+            };
+                    return cell;
+                };
+
+        colFLlego.setCellFactory(cellFactoryLlego);
     }
 
     public void initCellEstado() {

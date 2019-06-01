@@ -243,7 +243,7 @@ public class RepuestoUsoController implements Initializable {
 
     private void add() {
         try {
-            if (stockDetalleSelect == null) {
+            if (equipoSelect == null) {
                 DialogController.errorDialog("Uso Repuesto", "Debe selecionar un Equipo");
             } else {
                 Stage dialog = new Stage();

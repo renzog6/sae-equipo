@@ -22,12 +22,13 @@
                 <TableView fx:id="table" layoutX="-9.0" layoutY="14.0" minHeight="558.0" onMouseClicked="#showOnClick" prefHeight="558.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
                         <TableColumn fx:id="colFecha" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Fecha" />
-                        <TableColumn fx:id="colEquipo" prefWidth="102.0" text="Equipo" />
-                        <TableColumn fx:id="colRepuesto" prefWidth="102.0" text="Repuesto" />
+                        <TableColumn fx:id="colEquipo" prefWidth="100.0" text="Equipo" />
+                        <TableColumn fx:id="colRepuesto" prefWidth="100.0" text="Repuesto" />
                         <TableColumn fx:id="colCantidad" maxWidth="90.0" minWidth="70.0" text="Cantidad" />
-                        <TableColumn fx:id="colProveedor" prefWidth="102.0" text="Proveedor" />
+                        <TableColumn fx:id="colProveedor" prefWidth="100.0" text="Proveedor" />
                         <TableColumn fx:id="colEstado" maxWidth="100.0" minWidth="70.0" text="Estado" />
-                        <TableColumn fx:id="colObeservacion" prefWidth="102.0" text="Obeservacion" />
+                        <TableColumn fx:id="colFLlego" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Llego" />
+                        <TableColumn fx:id="colObeservacion" prefWidth="100.0" text="Obeservacion" />
                         <TableColumn fx:id="colAccion" maxWidth="100.0" minWidth="80.0" prefWidth="100.0" styleClass="colAccion" text="Accion" />
                     </columns>
                     <columnResizePolicy>
