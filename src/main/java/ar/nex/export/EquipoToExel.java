@@ -59,6 +59,6 @@ public class EquipoToExel {
             sheet.autoSizeColumn(i);
         }
 
-        new ExportUtil().save(workbook, "Lista Equipos - " + filtro);
+        new ExportUtil().save(workbook, "Lista Equipos - Empresa " + filtro);
     }
 }
