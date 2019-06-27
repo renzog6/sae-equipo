@@ -110,8 +110,7 @@ public class RepuestoPedidoDialogController implements Initializable {
                 this.dataProvedor.add(item);
             });            
             AutoCompletionBinding<Empresa> autoProvedor = TextFields.bindAutoCompletion(boxProvedor, dataProvedor);            
-            autoProvedor.setOnAutoCompleted(
-                    (AutoCompletionBinding.AutoCompletionEvent<Empresa> event) -> {
+            autoProvedor.setOnAutoCompleted((AutoCompletionBinding.AutoCompletionEvent<Empresa> event) -> {
                         provedorSelect = event.getCompletion();
                     }
             );            

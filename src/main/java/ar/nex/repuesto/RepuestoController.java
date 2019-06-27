@@ -308,7 +308,7 @@ public class RepuestoController implements Initializable {
     private void addToPedido() {
         System.out.println("ar.nex.pedido.RepuestoController.AddToPedido()");
         try {
-            Stage dlg = new Stage();
+            Stage stage = new Stage();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoPedidoDialog.fxml"));
             RepuestoPedidoDialogController controller = new RepuestoPedidoDialogController(selectRepuesto);
@@ -316,11 +316,11 @@ public class RepuestoController implements Initializable {
 
             Scene scene = new Scene(loader.load());
 
-            dlg.setScene(scene);
-            dlg.initModality(Modality.APPLICATION_MODAL);
-            dlg.resizableProperty().setValue(Boolean.FALSE);
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.resizableProperty().setValue(Boolean.FALSE);
 
-            dlg.showAndWait();
+            stage.showAndWait();
             this.loadData();
 
         } catch (IOException e) {
@@ -336,7 +336,7 @@ public class RepuestoController implements Initializable {
     public void edit() {
         System.out.println("ar.nex.pedido.RepuestoController.edit()");
         try {
-            Stage dlg = new Stage();
+            Stage stage = new Stage();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoDialog.fxml"));
             RepuestoDialogController controller = new RepuestoDialogController(selectRepuesto);
@@ -344,11 +344,11 @@ public class RepuestoController implements Initializable {
 
             Scene scene = new Scene(loader.load());
 
-            dlg.setScene(scene);
-            dlg.initModality(Modality.APPLICATION_MODAL);
-            dlg.resizableProperty().setValue(Boolean.FALSE);
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.resizableProperty().setValue(Boolean.FALSE);
 
-            dlg.showAndWait();
+            stage.showAndWait();
             this.loadData();
 
         } catch (IOException e) {
@@ -358,7 +358,7 @@ public class RepuestoController implements Initializable {
 
     public void addModelo() {
         try {
-            Stage dlg = new Stage();
+            Stage stage = new Stage();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoEquipoModeloDialog.fxml"));
             RepuestoEquipoModeloDialogController controller = new RepuestoEquipoModeloDialogController(selectRepuesto);
@@ -366,14 +366,14 @@ public class RepuestoController implements Initializable {
 
             Scene scene = new Scene(loader.load());
 
-            dlg.setScene(scene);
-            dlg.initModality(Modality.APPLICATION_MODAL);
-            dlg.resizableProperty().setValue(Boolean.FALSE);
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.resizableProperty().setValue(Boolean.FALSE);
 
-            dlg.showAndWait();
+            stage.showAndWait();
             this.loadData();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.print(e);
         }
     }

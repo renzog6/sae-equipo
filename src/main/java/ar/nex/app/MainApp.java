@@ -20,6 +20,8 @@ public class MainApp extends Application {
             stage.setTitle("App by HellNeX");
             stage.setScene(scene);
             stage.setMaximized(true);
+            stage.setMinWidth(1024);
+            stage.setMinHeight(768);            
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

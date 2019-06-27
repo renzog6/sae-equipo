@@ -1,6 +1,5 @@
 package ar.nex.pedido;
 
-
 import ar.nex.repuesto.RepuestoStockController;
 import ar.nex.entity.Pedido;
 import ar.nex.jpa.PedidoJpaController;
@@ -9,8 +8,11 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -76,12 +78,28 @@ public class PedidoReciboDialogController implements Initializable {
                 }
             });
 
-            lblCodigo.setText("Codigo: " + pedido.getRepuesto().toString());
+            lblCodigo.setText("Codigo: " + pedido.getRepuesto().toString() + " ( Cantidad Pedida: " + pedido.getCantidad() + " )");
 
             DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
             boxFecha.setText(fd.format(new Date()));
 
             boxCantidad.setText(pedido.getCantidad().toString());
+            boxCantidad.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if ((!newValue.matches("\\d*")) || (Double.valueOf(newValue) < pedido.getCantidad())) {
+                        boxCantidad.setText(newValue.replaceAll("[^\\d]", ""));
+                    }
+                    if (!newValue.isEmpty()) {
+                        if (Double.valueOf(newValue) < pedido.getCantidad()) {
+                            filtroEstado.getSelectionModel().select(EstadoPedido.PENDIENTE.getValue());
+                        }
+                        if (Objects.equals(Double.valueOf(newValue), pedido.getCantidad())) {
+                            filtroEstado.getSelectionModel().select(EstadoPedido.COMPLETO.getValue());
+                        }
+                    }
+                }
+            });
 
             boxInfo.setText(pedido.getInfo());
 
@@ -89,25 +107,37 @@ public class PedidoReciboDialogController implements Initializable {
             filtroEstado.getItems().addAll(list);
             filtroEstado.getSelectionModel().select(EstadoPedido.COMPLETO.getValue());
             System.out.println("ar.nex.pedido.PedidoReciboDialogController.initControls() :" + pedido.getRepuesto().getStock());
-            
+
         } catch (Exception e) {
-           DialogController.showException(e); 
+            DialogController.showException(e);
         }
     }
 
     @FXML
     private void guardar(ActionEvent event) {
         try {
+            PedidoJpaController jpaPedido = new PedidoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
+            
+            if (filtroEstado.getSelectionModel().getSelectedIndex() == EstadoPedido.PENDIENTE.getValue()) {
+                Pedido p = new Pedido();
+                p.setFechaInicio(pedido.getFechaInicio());
+                p.setRepuesto(pedido.getRepuesto());
+                p.setEmpresa(pedido.getEmpresa());
+                p.setEstado(EstadoPedido.PENDIENTE.getValue());
+                p.setCantidad(pedido.getCantidad() - Double.valueOf(boxCantidad.getText()));
+                p.setInfo(boxFecha.getText() + " llegaron " + boxCantidad.getText());
+                jpaPedido.create(p);
+            }
+            
             DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
             pedido.setFechaFin(fd.parse(boxFecha.getText()));
 
             pedido.setCantidad(Double.valueOf(boxCantidad.getText()));
             pedido.setInfo(boxInfo.getText());
+            pedido.setEstado(EstadoPedido.COMPLETO.getValue());
+            //pedido.setEstado(filtroEstado.getSelectionModel().getSelectedIndex());
 
-            pedido.setEstado(filtroEstado.getSelectionModel().getSelectedIndex());
-
-            PedidoJpaController jpaPedido = new PedidoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
-            if (pedido.getIdPedido() != null) {                
+            if (pedido.getIdPedido() != null) {
                 jpaPedido.edit(pedido);
                 System.out.println("ar.nex.pedido.PedidoReciboDialogController.guardar() : " + pedido.getRepuesto().getStock());
                 new RepuestoStockController().inStock(pedido);
@@ -115,10 +145,9 @@ public class PedidoReciboDialogController implements Initializable {
                 //jpaPedido.create(pedido);
                 System.out.println("ar.nex.pedido.PedidoReciboDialogController.guardar() : VERRRRRRRRRRRRRRRRRRRRRRR");
             }
-
             cancelar(event);
         } catch (Exception e) {
-           DialogController.showException(e); 
+            DialogController.showException(e);
         }
 
     }

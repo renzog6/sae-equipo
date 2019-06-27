@@ -117,7 +117,7 @@ public class EquipoDialogController implements Initializable {
         if (equipo.getEmpresa() != null) {
             idEmp = equipo.getEmpresa().getIdEmpresa();
             filtroEmpresa.getSelectionModel().select(equipo.getEmpresa().getIdEmpresa().intValue() + 1);
-        }else{
+        } else {
             filtroEmpresa.getSelectionModel().select(1);
         }
     }
@@ -157,12 +157,12 @@ public class EquipoDialogController implements Initializable {
             boxValorCompra.setText("0.0");
 
         } catch (Exception e) {
-            DialogController.showException(e); 
+            DialogController.showException(e);
         }
     }
 
     @FXML
-    private void guardar(ActionEvent event) {
+    private void guardar(ActionEvent e) {
         try {
 
             Empresa emp = service.getEmpresa().findEmpresa(idEmp);
@@ -197,11 +197,9 @@ public class EquipoDialogController implements Initializable {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
-
+            DialogController.showException(ex);
         } finally {
-            Stage stage = (Stage) btnCancelar.getScene().getWindow();
-            stage.close();
+            ((Node) (e.getSource())).getScene().getWindow().hide();
         }
     }
 
@@ -237,7 +235,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 3);
         } catch (IOException e) {
-            DialogController.showException(e); 
+            DialogController.showException(e);
         }
     }
 
@@ -273,7 +271,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 2);
         } catch (IOException e) {
-            DialogController.showException(e); 
+            DialogController.showException(e);
         }
     }
 
@@ -297,7 +295,7 @@ public class EquipoDialogController implements Initializable {
                     }
             );
         } catch (Exception e) {
-            DialogController.showException(e); 
+            DialogController.showException(e);
         }
     }
 
@@ -308,8 +306,8 @@ public class EquipoDialogController implements Initializable {
             loader.setController(controller);
 
             showDialog(new Scene(loader.load()), 1);
-        } catch (IOException e) {            
-            DialogController.showException(e); 
+        } catch (IOException e) {
+            DialogController.showException(e);
         }
     }
 
@@ -345,7 +343,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 4);
         } catch (IOException e) {
-            DialogController.showException(e); 
+            DialogController.showException(e);
         }
     }
 
@@ -383,7 +381,7 @@ public class EquipoDialogController implements Initializable {
                     break;
             }
         } catch (Exception e) {
-            DialogController.showException(e); 
+            DialogController.showException(e);
         }
     }
 

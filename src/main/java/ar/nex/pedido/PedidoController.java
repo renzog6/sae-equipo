@@ -6,6 +6,8 @@ import ar.nex.entity.Repuesto;
 import ar.nex.equipo.EquipoController;
 import ar.nex.util.DialogController;
 import ar.nex.jpa.PedidoJpaController;
+import ar.nex.jpa.RepuestoJpaController;
+import ar.nex.repuesto.RepuestoPedidoDialogController;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,13 +43,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Modality;
 
 /**
@@ -80,6 +86,8 @@ public class PedidoController implements Initializable {
 
     @FXML
     private Label lblCompra;
+    @FXML
+    private Label lblInfo;
 
     private final ObservableList<Pedido> data = FXCollections.observableArrayList();
     private final FilteredList<Pedido> filteredData = new FilteredList<>(data);
@@ -92,22 +100,28 @@ public class PedidoController implements Initializable {
     @FXML
     private TableColumn<Pedido, String> colEquipo;
     @FXML
-    private TableColumn<?, ?> colRepuesto;
+    private TableColumn<Pedido, String> colCodigo;
+    @FXML
+    private TableColumn<Pedido, String> colDescripcion;
     @FXML
     private TableColumn<?, ?> colCantidad;
     @FXML
     private TableColumn<?, ?> colProveedor;
     @FXML
     private TableColumn colEstado;
+//    @FXML
+//    private TableColumn<Pedido, Date> colFLlego;    
     @FXML
-    private TableColumn<Pedido, Date> colFLlego;
+    private TableColumn colInfo;
+
     @FXML
-    private TableColumn<?, ?> colObeservacion;
-    @FXML
-    private TableColumn colAccion;
+    private ContextMenu menuTable;
 
     private EntityManagerFactory factory;
-    private PedidoJpaController srvPedido;
+    private PedidoJpaController jpaPedido;
+    private RepuestoJpaController jpaRepuesto;
+
+    DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Initializes the controller class.
@@ -119,12 +133,50 @@ public class PedidoController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         System.out.println("ar.nex.repuesto.PedidoController.initialize()");
         initTable();
+        initMenuTable();
         initService();
         loadData(EstadoPedido.PENDIENTE);
         initFiltroEstado();
+
     }
 
-    public void clearAll() {
+    private void initMenuTable() {
+
+        MenuItem item = new MenuItem("Llego...");
+        item.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (pedidoSelect != null) {
+                    reciboPedido();
+                }
+            }
+        });        
+        menuTable.getItems().addAll(item);
+
+        item = new MenuItem("Volver a Pedir");
+        item.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (pedidoSelect != null) {
+                    volverAPedir();
+                }
+            }
+        });
+        menuTable.getItems().addAll(item);
+
+        item = new MenuItem("Devolver");
+        item.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (pedidoSelect != null) {
+                    devolverPedido();
+                }
+            }
+        });
+        menuTable.getItems().addAll(item);
+    }
+
+    private void clearAll() {
         data.clear();
         searchBox.clear();
         pedidoSelect = null;
@@ -133,7 +185,7 @@ public class PedidoController implements Initializable {
     private String listaModelo(Repuesto r) {
         String list = "-";
         try {
-            if (!r.getModeloList().isEmpty()) {
+            if (!r.getModeloList().isEmpty() && r.getModeloList() != null) {
                 if (r.getModeloList().size() >= 3) {
                     list = "[ Varios ]";
                 } else {
@@ -145,24 +197,40 @@ public class PedidoController implements Initializable {
                     }
                 }
             }
-        } catch (Exception e) {            
+        } catch (Exception e) {
             list = "NN";
         }
         return list;
     }
 
     public void initTable() {
+
         colEquipo.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Pedido, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Pedido, String> data) {
                 return new SimpleStringProperty(listaModelo(data.getValue().getRepuesto()));
             }
         });
-        colRepuesto.setCellValueFactory(new PropertyValueFactory<>("repuesto"));
+
+        colCodigo.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Pedido, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Pedido, String> param) {
+                return new SimpleStringProperty(param.getValue().getRepuesto().getCodigo());
+            }
+        });
+
+        colDescripcion.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Pedido, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Pedido, String> param) {
+                return new SimpleStringProperty(param.getValue().getRepuesto().getDescripcion());
+            }
+        });
+
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colProveedor.setCellValueFactory(new PropertyValueFactory<>("empresa"));
-        colObeservacion.setCellValueFactory(new PropertyValueFactory<>("info"));
-        initCellAccion();
+        colInfo.setCellValueFactory(new PropertyValueFactory<>("info"));
+
+        //   initCellAccion();
         initCellFecha();
         initCellEstado();
 
@@ -171,36 +239,6 @@ public class PedidoController implements Initializable {
 
         PedidoTableUtils.installCopyPasteHandler(table);
 
-    }
-
-    public void initCellAccion() {
-        colAccion.setCellValueFactory(new PropertyValueFactory<>("Accion"));
-        Callback<TableColumn<Pedido, String>, TableCell<Pedido, String>> cellFactory
-                = //
-                (final TableColumn<Pedido, String> param) -> {
-                    final TableCell<Pedido, String> cell = new TableCell<Pedido, String>() {
-
-                final Button btn = new Button("+");
-
-                @Override
-                public void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setGraphic(null);
-                        setText(null);
-                    } else {
-                        btn.setOnAction(event -> {
-                            pedidoSelect = getTableView().getItems().get(getIndex());
-                            reciboPedido();
-                        });
-                        setGraphic(btn);
-                        setText(null);
-                    }
-                }
-            };
-                    return cell;
-                };
-        colAccion.setCellFactory(cellFactory);
     }
 
     public void initCellFecha() {
@@ -217,7 +255,6 @@ public class PedidoController implements Initializable {
                         setGraphic(null);
                         setText(null);
                     } else {
-                        DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
                         setText(fd.format(item));
                         setGraphic(null);
                     }
@@ -228,32 +265,31 @@ public class PedidoController implements Initializable {
 
         colFecha.setCellFactory(cellFactory);
 
-        colFLlego.setCellValueFactory(new PropertyValueFactory<>("fechaFin"));
-        Callback<TableColumn<Pedido, Date>, TableCell<Pedido, Date>> cellFactoryLlego
-                = //
-                (final TableColumn<Pedido, Date> param) -> {
-                    final TableCell<Pedido, Date> cell = new TableCell<Pedido, Date>() {
-
-                @Override
-                public void updateItem(Date item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || (item == null)) {
-                        setGraphic(null);
-                        setText(null);
-                    } else {
-                        DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
-                        setText(fd.format(item));
-                        setGraphic(null);
-                    }
-                }
-            };
-                    return cell;
-                };
-
-        colFLlego.setCellFactory(cellFactoryLlego);
+//        colFLlego.setCellValueFactory(new PropertyValueFactory<>("fechaFin"));
+//        Callback<TableColumn<Pedido, Date>, TableCell<Pedido, Date>> cellFactoryLlego
+//                = //
+//                (final TableColumn<Pedido, Date> param) -> {
+//                    final TableCell<Pedido, Date> cell = new TableCell<Pedido, Date>() {
+//
+//                @Override
+//                public void updateItem(Date item, boolean empty) {
+//                    super.updateItem(item, empty);
+//                    if (empty || (item == null)) {
+//                        setGraphic(null);
+//                        setText(null);
+//                    } else {                        
+//                        setText(fd.format(item));
+//                        setGraphic(null);
+//                    }
+//                }
+//            };
+//                    return cell;
+//                };
+//
+//        colFLlego.setCellFactory(cellFactoryLlego);
     }
 
-    public void initCellEstado() {
+    private void initCellEstado() {
         try {
             colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
             Callback<TableColumn<Pedido, Integer>, TableCell<Pedido, Integer>> cellFactory
@@ -294,11 +330,10 @@ public class PedidoController implements Initializable {
         }
     }
 
-    public void initService() {
+    private void initService() {
         System.out.println("ar.nex.util.PedidoController.initService()");
         factory = Persistence.createEntityManagerFactory("SaeFxPU");
-        srvPedido = new PedidoJpaController(factory);
-        srvPedido = new PedidoJpaController(factory);
+        jpaPedido = new PedidoJpaController(factory);
     }
 
     private void initFiltroEstado() {
@@ -314,16 +349,20 @@ public class PedidoController implements Initializable {
         loadData((EstadoPedido) filtroEstado.getSelectionModel().getSelectedItem());
     }
 
-    public void loadData(EstadoPedido estado) {
-        clearAll();
+    private void loadData(EstadoPedido estado) {
+        try {
+            clearAll();
 
-        List<Pedido> lst = srvPedido.findPedidoEntities();
-        lst.forEach((item) -> {
-            if ((item.getEstado() == estado.getValue()) || (estado == EstadoPedido.TODOS)) {
-                data.add(item);
-            }
-        });
-        table.setItems(data);
+            List<Pedido> lst = jpaPedido.findPedidoEntities();
+            lst.forEach((item) -> {
+                if ((item.getEstado() == estado.getValue()) || (estado == EstadoPedido.TODOS)) {
+                    data.add(item);
+                }
+            });
+            table.setItems(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -356,16 +395,25 @@ public class PedidoController implements Initializable {
     @FXML
     private void showOnClick(MouseEvent event) {
         try {
-            Pedido item = (Pedido) table.getSelectionModel().getSelectedItem();
-            if (item.getRepuesto().getPedidoList().size() >= 1) {
-                lblCompra.setText("Ultima compra: " + item.getRepuesto().getPedidoList().get(item.getRepuesto().getPedidoList().size() - 1).toString());
+            pedidoSelect = (Pedido) table.getSelectionModel().getSelectedItem();
+            lblInfo.setText("Info: " + pedidoSelect.getRepuesto().getInfo());
+            if (pedidoSelect.getRepuesto().getPedidoList().size() >= 1) {
+                lblCompra.setText(ultimaCompra(pedidoSelect.getRepuesto().getPedidoList().get(pedidoSelect.getRepuesto().getPedidoList().size() - 1)));
             } else {
                 lblCompra.setText("Ultima compra: sin registro");
             }
         } catch (Exception e) {
             System.out.println(e);
-
+            lblCompra.setText("Ultima compra: sin registro");
         }
+    }
+
+    private String ultimaCompra(Pedido p) {
+        String str = "Ultima compra: ";
+        str += fd.format(p.getFechaInicio()) + " - ";
+        str += p.getEmpresa().getNombre() + " - ";
+        str += "Llego: " + fd.format(p.getFechaFin());
+        return str;
     }
 
     private void reciboPedido() {
@@ -384,6 +432,47 @@ public class PedidoController implements Initializable {
             this.loadData(EstadoPedido.PENDIENTE);
         } catch (IOException e) {
             System.err.print(e);
+        }
+    }
+
+    private void volverAPedir() {
+        try {
+            Stage stage = new Stage();
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoPedidoDialog.fxml"));
+            RepuestoPedidoDialogController controller = new RepuestoPedidoDialogController(pedidoSelect.getRepuesto());
+            loader.setController(controller);
+
+            Scene scene = new Scene(loader.load());
+
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.resizableProperty().setValue(Boolean.FALSE);
+
+            stage.showAndWait();
+            this.loadData(EstadoPedido.PENDIENTE);
+
+        } catch (IOException e) {
+            System.err.print(e);
+        }
+    }
+
+    private void devolverPedido() {
+        try {
+            if (DialogController.confirmDialog("Seguro que desea Cancelar el Pedido???")) {
+                if (pedidoSelect.getEstado() == EstadoPedido.COMPLETO.getValue()) {
+                    pedidoSelect.getRepuesto().setStock(pedidoSelect.getRepuesto().getStock() - pedidoSelect.getCantidad());
+                    jpaRepuesto = new RepuestoJpaController(factory);
+                    jpaRepuesto.edit(pedidoSelect.getRepuesto());
+                    jpaRepuesto = null;
+                }
+
+                pedidoSelect.setEstado(EstadoPedido.CANCELADO.getValue());
+                jpaPedido.edit(pedidoSelect);
+                
+                filtroEstado();
+            }
+        } catch (Exception e) {
         }
     }
 
