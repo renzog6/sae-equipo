@@ -1,13 +1,14 @@
 package ar.nex.equipo;
 
 import ar.nex.marca.MarcaDialogController;
-import ar.nex.entity.Empresa;
-import ar.nex.entity.Equipo;
-import ar.nex.entity.EquipoCategoria;
-import ar.nex.entity.EquipoCompraVenta;
-import ar.nex.entity.EquipoModelo;
-import ar.nex.entity.EquipoTipo;
+import ar.nex.entity.empresa.Empresa;
+import ar.nex.entity.equipo.Equipo;
+import ar.nex.entity.equipo.EquipoCategoria;
+import ar.nex.entity.equipo.EquipoCompraVenta;
+import ar.nex.entity.equipo.EquipoModelo;
+import ar.nex.entity.equipo.EquipoTipo;
 import ar.nex.entity.Marca;
+import ar.nex.service.JpaService;
 import ar.nex.util.DialogController;
 import java.io.IOException;
 import java.net.URL;
@@ -85,7 +86,7 @@ public class EquipoDialogController implements Initializable {
     @FXML
     private Button btnAddModelo;
 
-    private EquipoService service;
+    private JpaService jpa;
 
     private final Equipo equipo;
 
@@ -98,7 +99,7 @@ public class EquipoDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        service = new EquipoService();
+        jpa = new JpaService();
 
         loadDataCategoria();
         loadDataTipo();
@@ -165,14 +166,14 @@ public class EquipoDialogController implements Initializable {
     private void guardar(ActionEvent e) {
         try {
 
-            Empresa emp = service.getEmpresa().findEmpresa(idEmp);
+            Empresa emp = jpa.getEmpresa().findEmpresa(idEmp);
 
             EquipoCompraVenta cv = new EquipoCompraVenta();//service.getCompraVenta().findEquipoCompraVenta(Long.valueOf(1));
             Date fechaCompra = new Date();
             cv.setFechaCompra(fechaCompra);
             cv.setVendedor(boxVendedor.getText());
             cv.setValorCompra(Double.valueOf(boxValorCompra.getText()));
-            service.getCompraVenta().create(cv);
+            jpa.getEquipoCompraVenta().create(cv);
 
             equipo.setEmpresa(emp);
             equipo.setAnio(boxAnio.getText());
@@ -191,9 +192,9 @@ public class EquipoDialogController implements Initializable {
             equipo.setCompraVenta(cv);
 
             if (equipo.getIdEquipo() != null) {
-                service.getEquipo().edit(equipo);
+                jpa.getEquipo().edit(equipo);
             } else {
-                service.getEquipo().create(equipo);
+                jpa.getEquipo().create(equipo);
             }
 
         } catch (Exception ex) {
@@ -210,7 +211,7 @@ public class EquipoDialogController implements Initializable {
     private void loadDataCategoria() {
         try {
             this.dataCategoria.clear();
-            List<EquipoCategoria> lst = service.getCategoria().findEquipoCategoriaEntities();
+            List<EquipoCategoria> lst = jpa.getEquipoCategoria().findEquipoCategoriaEntities();
             lst.forEach((item) -> {
                 this.dataCategoria.add(item);
             });
@@ -246,7 +247,7 @@ public class EquipoDialogController implements Initializable {
     private void loadDataTipo() {
         try {
             this.dataTipo.clear();
-            List<EquipoTipo> lst = service.getTipo().findEquipoTipoEntities();
+            List<EquipoTipo> lst = jpa.getEquipoTipo().findEquipoTipoEntities();
             lst.forEach((item) -> {
                 this.dataTipo.add(item);
             });
@@ -282,7 +283,7 @@ public class EquipoDialogController implements Initializable {
     private void loadDataModelo() {
         try {
             this.dataModelo.clear();
-            List<EquipoModelo> lst = service.getModelo().findEquipoModeloEntities();
+            List<EquipoModelo> lst = jpa.getEquipoModelo().findEquipoModeloEntities();
             lst.forEach((item) -> {
                 this.dataModelo.add(item);
             });
@@ -318,7 +319,7 @@ public class EquipoDialogController implements Initializable {
     private void loadDataMarca() {
         try {
             this.dataMarca.clear();
-            List<Marca> lst = service.getMarca().findMarcaEntities();
+            List<Marca> lst = jpa.getMarca().findMarcaEntities();
             lst.forEach((item) -> {
                 this.dataMarca.add(item);
             });

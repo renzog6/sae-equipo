@@ -1,20 +1,19 @@
-package ar.nex.pedido;
+package ar.nex.gasoil;
 
 /**
  *
  * @author Renzo
  */
-public enum EstadoPedido {
+public enum GasoilMovimiento {
 
-    TODOS(0, "Todos"),
-    PENDIENTE(1, "Pendiente"),
-    COMPLETO(2, "Completo"),
-    CANCELADO(3, "Cancelado");
+    CARGA(0, "Carga"),
+    DESCARDA(1, "Descarga"),
+    OTRO(2, "Otro");
 
     private final int value;
     private final String estado;
 
-    private EstadoPedido(int value, String estado) {
+    private GasoilMovimiento(int value, String estado) {
         this.value = value;
         this.estado = estado;
     }
@@ -26,7 +25,7 @@ public enum EstadoPedido {
     public String getNombre() {
         return estado;
     }
-    
+
     @Override
     public String toString() {
         return estado;

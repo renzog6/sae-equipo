@@ -1,7 +1,8 @@
 package ar.nex.equipo;
 
-import ar.nex.entity.EquipoCategoria;
+import ar.nex.entity.equipo.EquipoCategoria;
 import ar.nex.jpa.EquipoCategoriaJpaController;
+import ar.nex.service.JpaService;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -40,7 +41,8 @@ public class EquipoCategoriaDialogController implements Initializable {
     private Button btnCancelar;
 
     private final EquipoCategoria categoria;
-    private EquipoCategoriaJpaController jpaCategoria;
+    
+    private JpaService jpa;
 
     /**
      * Initializes the controller class.
@@ -50,7 +52,7 @@ public class EquipoCategoriaDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO        
-        jpaCategoria = new EquipoService().getCategoria();
+        jpa = new JpaService();
 
         Platform.runLater(new Runnable() {
             @Override
@@ -66,10 +68,8 @@ public class EquipoCategoriaDialogController implements Initializable {
     @FXML
     private void guardar(ActionEvent event) {
         try {
-            categoria.setNombre(boxModelo.getText());
-           
-            jpaCategoria.create(categoria);
-
+            categoria.setNombre(boxModelo.getText());           
+            jpa.getEquipoCategoria().create(categoria);
             cancelar(event);
         } catch (Exception e) {
             System.out.println(e);

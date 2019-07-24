@@ -1,12 +1,12 @@
 package ar.nex.repuesto;
 
-import ar.nex.entity.Empresa;
-import ar.nex.entity.Pedido;
-import ar.nex.entity.Repuesto;
-import ar.nex.equipo.EquipoService;
+import ar.nex.entity.empresa.Empresa;
+import ar.nex.entity.equipo.Pedido;
+import ar.nex.entity.equipo.Repuesto;
 import ar.nex.jpa.EmpresaJpaController;
 import ar.nex.jpa.PedidoJpaController;
 import ar.nex.pedido.EstadoPedido;
+import ar.nex.service.JpaService;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -104,7 +104,7 @@ public class RepuestoPedidoDialogController implements Initializable {
     private void loadDataProvedor() {
         try {
             this.dataProvedor.clear();
-            EmpresaJpaController jpaProvedor = new EquipoService().getEmpresa();
+            EmpresaJpaController jpaProvedor = new JpaService().getEmpresa();
             List<Empresa> lst = jpaProvedor.findEmpresaEntities();
             lst.forEach((item) -> {
                 this.dataProvedor.add(item);

@@ -1,14 +1,14 @@
 package ar.nex.repuesto;
 
-import ar.nex.entity.Empresa;
-import ar.nex.entity.EquipoModelo;
+import ar.nex.entity.empresa.Empresa;
+import ar.nex.entity.equipo.EquipoModelo;
 import ar.nex.entity.Marca;
-import ar.nex.entity.Repuesto;
-import ar.nex.equipo.EquipoService;
+import ar.nex.entity.equipo.Repuesto;
 import ar.nex.jpa.EmpresaJpaController;
 import ar.nex.jpa.EquipoModeloJpaController;
 import ar.nex.jpa.MarcaJpaController;
 import ar.nex.jpa.RepuestoJpaController;
+import ar.nex.service.JpaService;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public class RepuestoDialogController implements Initializable {
 
     private Repuesto repuesto;
 
-    private RepuestoJpaController jpaRepuesto;
+    private JpaService jpa;
 
     /**
      * Initializes the controller class.
@@ -72,6 +72,7 @@ public class RepuestoDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        jpa = new JpaService();
         initControls();
         loadDataProvedor();
         loadDataMarca();
@@ -118,9 +119,9 @@ public class RepuestoDialogController implements Initializable {
             repuesto.setParte(boxParte.getText());
             repuesto.setStock(0.0);
 
-            jpaRepuesto = new RepuestoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
+            
             if (repuesto.getIdRepuesto() != null) {
-                jpaRepuesto.edit(repuesto);
+                jpa.getRepuesto().edit(repuesto);
             } else {
                 repuesto.setMarca(marcaSelect.toString());
 
@@ -132,7 +133,7 @@ public class RepuestoDialogController implements Initializable {
                 lstModelo.add(modeloSelect);
                 repuesto.setModeloList(lstModelo);
 
-                jpaRepuesto.create(repuesto);
+                jpa.getRepuesto().create(repuesto);
             }
 
             cancelar(event);
@@ -148,9 +149,8 @@ public class RepuestoDialogController implements Initializable {
 
     private void loadDataProvedor() {
         try {
-            this.dataProvedor.clear();
-            EmpresaJpaController jpaProvedor = new EquipoService().getEmpresa();
-            List<Empresa> lst = jpaProvedor.findEmpresaEntities();
+            this.dataProvedor.clear();            
+            List<Empresa> lst = jpa.getEmpresa().findEmpresaEntities();
             lst.forEach((item) -> {
                 this.dataProvedor.add(item);
             });
@@ -174,8 +174,7 @@ public class RepuestoDialogController implements Initializable {
     private void loadDataMarca() {
         try {
             this.dataMarca.clear();
-            MarcaJpaController jpaMarca = new EquipoService().getMarca();
-            List<Marca> lst = jpaMarca.findMarcaEntities();
+            List<Marca> lst = jpa.getMarca().findMarcaEntities();
             lst.forEach((item) -> {
                 this.dataMarca.add(item);
             });
@@ -199,9 +198,8 @@ public class RepuestoDialogController implements Initializable {
 
     private void loadDataModelo() {
         try {
-            this.dataModelo.clear();
-            EquipoModeloJpaController jpaModelo = new EquipoService().getModelo();
-            List<EquipoModelo> lst = jpaModelo.findEquipoModeloEntities();
+            this.dataModelo.clear();            
+            List<EquipoModelo> lst = jpa.getEquipoModelo().findEquipoModeloEntities();
             lst.forEach((item) -> {
                 this.dataModelo.add(item);
             });

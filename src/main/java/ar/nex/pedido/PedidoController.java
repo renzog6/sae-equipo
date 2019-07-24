@@ -1,8 +1,8 @@
 package ar.nex.pedido;
 
-import ar.nex.entity.EquipoModelo;
-import ar.nex.entity.Pedido;
-import ar.nex.entity.Repuesto;
+import ar.nex.entity.equipo.EquipoModelo;
+import ar.nex.entity.equipo.Pedido;
+import ar.nex.entity.equipo.Repuesto;
 import ar.nex.equipo.EquipoController;
 import ar.nex.util.DialogController;
 import ar.nex.jpa.PedidoJpaController;
@@ -53,7 +53,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCombination;
 import javafx.stage.Modality;
 
 /**
@@ -150,7 +149,7 @@ public class PedidoController implements Initializable {
                     reciboPedido();
                 }
             }
-        });        
+        });
         menuTable.getItems().addAll(item);
 
         item = new MenuItem("Volver a Pedir");
@@ -367,23 +366,29 @@ public class PedidoController implements Initializable {
 
     @FXML
     private void Search() {
-        searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            filteredData.setPredicate((Predicate<? super Pedido>) (Pedido item) -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (item.getRepuesto().getCodigo().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (item.getEmpresa().getNombre().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                return false;
+        try {
+            searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
+                filteredData.setPredicate((Predicate<? super Pedido>) (Pedido item) -> {
+                    if (newValue == null || newValue.isEmpty()) {
+                        return true;
+                    }
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    if (item.getRepuesto().getCodigo().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    } else if (item.getEmpresa().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    }else if (item.getRepuesto().getDescripcion().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    }
+                    return false;
+                });
             });
-        });
-        SortedList<Pedido> sortedData = new SortedList<>(filteredData);
-        sortedData.comparatorProperty().bind(table.comparatorProperty());
-        table.setItems(sortedData);
+            SortedList<Pedido> sortedData = new SortedList<>(filteredData);
+            sortedData.comparatorProperty().bind(table.comparatorProperty());
+            table.setItems(sortedData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -469,7 +474,7 @@ public class PedidoController implements Initializable {
 
                 pedidoSelect.setEstado(EstadoPedido.CANCELADO.getValue());
                 jpaPedido.edit(pedidoSelect);
-                
+
                 filtroEstado();
             }
         } catch (Exception e) {

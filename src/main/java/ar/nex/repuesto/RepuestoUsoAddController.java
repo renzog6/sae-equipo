@@ -1,8 +1,8 @@
 package ar.nex.repuesto;
 
-import ar.nex.entity.Equipo;
-import ar.nex.entity.Repuesto;
-import ar.nex.entity.RepuestoStockDetalle;
+import ar.nex.entity.equipo.Equipo;
+import ar.nex.entity.equipo.Repuesto;
+import ar.nex.entity.equipo.RepuestoStockDetalle;
 import ar.nex.util.DialogController;
 import ar.nex.jpa.RepuestoJpaController;
 import ar.nex.util.DateUtils;

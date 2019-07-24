@@ -1,6 +1,6 @@
 package ar.nex.export;
 
-import ar.nex.entity.Equipo;
+import ar.nex.entity.equipo.Equipo;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;

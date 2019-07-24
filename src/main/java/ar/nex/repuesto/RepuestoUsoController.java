@@ -1,9 +1,9 @@
 package ar.nex.repuesto;
 
-import ar.nex.entity.Equipo;
-import ar.nex.entity.RepuestoStockDetalle;
+import ar.nex.entity.equipo.Equipo;
+import ar.nex.entity.equipo.RepuestoStockDetalle;
 import ar.nex.equipo.EquipoController;
-import ar.nex.equipo.EquipoService;
+import ar.nex.service.JpaService;
 import ar.nex.util.DialogController;
 import java.io.IOException;
 import java.net.URL;
@@ -102,7 +102,7 @@ public class RepuestoUsoController implements Initializable {
     @FXML
     private TableColumn<?, ?> colEInfo;
 
-    private EquipoService jpaEquipo;
+    private JpaService jpa;
 
     /**
      * Initializes the controller class.
@@ -131,7 +131,7 @@ public class RepuestoUsoController implements Initializable {
     }
 
     private void initSevice() {
-        jpaEquipo = new EquipoService();
+        jpa = new JpaService();
     }
 
     private void initTableEquipo() {
@@ -144,7 +144,7 @@ public class RepuestoUsoController implements Initializable {
     private void loadDataEquipo() {
         try {
             clearAll();
-            List<Equipo> lst = jpaEquipo.getEquipo().findEquipoEntities();
+            List<Equipo> lst = jpa.getEquipo().findEquipoEntities();
             lst.forEach((item) -> {
                 dataEquipo.add(item);
             });

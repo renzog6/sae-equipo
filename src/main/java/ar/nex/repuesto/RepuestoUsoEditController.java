@@ -1,6 +1,6 @@
 package ar.nex.repuesto;
 
-import ar.nex.entity.RepuestoStockDetalle;
+import ar.nex.entity.equipo.RepuestoStockDetalle;
 import ar.nex.jpa.RepuestoStockDetalleJpaController;
 import ar.nex.util.DateUtils;
 import ar.nex.util.DialogController;

@@ -1,7 +1,7 @@
 package ar.nex.pedido;
 
 import ar.nex.repuesto.RepuestoStockController;
-import ar.nex.entity.Pedido;
+import ar.nex.entity.equipo.Pedido;
 import ar.nex.jpa.PedidoJpaController;
 import ar.nex.util.DialogController;
 import java.net.URL;

@@ -1,7 +1,7 @@
 package ar.nex.pedido;
 
-import ar.nex.entity.Pedido;
-import ar.nex.entity.Repuesto;
+import ar.nex.entity.equipo.Pedido;
+import ar.nex.entity.equipo.Repuesto;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;

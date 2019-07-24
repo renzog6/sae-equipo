@@ -23,6 +23,9 @@
                         <MenuItem mnemonicParsing="false" text="Lista Repuestos" />
                         <MenuItem mnemonicParsing="false" text="Lista Pedidos" />
                         <MenuItem mnemonicParsing="false" text="Uso Repuestos" />
+                        <MenuItem mnemonicParsing="false" text="Gas-Oil > Movimientos" />
+                        <MenuItem mnemonicParsing="false" text="Gas-Oil > Carga" />
+                        <MenuItem mnemonicParsing="false" text="Gas-Oil > Descarga" />
                     </items>
                     <VBox.margin>
                         <Insets bottom="5.0" left="10.0" right="10.0" />

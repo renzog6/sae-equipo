@@ -1,10 +1,10 @@
 package ar.nex.repuesto;
 
-import ar.nex.entity.EquipoModelo;
-import ar.nex.entity.Repuesto;
-import ar.nex.equipo.EquipoService;
+import ar.nex.entity.equipo.EquipoModelo;
+import ar.nex.entity.equipo.Repuesto;
 import ar.nex.jpa.EquipoModeloJpaController;
 import ar.nex.jpa.RepuestoJpaController;
+import ar.nex.service.JpaService;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -64,7 +64,7 @@ public class RepuestoEquipoModeloDialogController implements Initializable {
     private void loadDataModelo() {
         try {
             this.dataModelo.clear();
-            EquipoModeloJpaController jpaModelo = new EquipoService().getModelo();
+            EquipoModeloJpaController jpaModelo = new JpaService().getEquipoModelo();
             List<EquipoModelo> lst = jpaModelo.findEquipoModeloEntities();
             lst.forEach((item) -> {
                 this.dataModelo.add(item);

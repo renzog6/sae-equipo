@@ -1,7 +1,8 @@
 package ar.nex.equipo;
 
-import ar.nex.entity.Equipo;
+import ar.nex.entity.equipo.Equipo;
 import ar.nex.export.EquipoToExel;
+import ar.nex.service.JpaService;
 import ar.nex.util.DialogController;
 import java.io.IOException;
 import java.net.URL;
@@ -101,7 +102,7 @@ public class EquipoController implements Initializable {
     @FXML
     private MenuButton mbMenu;
 
-    private EquipoService jpaEquipo;
+    private JpaService jpa;
 
     /**
      * Initializes the controller class.
@@ -183,7 +184,7 @@ public class EquipoController implements Initializable {
     }
 
     public void initSevice() {
-        jpaEquipo = new EquipoService();
+        jpa = new JpaService();
     }
 
     public void initFiltro() {
@@ -195,7 +196,7 @@ public class EquipoController implements Initializable {
     public void loadData(long id) {
         try {
             clearAll();
-            List<Equipo> lst = jpaEquipo.getEquipo().findEquipoEntities();
+            List<Equipo> lst = jpa.getEquipo().findEquipoEntities();
             for (Equipo item : lst) {
                 if ((item.getEmpresa().getIdEmpresa() == id) || (id == 0)) {
                     data.add(item);
@@ -277,7 +278,7 @@ public class EquipoController implements Initializable {
     private void showOnClick(MouseEvent event) {
         try {
             Equipo item = (Equipo) table.getSelectionModel().getSelectedItem();
-            equipoSelect = jpaEquipo.getEquipo().findEquipo(item.getIdEquipo());
+            equipoSelect = jpa.getEquipo().findEquipo(item.getIdEquipo());
         } catch (Exception e) {
             System.out.println(e);
         }

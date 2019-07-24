@@ -1,11 +1,8 @@
 package ar.nex.equipo;
 
-import ar.nex.entity.EquipoCategoria;
-import ar.nex.entity.EquipoModelo;
-import ar.nex.entity.EquipoTipo;
-import ar.nex.jpa.EquipoCategoriaJpaController;
-import ar.nex.jpa.EquipoModeloJpaController;
+import ar.nex.entity.equipo.EquipoTipo;
 import ar.nex.jpa.EquipoTipoJpaController;
+import ar.nex.service.JpaService;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -54,7 +51,7 @@ public class EquipoTipoDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO        
-        jpaTipo = new EquipoService().getTipo();
+        jpaTipo = new JpaService().getEquipoTipo();
 
         Platform.runLater(new Runnable() {
             @Override

@@ -1,8 +1,8 @@
 package ar.nex.marca;
 
 import ar.nex.entity.Marca;
-import ar.nex.equipo.EquipoService;
 import ar.nex.jpa.MarcaJpaController;
+import ar.nex.service.JpaService;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -41,6 +41,7 @@ public class MarcaDialogController implements Initializable {
     private Button btnCancelar;
 
     private final Marca marca;
+    
     private MarcaJpaController jpaMarca;
 
     /**
@@ -51,7 +52,7 @@ public class MarcaDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO        
-        jpaMarca = new EquipoService().getMarca();
+        jpaMarca = new JpaService().getMarca();
 
         Platform.runLater(new Runnable() {
             @Override

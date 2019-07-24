@@ -1,7 +1,8 @@
 package ar.nex.equipo;
 
-import ar.nex.entity.EquipoModelo;
+import ar.nex.entity.equipo.EquipoModelo;
 import ar.nex.jpa.EquipoModeloJpaController;
+import ar.nex.service.JpaService;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -50,7 +51,7 @@ public class ModeloDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO        
-        jpaModelo = new EquipoService().getModelo();
+        jpaModelo = new JpaService().getEquipoModelo();
 
         Platform.runLater(new Runnable() {
             @Override
