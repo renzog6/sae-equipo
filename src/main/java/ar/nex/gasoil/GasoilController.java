@@ -320,15 +320,14 @@ public class GasoilController implements Initializable {
             @Override
             public void run() {
                 CategoryAxis xAxis = new CategoryAxis();
-                NumberAxis yAxis = new NumberAxis(0, 100, 10);
-                bcGasoil = new BarChart(xAxis, yAxis);
+                NumberAxis yAxis = new NumberAxis(0, 100, 10);                
 
                 XYChart.Series dataSerie = new XYChart.Series();
-                double porcentaje = ((ultimoMovimiento().getStock() * 100) / 36000);
+                double porcentaje = ((ultimoMovimiento().getStock() * 100) / 50000);
                 dataSerie.getData().add(new XYChart.Data("Tanques", porcentaje));
 
-                bcGasoil.getData().add(dataSerie);
-
+                bcGasoil = new BarChart(xAxis, yAxis);
+                bcGasoil.getData().add(dataSerie);                
                 bcGasoil.setLegendVisible(false);
                 vhTanque.getChildren().add(bcGasoil);
             }
