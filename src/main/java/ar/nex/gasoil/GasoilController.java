@@ -1,12 +1,16 @@
 package ar.nex.gasoil;
 
-import ar.nex.entity.equipo.Gasoil;
+import ar.nex.entity.equipo.Equipo;
+import ar.nex.entity.equipo.gasto.Gasoil;
 import ar.nex.service.JpaService;
+import ar.nex.util.DateUtils;
 import ar.nex.util.DialogController;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
@@ -19,6 +23,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -29,7 +35,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
@@ -52,21 +58,21 @@ import javax.persistence.TypedQuery;
  * @author Renzo
  */
 public class GasoilController implements Initializable {
-    
+
     public GasoilController() {
     }
-    
+
     public Parent getRoot() {
         Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getResource("/fxml/gasoil/Gasoil.fxml"));
+            root = FXMLLoader.load(getClass().getResource("/fxml/gasoil/GasoilList.fxml"));
             root.setStyle("/fxml/gasoil/Gasoil.css");
         } catch (IOException ex) {
             Logger.getLogger(GasoilController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return root;
     }
-    
+
     @FXML
     private BorderPane bpGasoil;
     @FXML
@@ -79,15 +85,17 @@ public class GasoilController implements Initializable {
     private Button btnEdit;
     @FXML
     private Button btnDelete;
-    
+    @FXML
+    private Button btnUpdate;
+
     @FXML
     private MenuButton mbMenu;
-    
+
     @FXML
     private HBox vhTanque;
-    
+
     private BarChart bcGasoil;
-    
+
     private final ObservableList<Gasoil> data = FXCollections.observableArrayList();
     private final FilteredList<Gasoil> filteredData = new FilteredList<>(data);
     private Gasoil gasoilSelect;
@@ -96,7 +104,7 @@ public class GasoilController implements Initializable {
     @FXML
     private TableColumn<Gasoil, String> colFecha;
     @FXML
-    private TableColumn<?, ?> colEquipo;
+    private TableColumn<Gasoil, String> colEquipo;
     @FXML
     private TableColumn<Gasoil, String> colMovimiento;
     @FXML
@@ -105,7 +113,12 @@ public class GasoilController implements Initializable {
     private TableColumn<Gasoil, String> colStock;
     @FXML
     private TableColumn<?, ?> colInfo;
-    
+
+    @FXML
+    private DatePicker dpDesde;
+    @FXML
+    private DatePicker dpHasta;
+
     private JpaService jpa;
 
     /**
@@ -119,20 +132,22 @@ public class GasoilController implements Initializable {
         try {
             btnAdd.setOnAction(e -> add());
             btnEdit.setOnAction(e -> edit());
+            btnUpdate.setOnAction(e -> loadData(dpDesde.getValue(), dpHasta.getValue()));
             startTask();
         } catch (Exception e) {
             DialogController.showException(e);
         }
     }
-    
+
     private void startTask() {
         Runnable task = new Runnable() {
             @Override
             public void run() {
                 jpa = new JpaService();
                 initMenu();
+                initFecha();
                 iniTable();
-                loadData(listGasoil());
+                loadData(listGasoil(dpDesde.getValue(), dpHasta.getValue()));
                 initTanque();
             }
         };
@@ -141,13 +156,31 @@ public class GasoilController implements Initializable {
         backgroundThread.setDaemon(true);
         backgroundThread.start();
     }
-    
+
     private void initMenu() {
         MenuItem item = new MenuItem("[ Update Stock ]");
         item.setOnAction(e -> updateStock());
         mbMenu.getItems().add(item);
     }
-    
+
+    private void initFecha() {
+        LocalDate hoy = LocalDate.now();
+        dpDesde.setValue(hoy.plusDays(-10));
+        dpHasta.setValue(hoy);
+
+        EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                if (dpDesde.getValue().compareTo(dpHasta.getValue()) > 0) {
+                    dpDesde.setValue(dpHasta.getValue());
+                }
+            }
+        };
+
+        dpDesde.setOnAction(event);
+        dpHasta.setOnAction(event);
+    }
+
     private void iniTable() {
         //colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
         colFecha.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Gasoil, String>, ObservableValue<String>>() {
@@ -156,9 +189,14 @@ public class GasoilController implements Initializable {
                 return new SimpleStringProperty(new SimpleDateFormat("dd-MM-yyyy").format(p.getValue().getFecha()));
             }
         });
-        
-        colEquipo.setCellValueFactory(new PropertyValueFactory<>("idEquipo"));
-        //colMovimiento.setCellValueFactory(new PropertyValueFactory<>("movimineto"));
+
+        colEquipo.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Gasoil, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<Gasoil, String> param) {
+                return new SimpleStringProperty(param.getValue().getEquipo().toString());
+            }
+        });
+
         colMovimiento.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Gasoil, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Gasoil, String> p) {
@@ -178,7 +216,7 @@ public class GasoilController implements Initializable {
                 return new SimpleStringProperty(decimalFormat.format(param.getValue().getLitros()));
             }
         });
-        
+
         colStock.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Gasoil, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Gasoil, String> param) {
@@ -186,27 +224,37 @@ public class GasoilController implements Initializable {
                 return new SimpleStringProperty(decimalFormat.format(param.getValue().getStock()));
             }
         });
-        
+
         colInfo.setCellValueFactory(new PropertyValueFactory<>("info"));
     }
-    
+
     private void loadData(List<Gasoil> lst) {
         try {
             clearAll();
-            //List<Gasoil> lst = jpa.getGasoil().findGasoilEntities();
-            lst.forEach((item) -> {
-                data.add(item);
-            });
-            table.setItems(data);
+            if (null != lst) {
+                lst.forEach((item) -> {
+                    data.add(item);
+                });
+                table.setItems(data);
+            }
         } catch (Exception e) {
             DialogController.showException(e);
         }
     }
-    
+
+    private void loadData(LocalDate local_desde, LocalDate local_hasta) {
+        try {
+            clearAll();
+            loadData(listGasoil(local_desde, local_hasta));
+        } catch (Exception e) {
+            DialogController.showException(e);
+        }
+    }
+
     private List<Gasoil> listGasoil() {
         EntityManager em = jpa.getFactory().createEntityManager();
         TypedQuery<Gasoil> query
-                = em.createQuery("SELECT c FROM Gasoil c ORDER BY c.fecha ASC", Gasoil.class);
+                = em.createQuery("SELECT c FROM Gasoil c ORDER BY c.fecha, c.idGasto ASC", Gasoil.class);
         List<Gasoil> results = query.getResultList();
         if (!results.isEmpty()) {
             return results;
@@ -214,16 +262,38 @@ public class GasoilController implements Initializable {
             return null;
         }
     }
-    
+    private List<Gasoil> listGasoil(LocalDate local_desde, LocalDate local_hasta) {
+        DateUtils du = new DateUtils();
+        Date desde = (Date) du.convertToDateViaSqlDate(local_desde);
+        Date hasta = (Date) du.convertToDateViaSqlDate(local_hasta);
+        EntityManager em = jpa.getFactory().createEntityManager();
+        TypedQuery<Gasoil> query
+                = em.createQuery("SELECT c FROM Gasoil c"
+                        + "  WHERE c.fecha BETWEEN :start AND :end"
+                        + " ORDER BY c.fecha, c.idGasto ASC", Gasoil.class)
+                        .setParameter("start", desde)
+                        .setParameter("end", hasta);
+        List<Gasoil> results = query.getResultList();
+        if (!results.isEmpty()) {
+            return results;
+        } else {
+            return null;
+        }
+    }
+
+    private Gasoil ultimoMovimiento() {
+        return listGasoil().get(listGasoil().size() - 1);
+    }
+
     private void updateStock() {
         try {
             List<Gasoil> lst = listGasoil();
             boolean flag = false;
-            for (Gasoil item : lst) {                
-                if (flag) {                    
+            for (Gasoil item : lst) {
+                if (flag) {
                     switch (item.getMovimineto()) {
                         case 0://Carga
-                            item.setStock(gasoilSelect.getStock() - item.getLitros());                            
+                            item.setStock(gasoilSelect.getStock() - item.getLitros());
                             break;
                         case 1://Descarga
                             item.setStock(gasoilSelect.getStock() + item.getLitros());
@@ -237,14 +307,14 @@ public class GasoilController implements Initializable {
                     flag = true;
                 }
             };
-            
+
             this.loadData(listGasoil());
             updateTanque();
         } catch (Exception e) {
             DialogController.showException(e);
         }
     }
-    
+
     private void initTanque() {
         Platform.runLater(new Runnable() {
             @Override
@@ -252,36 +322,27 @@ public class GasoilController implements Initializable {
                 CategoryAxis xAxis = new CategoryAxis();
                 NumberAxis yAxis = new NumberAxis(0, 100, 10);
                 bcGasoil = new BarChart(xAxis, yAxis);
-                
+
                 XYChart.Series dataSerie = new XYChart.Series();
-                double porcentaje = ((ultimoStock() * 100) / 36000);
+                double porcentaje = ((ultimoMovimiento().getStock() * 100) / 36000);
                 dataSerie.getData().add(new XYChart.Data("Tanques", porcentaje));
-                
+
                 bcGasoil.getData().add(dataSerie);
-                
+
                 bcGasoil.setLegendVisible(false);
                 vhTanque.getChildren().add(bcGasoil);
             }
         });
     }
-    
+
     private void updateTanque() {
         bcGasoil.getData().clear();
         XYChart.Series dataSerie = new XYChart.Series();
-        double porcentaje = ((ultimoStock() * 100) / 36000);
+        double porcentaje = ((ultimoMovimiento().getStock() * 100) / 36000);
         dataSerie.getData().add(new XYChart.Data("Tanques", porcentaje));
         bcGasoil.getData().add(dataSerie);
     }
-    
-    private Double ultimoStock() {
-        List<Gasoil> results = listGasoil();
-        if (!results.isEmpty()) {
-            return ((Gasoil) results.get(results.size() - 1)).getStock();
-        } else {
-            return 0.0;
-        }
-    }
-    
+
     @FXML
     private void Search() {
         searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
@@ -302,43 +363,43 @@ public class GasoilController implements Initializable {
         sortedData.comparatorProperty().bind(table.comparatorProperty());
         table.setItems(sortedData);
     }
-    
+
     @FXML
     private void showOnClick(MouseEvent event) {
         gasoilSelect = (Gasoil) table.getSelectionModel().getSelectedItem();
     }
-    
+
     private void add() {
         gasoilSelect = null;
         edit();
     }
-    
+
     private void edit() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/gasoil/GasoilDialog.fxml"));
             GasoilDialogController controller = new GasoilDialogController(gasoilSelect);
             loader.setController(controller);
-            
+
             Scene scene = new Scene(loader.load());
             Stage dialog = new Stage();
             dialog.setTitle("Movimiento de Gas-Oil");
             dialog.setScene(scene);
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.resizableProperty().setValue(Boolean.FALSE);
-            
+
             dialog.showAndWait();
-            this.loadData(listGasoil());
+            this.loadData(listGasoil(dpDesde.getValue(), dpHasta.getValue()));
             updateTanque();
-            
+
         } catch (IOException e) {
             System.err.print(e);
         }
     }
-    
+
     private void clearAll() {
         data.clear();
         searchBox.clear();
         gasoilSelect = null;
     }
-    
+
 }

@@ -1,10 +1,10 @@
 package ar.nex.gasoil;
 
-import ar.nex.entity.equipo.Gasoil;
+import ar.nex.entity.equipo.Equipo;
+import ar.nex.entity.equipo.gasto.Gasoil;
 import ar.nex.service.JpaService;
 import ar.nex.util.DateUtils;
 import ar.nex.util.DialogController;
-import java.math.BigInteger;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -20,9 +20,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.TextFields;
 
 /**
  * FXML Controller class
@@ -51,8 +54,12 @@ public class GasoilDialogController implements Initializable {
     private TextField boxInfo;
     @FXML
     private ComboBox<GasoilMovimiento> cbMovimiento;
+    @FXML
+    private Label lblPrecio_kms;
 
     private Gasoil gasoil;
+    private Equipo equipoSelect;
+    private final ObservableList<Equipo> dataEquipo = FXCollections.observableArrayList();
 
     private JpaService jpa;
 
@@ -73,7 +80,20 @@ public class GasoilDialogController implements Initializable {
             btnCancelar.setOnAction(e -> ((Node) (e.getSource())).getScene().getWindow().hide());
             btnGuardar.setOnAction(e -> guardar(e));
 
-            //loadEquipos();
+            listaEquipo();
+            AutoCompletionBinding<Equipo> autoProvedor = TextFields.bindAutoCompletion(boxEquipo, dataEquipo);
+            autoProvedor.setOnAutoCompleted((AutoCompletionBinding.AutoCompletionEvent<Equipo> event) -> {
+                equipoSelect = event.getCompletion();
+                if (equipoSelect.getTipo().getNombre().equalsIgnoreCase("Camion")) {
+                    boxPrecio.setDisable(false);
+                    lblPrecio_kms.setText("Kilometros");
+                } else {
+                    boxPrecio.setDisable(true);
+                    lblPrecio_kms.setText("?");
+                }
+            }
+            );
+
             boxLitros.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -102,9 +122,11 @@ public class GasoilDialogController implements Initializable {
                         case CARGA:
                             boxPrecio.setDisable(true);
                             boxEquipo.setDisable(false);
+                            lblPrecio_kms.setText("?");
                             break;
                         case DESCARDA:
                             boxPrecio.setDisable(false);
+                            lblPrecio_kms.setText("Precio x litro");
                             boxEquipo.setDisable(true);
                             break;
                         case OTRO:
@@ -118,7 +140,7 @@ public class GasoilDialogController implements Initializable {
             DateUtils du = new DateUtils();
             if (gasoil != null) {
                 dpFecha.setValue(du.convertToLocalDateViaInstant(gasoil.getFecha()));
-                boxEquipo.setText(gasoil.getIdEquipo().toString());
+                boxEquipo.setText(gasoil.getEquipo().toString());
                 boxLitros.setText(gasoil.getLitros().toString());
                 boxInfo.setText(gasoil.getInfo());
                 boxPrecio.setText(gasoil.getPrecio().toString());
@@ -137,24 +159,30 @@ public class GasoilDialogController implements Initializable {
         try {
             DateUtils du = new DateUtils();
             gasoil.setFecha(du.convertToDateViaSqlDate(dpFecha.getValue()));
-            gasoil.setIdEquipo(BigInteger.valueOf(143));
             gasoil.setLitros(Double.parseDouble(boxLitros.getText()));
 
             gasoil.setMovimineto(cbMovimiento.getValue().getValue());
+            Gasoil ultimo = ultimoMovimiento();
             switch (cbMovimiento.getValue()) {
                 case CARGA:
-                    gasoil.setStock(ultimoStock() - gasoil.getLitros());
-                    gasoil.setPrecio(ultimoPrecio());
+                    gasoil.setStock(ultimo.getStock() - gasoil.getLitros());
+                    gasoil.setPrecio(ultimo.getPrecio());
+                    gasoil.setEquipo(equipoSelect);
+                    if (equipoSelect.getTipo().getNombre().equalsIgnoreCase("Camion")) {
+                        gasoil.setKms(Double.parseDouble(boxPrecio.getText()));
+                    }                    
                     break;
                 case DESCARDA:
-                    gasoil.setStock(ultimoStock() + gasoil.getLitros());
+                    gasoil.setStock(ultimo.getStock() + gasoil.getLitros());
                     gasoil.setPrecio(Double.parseDouble(boxPrecio.getText()));
+                    gasoil.setEquipo(jpa.getEquipo().findEquipo(143L));
+                    gasoil.setKms(0);
                     break;
             }
 
             gasoil.setInfo(boxInfo.getText());
 
-            if (gasoil.getIdGasoil() != null) {
+            if (gasoil.getIdGasto() != null) {
                 jpa.getGasoil().edit(gasoil);
             } else {
                 jpa.getGasoil().create(gasoil);
@@ -167,29 +195,27 @@ public class GasoilDialogController implements Initializable {
         }
     }
 
-    private Double ultimoStock() {
+    private Gasoil ultimoMovimiento() {
         EntityManager em = jpa.getFactory().createEntityManager();
         TypedQuery<Gasoil> query
-                = em.createQuery("SELECT c FROM Gasoil c", Gasoil.class);
+                = em.createQuery("SELECT c FROM Gasoil c ORDER BY c.fecha, c.idGasto ASC", Gasoil.class);
         List<Gasoil> results = query.getResultList();
         if (!results.isEmpty()) {
-            return ((Gasoil) results.get(results.size() - 1)).getStock();
+            return ((Gasoil) results.get(results.size() - 1));
         } else {
-            return 0.0;
+            return null;
         }
     }
 
-    private Double ultimoPrecio() {
+    private void listaEquipo() {
         EntityManager em = jpa.getFactory().createEntityManager();
-        TypedQuery<Gasoil> query
-                = em.createQuery("SELECT c "
-                        + "FROM Gasoil c "
-                        + "ORDER BY c.fecha DESC", Gasoil.class);
-        List<Gasoil> results = query.getResultList();
+        TypedQuery<Equipo> query
+                = em.createQuery("SELECT c FROM Equipo c WHERE c.gasoil=1", Equipo.class);
+        List<Equipo> results = query.getResultList();
         if (!results.isEmpty()) {
-            return ((Gasoil) results.get(results.size() - 1)).getPrecio();
-        } else {
-            return 0.0;
+            results.forEach((item) -> {
+                dataEquipo.add(item);
+            });
         }
     }
 

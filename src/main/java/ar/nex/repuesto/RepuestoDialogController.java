@@ -4,10 +4,6 @@ import ar.nex.entity.empresa.Empresa;
 import ar.nex.entity.equipo.EquipoModelo;
 import ar.nex.entity.Marca;
 import ar.nex.entity.equipo.Repuesto;
-import ar.nex.jpa.EmpresaJpaController;
-import ar.nex.jpa.EquipoModeloJpaController;
-import ar.nex.jpa.MarcaJpaController;
-import ar.nex.jpa.RepuestoJpaController;
 import ar.nex.service.JpaService;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,7 +18,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javax.persistence.Persistence;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.controlsfx.control.textfield.TextFields;
 

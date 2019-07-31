@@ -109,7 +109,6 @@ public class PedidoTableUtils {
         final ClipboardContent content = new ClipboardContent();
         content.putString(clipboardString.toString());
         Clipboard.getSystemClipboard().setContent(content);
-
     }
 
     /**
