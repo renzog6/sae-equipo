@@ -1,6 +1,6 @@
-package ar.nex.export;
+package ar.nex.equipo.util;
 
-import ar.nex.util.DialogController;
+
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;

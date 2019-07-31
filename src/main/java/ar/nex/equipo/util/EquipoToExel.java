@@ -1,4 +1,4 @@
-package ar.nex.export;
+package ar.nex.equipo.util;
 
 import ar.nex.entity.equipo.Equipo;
 import java.io.IOException;

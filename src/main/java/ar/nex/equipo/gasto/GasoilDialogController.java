@@ -1,14 +1,15 @@
-package ar.nex.gasoil;
+package ar.nex.equipo.gasto;
 
 import ar.nex.entity.equipo.Equipo;
 import ar.nex.entity.equipo.gasto.Gasoil;
+import ar.nex.equipo.util.DateUtils;
+import ar.nex.equipo.util.DialogController;
 import ar.nex.service.JpaService;
-import ar.nex.util.DateUtils;
-import ar.nex.util.DialogController;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -18,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -56,6 +58,8 @@ public class GasoilDialogController implements Initializable {
     private ComboBox<GasoilMovimiento> cbMovimiento;
     @FXML
     private Label lblPrecio_kms;
+    @FXML
+    private CheckBox cbStockUpdate;
 
     private Gasoil gasoil;
     private Equipo equipoSelect;
@@ -75,6 +79,9 @@ public class GasoilDialogController implements Initializable {
         initControls();
     }
 
+    /**
+     * Inicializa todos los elementos a usar.
+     */
     private void initControls() {
         try {
             btnCancelar.setOnAction(e -> ((Node) (e.getSource())).getScene().getWindow().hide());
@@ -111,7 +118,6 @@ public class GasoilDialogController implements Initializable {
                     }
                 }
             });
-            boxPrecio.setDisable(true);
 
             cbMovimiento.getItems().addAll((ObservableList) FXCollections.observableArrayList(GasoilMovimiento.values()));
             cbMovimiento.getSelectionModel().select(GasoilMovimiento.CARGA.getValue());
@@ -137,17 +143,28 @@ public class GasoilDialogController implements Initializable {
                 }
             });
 
-            DateUtils du = new DateUtils();
+            //DateUtils du = new DateUtils();
             if (gasoil != null) {
-                dpFecha.setValue(du.convertToLocalDateViaInstant(gasoil.getFecha()));
+                dpFecha.setValue(DateUtils.convertToLocalDateViaSqlDate(gasoil.getFecha()));
+
                 boxEquipo.setText(gasoil.getEquipo().toString());
+                equipoSelect = gasoil.getEquipo();
+                if (equipoSelect.getTipo().getNombre().equalsIgnoreCase("Camion")) {
+                    lblPrecio_kms.setText("Kilometros");
+                    boxPrecio.setText(gasoil.getKms().toString());
+                } else {
+                    lblPrecio_kms.setText("Precio");
+                    boxPrecio.setText(gasoil.getPrecio().toString());
+                }
+                cbStockUpdate.setSelected(!gasoil.isStockUpdate());
                 boxLitros.setText(gasoil.getLitros().toString());
                 boxInfo.setText(gasoil.getInfo());
-                boxPrecio.setText(gasoil.getPrecio().toString());
+
                 cbMovimiento.getSelectionModel().select(gasoil.getMovimineto());
             } else {
                 gasoil = new Gasoil();
                 dpFecha.setValue(LocalDate.now());
+                boxPrecio.setDisable(true);
             }
         } catch (Exception ex) {
             DialogController.showException(ex);
@@ -155,43 +172,92 @@ public class GasoilDialogController implements Initializable {
 
     }
 
+    private boolean isEmptytBox() {        
+        if (!DateUtils.validate(dpFecha.getValue())) {
+            DialogController.errorDialog("Requiere valor", "Fecha");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    dpFecha.requestFocus();
+                }
+            });
+            return true;
+        } else if (boxLitros.getText().trim().isEmpty()) {
+            DialogController.errorDialog("Requiere valor", "Litros");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    boxLitros.requestFocus();
+                }
+            });
+            return true;
+        } else if (boxEquipo.getText().trim().isEmpty() && (cbMovimiento.getValue() != GasoilMovimiento.DESCARDA)) {
+            DialogController.errorDialog("Requiere valor", "Equipo");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    boxEquipo.requestFocus();
+                }
+            });
+            return true;
+        } else if (boxPrecio.getText().trim().isEmpty()) {
+            DialogController.errorDialog("Requiere valor", lblPrecio_kms.getText());
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    boxPrecio.requestFocus();
+                }
+            });
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private void guardar(ActionEvent e) {
-        try {
-            DateUtils du = new DateUtils();
-            gasoil.setFecha(du.convertToDateViaSqlDate(dpFecha.getValue()));
-            gasoil.setLitros(Double.parseDouble(boxLitros.getText()));
+        if (!isEmptytBox()) {
+            try {
+                DateUtils du = new DateUtils();
+                gasoil.setFecha(du.convertToDateViaSqlDate(dpFecha.getValue()));
+                gasoil.setLitros(Double.parseDouble(boxLitros.getText()));
 
-            gasoil.setMovimineto(cbMovimiento.getValue().getValue());
-            Gasoil ultimo = ultimoMovimiento();
-            switch (cbMovimiento.getValue()) {
-                case CARGA:
-                    gasoil.setStock(ultimo.getStock() - gasoil.getLitros());
-                    gasoil.setPrecio(ultimo.getPrecio());
-                    gasoil.setEquipo(equipoSelect);
-                    if (equipoSelect.getTipo().getNombre().equalsIgnoreCase("Camion")) {
-                        gasoil.setKms(Double.parseDouble(boxPrecio.getText()));
-                    }                    
-                    break;
-                case DESCARDA:
-                    gasoil.setStock(ultimo.getStock() + gasoil.getLitros());
-                    gasoil.setPrecio(Double.parseDouble(boxPrecio.getText()));
-                    gasoil.setEquipo(jpa.getEquipo().findEquipo(143L));
-                    gasoil.setKms(0);
-                    break;
+                gasoil.setMovimineto(cbMovimiento.getValue().getValue());
+                Gasoil ultimo = ultimoMovimiento();
+                switch (cbMovimiento.getValue()) {
+                    case CARGA:
+                        gasoil.setStock(ultimo.getStock() - gasoil.getLitros());
+                        gasoil.setPrecio(ultimo.getPrecio());
+                        gasoil.setEquipo(equipoSelect);
+                        if (equipoSelect.getTipo().getNombre().equalsIgnoreCase("Camion")) {
+                            gasoil.setKms(Double.parseDouble(boxPrecio.getText()));
+                        }
+                        break;
+                    case DESCARDA:
+                        gasoil.setStock(ultimo.getStock() + gasoil.getLitros());
+                        gasoil.setPrecio(Double.parseDouble(boxPrecio.getText()));
+                        gasoil.setEquipo(jpa.getEquipo().findEquipo(143L));
+                        gasoil.setKms(0.0);
+                        break;
+                }
+                if (cbStockUpdate.isSelected()) {
+                    gasoil.setStockUpdate(false);
+                    gasoil.setStock(0.0);
+                } else {
+                    gasoil.setStockUpdate(true);
+                }
+
+                gasoil.setInfo(boxInfo.getText());
+
+                if (gasoil.getIdGasto() != null) {
+                    jpa.getGasoil().edit(gasoil);
+                } else {
+                    jpa.getGasoil().create(gasoil);
+                }
+                ((Node) (e.getSource())).getScene().getWindow().hide();
+
+            } catch (Exception ex) {
+                DialogController.showException(ex);
             }
-
-            gasoil.setInfo(boxInfo.getText());
-
-            if (gasoil.getIdGasto() != null) {
-                jpa.getGasoil().edit(gasoil);
-            } else {
-                jpa.getGasoil().create(gasoil);
-            }
-        } catch (Exception ex) {
-            DialogController.showException(ex);
-        } finally {
-            ((Node) (e.getSource())).getScene().getWindow().hide();
-            e.consume();
         }
     }
 

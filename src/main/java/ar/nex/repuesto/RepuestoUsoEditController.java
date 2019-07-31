@@ -1,9 +1,9 @@
 package ar.nex.repuesto;
 
 import ar.nex.entity.equipo.RepuestoStockDetalle;
+import ar.nex.equipo.util.DateUtils;
+import ar.nex.equipo.util.DialogController;
 import ar.nex.jpa.RepuestoStockDetalleJpaController;
-import ar.nex.util.DateUtils;
-import ar.nex.util.DialogController;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;

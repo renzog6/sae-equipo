@@ -1,7 +1,7 @@
 package ar.nex.marca;
 
 import ar.nex.entity.Marca;
-import ar.nex.util.DialogController;
+import ar.nex.equipo.util.DialogController;
 import ar.nex.jpa.MarcaJpaController;
 import java.net.URL;
 import java.util.List;

@@ -2,7 +2,7 @@ package ar.nex.repuesto;
 
 import ar.nex.entity.equipo.Pedido;
 import ar.nex.entity.equipo.RepuestoStockDetalle;
-import ar.nex.util.DialogController;
+import ar.nex.equipo.util.DialogController;
 import ar.nex.jpa.RepuestoJpaController;
 import ar.nex.jpa.RepuestoStockDetalleJpaController;
 import javax.persistence.Persistence;

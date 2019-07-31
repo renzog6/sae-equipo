@@ -2,8 +2,8 @@ package ar.nex.pedido;
 
 import ar.nex.repuesto.RepuestoStockController;
 import ar.nex.entity.equipo.Pedido;
+import ar.nex.equipo.util.DialogController;
 import ar.nex.jpa.PedidoJpaController;
-import ar.nex.util.DialogController;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

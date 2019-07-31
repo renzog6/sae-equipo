@@ -55,7 +55,7 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <CheckBox layoutX="14.0" layoutY="292.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="420.0" text="NO actualiza Stock." AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="285.0">
+      <CheckBox fx:id="cbStockUpdate" layoutX="14.0" layoutY="292.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="420.0" text="NO actualiza Stock." AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="285.0">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>

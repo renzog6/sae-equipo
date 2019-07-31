@@ -1,4 +1,4 @@
-package ar.nex.gasoil;
+package ar.nex.equipo.gasto;
 
 /**
  *

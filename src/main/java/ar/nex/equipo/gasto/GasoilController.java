@@ -1,10 +1,9 @@
-package ar.nex.gasoil;
+package ar.nex.equipo.gasto;
 
-import ar.nex.entity.equipo.Equipo;
 import ar.nex.entity.equipo.gasto.Gasoil;
+import ar.nex.equipo.util.DateUtils;
+import ar.nex.equipo.util.DialogController;
 import ar.nex.service.JpaService;
-import ar.nex.util.DateUtils;
-import ar.nex.util.DialogController;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
@@ -262,6 +261,7 @@ public class GasoilController implements Initializable {
             return null;
         }
     }
+
     private List<Gasoil> listGasoil(LocalDate local_desde, LocalDate local_hasta) {
         DateUtils du = new DateUtils();
         Date desde = (Date) du.convertToDateViaSqlDate(local_desde);
@@ -289,26 +289,27 @@ public class GasoilController implements Initializable {
         try {
             List<Gasoil> lst = listGasoil();
             boolean flag = false;
-            for (Gasoil item : lst) {
+            for (Gasoil item : lst) {                
                 if (flag) {
-                    switch (item.getMovimineto()) {
-                        case 0://Carga
-                            item.setStock(gasoilSelect.getStock() - item.getLitros());
-                            break;
-                        case 1://Descarga
-                            item.setStock(gasoilSelect.getStock() + item.getLitros());
-                            break;
+                    if (item.isStockUpdate()) {
+                        switch (item.getMovimineto()) {
+                            case 0://Carga
+                                item.setStock(gasoilSelect.getStock() - item.getLitros());
+                                break;
+                            case 1://Descarga
+                                item.setStock(gasoilSelect.getStock() + item.getLitros());
+                                break;
+                        }
+                        item.setPrecio(gasoilSelect.getPrecio());
+                        jpa.getGasoil().edit(item);
+                        gasoilSelect = item;
                     }
-                    item.setPrecio(gasoilSelect.getPrecio());
-                    jpa.getGasoil().edit(item);
-                    gasoilSelect = item;
                 } else {
                     gasoilSelect = item;
                     flag = true;
                 }
             };
-
-            this.loadData(listGasoil());
+            this.loadData(listGasoil(dpDesde.getValue(), dpHasta.getValue()));
             updateTanque();
         } catch (Exception e) {
             DialogController.showException(e);
@@ -320,14 +321,14 @@ public class GasoilController implements Initializable {
             @Override
             public void run() {
                 CategoryAxis xAxis = new CategoryAxis();
-                NumberAxis yAxis = new NumberAxis(0, 100, 10);                
+                NumberAxis yAxis = new NumberAxis(0, 100, 10);
 
                 XYChart.Series dataSerie = new XYChart.Series();
                 double porcentaje = ((ultimoMovimiento().getStock() * 100) / 50000);
                 dataSerie.getData().add(new XYChart.Data("Tanques", porcentaje));
 
                 bcGasoil = new BarChart(xAxis, yAxis);
-                bcGasoil.getData().add(dataSerie);                
+                bcGasoil.getData().add(dataSerie);
                 bcGasoil.setLegendVisible(false);
                 vhTanque.getChildren().add(bcGasoil);
             }
@@ -337,7 +338,7 @@ public class GasoilController implements Initializable {
     private void updateTanque() {
         bcGasoil.getData().clear();
         XYChart.Series dataSerie = new XYChart.Series();
-        double porcentaje = ((ultimoMovimiento().getStock() * 100) / 36000);
+        double porcentaje = ((ultimoMovimiento().getStock() * 100) / 50000);
         dataSerie.getData().add(new XYChart.Data("Tanques", porcentaje));
         bcGasoil.getData().add(dataSerie);
     }

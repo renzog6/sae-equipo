@@ -4,7 +4,7 @@ import ar.nex.entity.equipo.EquipoModelo;
 import ar.nex.entity.equipo.Pedido;
 import ar.nex.entity.equipo.Repuesto;
 import ar.nex.equipo.EquipoController;
-import ar.nex.util.DialogController;
+import ar.nex.equipo.util.DialogController;
 import ar.nex.jpa.PedidoJpaController;
 import ar.nex.jpa.RepuestoJpaController;
 import ar.nex.repuesto.RepuestoPedidoDialogController;

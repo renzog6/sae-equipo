@@ -4,7 +4,7 @@ import ar.nex.entity.empresa.Empresa;
 import ar.nex.entity.equipo.EquipoModelo;
 import ar.nex.entity.equipo.Repuesto;
 import ar.nex.equipo.EquipoController;
-import ar.nex.util.DialogController;
+import ar.nex.equipo.util.DialogController;
 import ar.nex.jpa.RepuestoJpaController;
 
 import java.io.IOException;

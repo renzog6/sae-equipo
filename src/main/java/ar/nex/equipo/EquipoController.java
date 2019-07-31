@@ -1,9 +1,9 @@
 package ar.nex.equipo;
 
 import ar.nex.entity.equipo.Equipo;
-import ar.nex.export.EquipoToExel;
+import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.EquipoToExel;
 import ar.nex.service.JpaService;
-import ar.nex.util.DialogController;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
