@@ -24,6 +24,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -85,6 +86,8 @@ public class EquipoDialogController implements Initializable {
     private Button btnAddTipo;
     @FXML
     private Button btnAddModelo;
+    @FXML
+    private CheckBox cbUsaGasoil;
 
     private JpaService jpa;
 
@@ -153,6 +156,12 @@ public class EquipoDialogController implements Initializable {
             boxPatente.setText(equipo.getPatente());
             boxNombre.setText(equipo.getNombre());
 
+            if (equipo.getUsaGasoil() != null) {
+                cbUsaGasoil.setSelected(equipo.getUsaGasoil());
+            } else {
+                cbUsaGasoil.setSelected(false);
+            }
+
             boxFechaCompra.setText("-");
             boxVendedor.setText("-");
             boxValorCompra.setText("0.0");
@@ -188,6 +197,8 @@ public class EquipoDialogController implements Initializable {
             equipo.setTipo(tipoSelect);
             equipo.setModelo(modeloSelect);
             equipo.setMarca(marcaSelect);
+
+            equipo.setUsaGasoil(cbUsaGasoil.isSelected());
 
             equipo.setCompraVenta(cv);
 

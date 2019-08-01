@@ -276,7 +276,7 @@ public class GasoilDialogController implements Initializable {
     private void listaEquipo() {
         EntityManager em = jpa.getFactory().createEntityManager();
         TypedQuery<Equipo> query
-                = em.createQuery("SELECT c FROM Equipo c WHERE c.gasoil=1", Equipo.class);
+                = em.createQuery("SELECT c FROM Equipo c WHERE c.usaGasoil=1", Equipo.class);
         List<Equipo> results = query.getResultList();
         if (!results.isEmpty()) {
             results.forEach((item) -> {

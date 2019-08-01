@@ -15,10 +15,10 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="bpGasoil" minHeight="768.0" minWidth="1024.0" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.gasto.GasoilController">
+<BorderPane fx:id="bpGasoil" minHeight="710.0" minWidth="1024.0" prefHeight="710.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.gasto.GasoilController">
     
     <center>
-        <AnchorPane minHeight="558.0" prefHeight="558.0">
+        <AnchorPane minHeight="560.0" prefHeight="560.0">
             <children>
                 <TableView fx:id="table" layoutX="-9.0" layoutY="14.0" minHeight="558.0" onMouseClicked="#showOnClick" prefHeight="558.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
@@ -70,30 +70,30 @@
         </AnchorPane>       
     </top>
    <left>
-        <AnchorPane fx:id="menuPane" prefHeight="718.0" prefWidth="200.0" styleClass="menuPane" BorderPane.alignment="CENTER">
+        <AnchorPane fx:id="menuPane" prefWidth="200.0" styleClass="menuPane" BorderPane.alignment="CENTER">
             <children>
              
-                <Button fx:id="btnAdd" contentDisplay="CENTER" layoutX="845.0" layoutY="112.0" mnemonicParsing="false" prefWidth="45.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="10.0">
+                <Button fx:id="btnAdd" contentDisplay="CENTER" layoutX="845.0" layoutY="112.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0">
                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" scaleX="1.5" scaleY="1.5">
                             <image>
                                 <Image url="@../../img/plus_64.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>                        
-                <Button fx:id="btnEdit" alignment="CENTER" contentDisplay="CENTER" layoutX="77.0" layoutY="665.0" mnemonicParsing="false" prefWidth="45.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="77.0">
+                <Button fx:id="btnEdit" alignment="CENTER" contentDisplay="CENTER" layoutX="77.0" layoutY="665.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="77.0">
                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" scaleX="1.5" scaleY="1.5">
                             <image>
                                 <Image url="@../../img/pencil_64.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>                        
-                <Button fx:id="btnDelete" contentDisplay="CENTER" layoutX="110.0" layoutY="210.0" mnemonicParsing="false" prefWidth="45.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="10.0">
+                <Button fx:id="btnDelete" contentDisplay="CENTER" layoutX="110.0" layoutY="210.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
                     <graphic>
-                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" scaleX="1.5" scaleY="1.5">
                             <image>
                                 <Image url="@../../img/delete_64.png" />
                             </image>

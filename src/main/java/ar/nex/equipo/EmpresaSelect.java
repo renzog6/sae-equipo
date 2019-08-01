@@ -1,7 +1,5 @@
 package ar.nex.equipo;
 
-import ar.nex.pedido.*;
-
 /**
  *
  * @author Renzo
