@@ -61,7 +61,12 @@
             <type>jar</type>
         </dependency> -->
         <!-- xXx xXx xXx xXx Deploy by renzog6 xXx xXx xXx xXx-->          
-             
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.41</version>
+        </dependency>
+                     
         <dependency>
             <groupId>com.miglayout</groupId>
             <artifactId>miglayout-javafx</artifactId>
@@ -72,11 +77,6 @@
             <artifactId>controlsfx</artifactId>
             <version>8.40.14</version>
             <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.41</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>

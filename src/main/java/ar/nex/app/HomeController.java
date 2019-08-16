@@ -58,12 +58,13 @@ public class HomeController implements Initializable {
         mbEquipo.getItems().get(2).setOnAction(e->loadUI("pedido/Pedido"));
         mbEquipo.getItems().get(3).setOnAction(e->loadUI("repuesto/RepuestoUso"));
         mbEquipo.getItems().get(4).setOnAction(e->loadUI("gasoil/GasoilList"));
+        mbEquipo.getItems().get(5).setOnAction(e->loadUI("transporte/TransporteList"));
     }
     
     public void loadUI(String ui) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/" + ui + ".fxml"));
-            bpHome.getStylesheets().add("/fxml/" + ui + ".css");
+            bpHome.getStylesheets().add("/fxml/Equipo.css");
             bpHome.setCenter(root);
         } catch (Exception e) {
             e.printStackTrace();

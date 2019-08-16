@@ -6,6 +6,7 @@ import ar.nex.entity.equipo.Repuesto;
 import ar.nex.equipo.EquipoController;
 import ar.nex.equipo.util.DialogController;
 import ar.nex.jpa.RepuestoJpaController;
+import ar.nex.service.JpaService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -109,8 +110,7 @@ public class RepuestoController implements Initializable {
     @FXML
     private Label lblCompra;
 
-    private EntityManagerFactory factory;
-    private RepuestoJpaController jpaService;
+    private JpaService jpa;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -121,13 +121,12 @@ public class RepuestoController implements Initializable {
 
         btnAddModelo.setOnAction(e -> this.addModelo());
 
+        jpa = new JpaService();
         initTable();
-        initService();
         loadData();
     }
 
     public void clearAll() {
-        System.out.println("ar.nex.util.RepuestoController.clearAll()");
         data.clear();
         searchBox.clear();
         selectRepuesto = null;
@@ -189,16 +188,11 @@ public class RepuestoController implements Initializable {
         colAccion.setCellFactory(cellFactory);
     }
 
-    public void initService() {
-        factory = Persistence.createEntityManagerFactory("SaeFxPU");
-        jpaService = new RepuestoJpaController(factory);
-    }
-
     public void loadData() {
         System.out.println("ar.nex.util.RepuestoController.loadData()");
         clearAll();
         selectRepuesto = null;
-        List<Repuesto> lst = jpaService.findRepuestoEntities();
+        List<Repuesto> lst = jpa.getRepuesto().findRepuestoEntities();
         lst.forEach((item) -> {
             data.add(item);
         });
@@ -238,7 +232,7 @@ public class RepuestoController implements Initializable {
     private void Delete(ActionEvent event) {
         try {
             if (dlg.confirmDialog("Confimar Eliminar : " + selectRepuesto.toString() + "???")) {
-                jpaService.destroy(selectRepuesto.getIdRepuesto());
+                jpa.getRepuesto().destroy(selectRepuesto.getIdRepuesto());
                 dlg.showSuccess("Se Elimino Correctamente!!!");
             }
 //            } else {
@@ -261,7 +255,7 @@ public class RepuestoController implements Initializable {
         System.out.println("ar.nex.util.RepuestoController.showOnClick()");
         try {
             Repuesto item = (Repuesto) table.getSelectionModel().getSelectedItem();
-            selectRepuesto = jpaService.findRepuesto(item.getIdRepuesto());
+            selectRepuesto = jpa.getRepuesto().findRepuesto(item.getIdRepuesto());
 
             lblModelo.setText(listaModelo(selectRepuesto));
             lblPedido.setText(listaProvedor(selectRepuesto));
@@ -278,14 +272,18 @@ public class RepuestoController implements Initializable {
 
     private String listaModelo(Repuesto r) {
         String list = null;
-        if (!r.getModeloList().isEmpty()) {
-            for (EquipoModelo item : r.getModeloList()) {
-                if (list == null) {
-                    list = item.getNombre();
-                } else {
-                    list = list + " / " + item.getNombre();
+        try {
+            if (!r.getModeloList().isEmpty()) {
+                for (EquipoModelo item : r.getModeloList()) {
+                    if (list == null) {
+                        list = item.getNombre();
+                    } else {
+                        list = list + " / " + item.getNombre();
+                    }
                 }
             }
+        } catch (Exception e) {
+            list = "";
         }
         return list;
     }

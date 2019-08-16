@@ -237,7 +237,6 @@ public class PedidoController implements Initializable {
         table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         PedidoTableUtils.installCopyPasteHandler(table);
-
     }
 
     public void initCellFecha() {

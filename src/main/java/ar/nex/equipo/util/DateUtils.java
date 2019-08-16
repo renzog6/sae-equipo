@@ -126,7 +126,11 @@ public class DateUtils {
 //                .toLocalDate();
 //    }
     public static LocalDate convertToLocalDateViaSqlDate(Date dateToConvert) {
-        return new java.sql.Date(dateToConvert.getTime()).toLocalDate();
+        try {
+            return new java.sql.Date(dateToConvert.getTime()).toLocalDate();
+        } catch (Exception e) {
+            return  LocalDate.now();
+        }        
     }
 
     public static Date convertToDateViaSqlDate(LocalDate dateToConvert) {
