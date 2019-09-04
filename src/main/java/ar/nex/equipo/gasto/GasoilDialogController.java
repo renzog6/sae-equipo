@@ -80,7 +80,7 @@ public class GasoilDialogController implements Initializable {
     }
 
     /**
-     * Inicializa todos los elementos a usar.
+     * Inicializar todos los elementos a usar.
      */
     private void initControls() {
         try {
@@ -216,9 +216,8 @@ public class GasoilDialogController implements Initializable {
 
     private void guardar(ActionEvent e) {
         if (!isEmptytBox()) {
-            try {
-                DateUtils du = new DateUtils();
-                gasoil.setFecha(du.convertToDateViaSqlDate(dpFecha.getValue()));
+            try {                
+                gasoil.setFecha(DateUtils.convertToDateViaSqlDate(dpFecha.getValue()));
                 gasoil.setLitros(Double.parseDouble(boxLitros.getText()));
 
                 gasoil.setMovimineto(cbMovimiento.getValue().getValue());

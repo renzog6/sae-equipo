@@ -1,14 +1,9 @@
 package ar.nex.equipo.util;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.Period;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,7 +44,12 @@ public class DateUtils {
     public DateUtils() {
         //pattern = Pattern.compile(DATE_PATTERN);        
     }
-
+   public static Integer getEdad(Date date) { 
+        LocalDate ahora = LocalDate.now();
+        Period periodo = Period.between(convertToLocalDateViaSqlDate(date), ahora);
+        return periodo.getYears();
+    }
+   
     /**
      * Validate date format with regular expression
      *

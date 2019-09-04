@@ -15,7 +15,7 @@ public class MainApp extends Application {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/Home.fxml"));
 
             Scene scene = new Scene(root);
-            scene.getStylesheets().add("/fxml/Home.css");
+            scene.getStylesheets().add("/css/home.css");
 
             stage.setTitle("App by HellNeX");
             stage.setScene(scene);

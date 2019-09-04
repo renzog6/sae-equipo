@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="bpGasoil" minHeight="710.0" minWidth="1024.0" prefHeight="710.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.gasto.GasoilController">
+<BorderPane fx:id="bpGasoil" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.gasto.GasoilController">
     
     <center>
         <AnchorPane minHeight="560.0" prefHeight="560.0">

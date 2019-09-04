@@ -65,7 +65,7 @@ public class GasoilController implements Initializable {
         Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getResource("/fxml/gasoil/GasoilList.fxml"));
-            root.setStyle("/fxml/gasoil/Gasoil.css");
+            root.setStyle("/css/gasoil.css");
         } catch (IOException ex) {
             Logger.getLogger(GasoilController.class.getName()).log(Level.SEVERE, null, ex);
         }

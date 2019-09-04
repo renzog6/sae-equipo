@@ -50,7 +50,7 @@ public class EquipoController implements Initializable {
         Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getResource("/fxml/equipo/Equipo.fxml"));
-            root.setStyle("/fxml/equipo/Equipo.css");
+            root.setStyle("/css/equipo.css");
         } catch (IOException ex) {
             Logger.getLogger(EquipoController.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -27,7 +27,7 @@ public class HomeController implements Initializable {
         Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getResource("/fxml/Home.fxml"));
-            root.setStyle("/fxml/Home.css");
+            root.setStyle("/css/home.css");
         } catch (IOException ex) {
             Logger.getLogger(EquipoController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -64,7 +64,7 @@ public class HomeController implements Initializable {
     public void loadUI(String ui) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/" + ui + ".fxml"));
-            bpHome.getStylesheets().add("/fxml/Equipo.css");
+            bpHome.getStylesheets().add("/css/equipo.css");
             bpHome.setCenter(root);
         } catch (Exception e) {
             e.printStackTrace();
