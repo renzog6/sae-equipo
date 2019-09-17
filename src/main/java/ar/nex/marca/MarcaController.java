@@ -1,18 +1,29 @@
 package ar.nex.marca;
 
 import ar.nex.entity.Marca;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.entity.equipo.gasto.Gasoil;
+import ar.nex.equipo.gasto.GasoilController;
+import ar.nex.equipo.gasto.GasoilDialogController;
 import ar.nex.jpa.MarcaJpaController;
+import ar.nex.service.JpaService;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -20,176 +31,151 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+/**
+ * FXML Controller class
+ *
+ * @author Renzo
+ */
 public class MarcaController implements Initializable {
 
-    private DialogController dialog;
+    public MarcaController() {
+    }
+
+    public Parent getRoot() {
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getResource("/fxml/marca/MarcaList.fxml"));
+        } catch (IOException ex) {
+            Logger.getLogger(GasoilController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return root;
+    }
 
     @FXML
-    private TextField boxNombre;
-    @FXML
-    private TextField boxDescripcion;
+    private BorderPane bpMarca;
     @FXML
     private TextField searchBox;
     @FXML
-    private Button signOut;
+    private AnchorPane menuPane;
     @FXML
-    private Button addnewBtn;
+    private Button btnAdd;
     @FXML
-    private Button updateBtn;
+    private Button btnEdit;
     @FXML
-    private Button deleteBtn;
+    private Button btnDelete;
+    @FXML
+    private Label lblSelect;
 
-    ObservableList<Marca> data = FXCollections.observableArrayList();
-    FilteredList<Marca> filteredData = new FilteredList<>(data);
-    Marca select;
+    private final ObservableList<Marca> data = FXCollections.observableArrayList();
+    private final FilteredList<Marca> filteredData = new FilteredList<>(data);
+    private Marca select;
 
     @FXML
     private TableView<Marca> table;
     @FXML
+    private TableColumn<?, ?> colId;
+    @FXML
     private TableColumn<?, ?> colNombre;
     @FXML
-    private TableColumn<?, ?> colDescripcion;
+    private TableColumn<?, ?> colInfo;
 
-    private EntityManagerFactory factory;
-    private MarcaJpaController service;
+    private JpaService jpa;
 
+    /**
+     * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("ar.nex.util.MarcaController.initialize()");
+        // TODO
+        jpa = new JpaService();
+
+        btnAdd.setOnAction(e -> add());
+        btnEdit.setOnAction(e -> edit());
+
         initTable();
-        initService();
         loadData();
     }
 
     public void clearAll() {
-        System.out.println("ar.nex.util.MarcaController.clearAll()");
         data.clear();
-        boxNombre.clear();
-        boxDescripcion.clear();
         searchBox.clear();
         select = null;
     }
 
     public void initTable() {
-        System.out.println("ar.nex.util.MarcaController.initTable()");
+        colId.setCellValueFactory(new PropertyValueFactory<>("idMarca"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
-    }
-
-    public void initService() {
-        System.out.println("ar.nex.util.MarcaController.initService()");
-        factory = Persistence.createEntityManagerFactory("SaeFxPU");
-        service = new MarcaJpaController(factory);
+        colInfo.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
     }
 
     public void loadData() {
-        System.out.println("ar.nex.util.MarcaController.loadData()");
-        clearAll();
-
-        List<Marca> lst = service.findMarcaEntities();
-        for (Marca item : lst) {
-            data.add(item);
+        try {
+            clearAll();
+            List<Marca> lst = jpa.getMarca().findMarcaEntities();
+            lst.forEach((item) -> {
+                data.add(item);
+            });
             table.setItems(data);
-        }
-    }
-
-    public ObservableList<Marca> gatData() {
-        System.out.println("ar.nex.util.MarcaController.gatData()");
-        initService();
-        List<Marca> lst = service.findMarcaEntities();
-        for (Marca item : lst) {
-            data.add(item);            
-        }
-        return data;
-    }
-    
-    @FXML
-    private void Search(InputMethodEvent event) {
-    }
-
-    @FXML
-    private void Search(KeyEvent event) {
-    }
-
-    @FXML
-    private void goSignOut(ActionEvent event) {
-        Stage stage = (Stage) signOut.getScene().getWindow();
-        stage.close();
-    }
-
-    @FXML
-    private void Add(ActionEvent event) {
-        System.out.println("ar.nex.util.MarcaController.Add()");
-        try {
-            String nombre = boxNombre.getText();
-            String descrp = boxDescripcion.getText();
-
-            Marca item = new Marca();
-            item.setNombre(nombre);
-            item.setDescripcion(descrp);
-
-            service.create(item);
-
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
-        dialog.showSuccess("New Added Successfully!!!");
-        loadData();
     }
 
     @FXML
-    private void Update(ActionEvent event) {
-        System.out.println("ar.nex.util.MarcaController.Update()");
-        try {
-            String msg = "Confirma Actualizar " + select.toString() + " a " + boxNombre.getText();
-            if (dialog.confirmDialog(msg)) {
-                select.setNombre(boxNombre.getText());
-                select.setDescripcion(boxDescripcion.getText());
-                service.edit(select);
-                dialog.showSuccess("Se Actualizo Correctamente!!!");
-            } else {
-                boxNombre.clear();
-                boxDescripcion.clear();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-        loadData();
-
-    }
-
-    @FXML
-    private void Delete(ActionEvent event) {
-        try {
-            if (dialog.confirmDialog("Confimar Eliminar : " + select.toString() + "???")) {
-                service.destroy(select.getIdMarca());
-                dialog.showSuccess("Se Elimino Correctamente!!!");
-            } else {
-                boxNombre.clear();
-                boxDescripcion.clear();
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        loadData();
+    private void Search() {
+        searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            filteredData.setPredicate((Predicate<? super Marca>) item -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                if (item.getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                }
+                return false;
+            });
+        });
+        SortedList<Marca> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+        table.setItems(sortedData);
     }
 
     @FXML
     private void showOnClick(MouseEvent event) {
-        System.out.println("ar.nex.util.MarcaController.showOnClick()");
-        try {
-            Marca item = (Marca) table.getSelectionModel().getSelectedItem();
-            select = service.findMarca(item.getIdMarca());
+        select = table.getSelectionModel().getSelectedItem();
+        lblSelect.setText(select.getNombre());
+    }
 
-            boxNombre.setText(item.getNombre());
-            boxDescripcion.setText(item.getDescripcion());
+    private void add() {
+        select = null;
+        edit();
+    }
+
+    private void edit() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/marca/MarcaEdit.fxml"));
+            MarcaDialogController controller = new MarcaDialogController(select);
+            loader.setController(controller);
+
+            Scene scene = new Scene(loader.load());
+            Stage dialog = new Stage();
+            dialog.setTitle("Marca.");
+            dialog.setScene(scene);
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.resizableProperty().setValue(Boolean.FALSE);
+            dialog.showAndWait();
+            loadData();
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

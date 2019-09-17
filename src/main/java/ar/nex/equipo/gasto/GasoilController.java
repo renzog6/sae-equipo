@@ -1,8 +1,9 @@
 package ar.nex.equipo.gasto;
 
+import ar.nex.entity.equipo.gasto.GasoilMovimiento;
 import ar.nex.entity.equipo.gasto.Gasoil;
 import ar.nex.equipo.util.DateUtils;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.service.JpaService;
 import java.io.IOException;
 import java.net.URL;
@@ -134,7 +135,7 @@ public class GasoilController implements Initializable {
             btnUpdate.setOnAction(e -> loadData(dpDesde.getValue(), dpHasta.getValue()));
             startTask();
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -199,7 +200,7 @@ public class GasoilController implements Initializable {
         colMovimiento.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Gasoil, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Gasoil, String> p) {
-                if (p.getValue().getMovimineto() == 0) {
+                if (p.getValue().getMovimineto().getValue() == 0) {
                     return new SimpleStringProperty(GasoilMovimiento.CARGA.getNombre());
                 } else {
                     return new SimpleStringProperty(GasoilMovimiento.DESCARDA.getNombre());
@@ -237,7 +238,7 @@ public class GasoilController implements Initializable {
                 table.setItems(data);
             }
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -246,7 +247,7 @@ public class GasoilController implements Initializable {
             clearAll();
             loadData(listGasoil(local_desde, local_hasta));
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -263,20 +264,23 @@ public class GasoilController implements Initializable {
     }
 
     private List<Gasoil> listGasoil(LocalDate local_desde, LocalDate local_hasta) {
-        DateUtils du = new DateUtils();
-        Date desde = (Date) du.convertToDateViaSqlDate(local_desde);
-        Date hasta = (Date) du.convertToDateViaSqlDate(local_hasta);
-        EntityManager em = jpa.getFactory().createEntityManager();
-        TypedQuery<Gasoil> query
-                = em.createQuery("SELECT c FROM Gasoil c"
-                        + "  WHERE c.fecha BETWEEN :start AND :end"
-                        + " ORDER BY c.fecha, c.idGasto ASC", Gasoil.class)
-                        .setParameter("start", desde)
-                        .setParameter("end", hasta);
-        List<Gasoil> results = query.getResultList();
-        if (!results.isEmpty()) {
-            return results;
-        } else {
+        try {
+            Date desde = (Date) DateUtils.convertToDateViaSqlDate(local_desde);
+            Date hasta = (Date) DateUtils.convertToDateViaSqlDate(local_hasta);
+            EntityManager em = jpa.getFactory().createEntityManager();
+            TypedQuery<Gasoil> query
+                    = em.createQuery("SELECT c FROM Gasoil c"
+                            + "  WHERE c.fecha BETWEEN :start AND :end"
+                            + " ORDER BY c.fecha, c.idGasto ASC", Gasoil.class)
+                            .setParameter("start", desde)
+                            .setParameter("end", hasta);
+            List<Gasoil> results = query.getResultList();
+            if (!results.isEmpty()) {
+                return results;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
             return null;
         }
     }
@@ -289,10 +293,10 @@ public class GasoilController implements Initializable {
         try {
             List<Gasoil> lst = listGasoil();
             boolean flag = false;
-            for (Gasoil item : lst) {                
+            for (Gasoil item : lst) {
                 if (flag) {
                     if (item.isStockUpdate()) {
-                        switch (item.getMovimineto()) {
+                        switch (item.getMovimineto().getValue()) {
                             case 0://Carga
                                 item.setStock(gasoilSelect.getStock() - item.getLitros());
                                 break;
@@ -312,7 +316,7 @@ public class GasoilController implements Initializable {
             this.loadData(listGasoil(dpDesde.getValue(), dpHasta.getValue()));
             updateTanque();
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 

@@ -26,10 +26,20 @@ public class DateUtils {
         return DATE_TIME_FORMAT.format(new Date(time));
     }
 
+    /**
+     * 
+     * @param date
+     * @return DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+     */
     public static String getDateString(Date date) {
         return DATE_FORMAT.format(date);
     }
 
+    /**
+     * 
+     * @param date
+     * @return DATE_FORMAT_Y = new SimpleDateFormat("yyyy-mm-dd");
+     */
     public static String getDateYString(Date date) {
         return DATE_FORMAT_Y.format(date);
     }
@@ -145,7 +155,6 @@ public class DateUtils {
     public boolean compareDateToLocalDate(Date date, LocalDate localDate) {
         String dt = convertToLocalDateViaSqlDate(date).toString();
         String ld = convertToDateViaSqlDate(localDate).toString();
-        System.out.println("ar.nex.util.DateUtils.compareDateToLocalDate() dt: " + dt + " ld: " + ld);
         return dt.contentEquals(ld);
     }
 

@@ -3,7 +3,7 @@ package ar.nex.repuesto;
 import ar.nex.entity.equipo.Equipo;
 import ar.nex.entity.equipo.RepuestoStockDetalle;
 import ar.nex.equipo.EquipoController;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.service.JpaService;
 import java.io.IOException;
 import java.net.URL;
@@ -244,7 +244,7 @@ public class RepuestoUsoController implements Initializable {
     private void add() {
         try {
             if (equipoSelect == null) {
-                DialogController.errorDialog("Uso Repuesto", "Debe selecionar un Equipo");
+                UtilDialog.errorDialog("Uso Repuesto", "Debe selecionar un Equipo");
             } else {
                 Stage dialog = new Stage();
 
@@ -279,7 +279,7 @@ public class RepuestoUsoController implements Initializable {
     private void edit() {
         try {
             if (stockDetalleSelect == null) {
-                DialogController.errorDialog("Uso Repuesto", "Debe selecionar un Repuesto");
+                UtilDialog.errorDialog("Uso Repuesto", "Debe selecionar un Repuesto");
             } else {
                 Stage dialog = new Stage();
 

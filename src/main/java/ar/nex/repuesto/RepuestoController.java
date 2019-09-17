@@ -4,8 +4,8 @@ import ar.nex.entity.empresa.Empresa;
 import ar.nex.entity.equipo.EquipoModelo;
 import ar.nex.entity.equipo.Repuesto;
 import ar.nex.equipo.EquipoController;
-import ar.nex.equipo.util.DialogController;
-import ar.nex.jpa.RepuestoJpaController;
+import ar.nex.equipo.util.DateUtils;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.service.JpaService;
 
 import java.io.IOException;
@@ -40,9 +40,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 /**
  * FXML Controller class
  *
@@ -65,7 +62,7 @@ public class RepuestoController implements Initializable {
         return root;
     }
 
-    private DialogController dlg;
+    private UtilDialog dlg;
 
     @FXML
     private TextField searchBox;
@@ -114,8 +111,6 @@ public class RepuestoController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("ar.nex.repuesto.RepuestoController.initialize()");
-
         btnAdd.setOnAction(e -> this.add());
         btnEdit.setOnAction(e -> this.edit());
 
@@ -252,7 +247,6 @@ public class RepuestoController implements Initializable {
 
     @FXML
     private void showOnClick(MouseEvent event) {
-        System.out.println("ar.nex.util.RepuestoController.showOnClick()");
         try {
             Repuesto item = (Repuesto) table.getSelectionModel().getSelectedItem();
             selectRepuesto = jpa.getRepuesto().findRepuesto(item.getIdRepuesto());
@@ -260,13 +254,27 @@ public class RepuestoController implements Initializable {
             lblModelo.setText(listaModelo(selectRepuesto));
             lblPedido.setText(listaProvedor(selectRepuesto));
             if (selectRepuesto.getPedidoList().size() >= 1) {
-                lblCompra.setText("Ultima compra: " + selectRepuesto.getPedidoList().get(selectRepuesto.getPedidoList().size() - 1).toString());
+                lblCompra.setText(ultimaCompra(selectRepuesto.getPedidoList().size() - 1));
             } else {
                 lblCompra.setText("Ultima compra: sin registro");
             }
         } catch (Exception e) {
-            System.out.println(e);
             e.printStackTrace();
+        }
+        event.consume();
+    }
+
+    private String ultimaCompra(int index) {
+        String ultima = "Ultima compra: ";
+        try {
+            if (index >= 0) {
+                ultima += DateUtils.getDateString(selectRepuesto.getPedidoList().get(index).getFechaFin());
+                ultima += " - " + selectRepuesto.getPedidoList().get(index).getCantidad();
+                ultima += " - " + selectRepuesto.getPedidoList().get(index).getEmpresa().getNombre();
+            }
+            return ultima;
+        } catch (Exception e) {
+            return ultima;
         }
     }
 
@@ -356,19 +364,23 @@ public class RepuestoController implements Initializable {
 
     public void addModelo() {
         try {
-            Stage stage = new Stage();
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoEquipoModeloDialog.fxml"));
-            RepuestoEquipoModeloDialogController controller = new RepuestoEquipoModeloDialogController(selectRepuesto);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoModeloSelect.fxml"));
+            RepuestoModeloSelectController controller = new RepuestoModeloSelectController(selectRepuesto.getModeloList());
             loader.setController(controller);
-
             Scene scene = new Scene(loader.load());
 
+            Stage stage = new Stage();
+            stage.setTitle("Seleccionar Modelos de Equipos");
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.resizableProperty().setValue(Boolean.FALSE);
-
             stage.showAndWait();
+
+            if (controller.getEquipoModeloList() != null) {
+                selectRepuesto.setModeloList(controller.getEquipoModeloList());
+                jpa.getRepuesto().edit(selectRepuesto);
+            }
+
             this.loadData();
 
         } catch (Exception e) {

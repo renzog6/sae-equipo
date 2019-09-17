@@ -3,7 +3,7 @@ package ar.nex.equipo.transporte;
 import ar.nex.entity.equipo.Equipo;
 import ar.nex.entity.equipo.EquipoDocumentacion;
 import ar.nex.equipo.util.DateUtils;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.service.JpaService;
 import java.io.IOException;
 import java.net.URL;
@@ -95,7 +95,7 @@ public class EquipoEditVctoController implements Initializable {
                 dpPatente.setValue(LocalDate.now());
             }
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
 
     }

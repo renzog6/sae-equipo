@@ -1,18 +1,24 @@
 package ar.nex.marca;
 
 import ar.nex.entity.Marca;
+import ar.nex.equipo.gasto.GasoilController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.jpa.MarcaJpaController;
 import ar.nex.service.JpaService;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 
 /**
  * FXML Controller class
@@ -25,56 +31,89 @@ public class MarcaDialogController implements Initializable {
         this.marca = m;
     }
 
+    public Parent getRoot() {
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getResource("/fxml/marca/MarcaEdit.fxml"));
+        } catch (IOException ex) {
+            Logger.getLogger(GasoilController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return root;
+    }
+
     @FXML
-    private AnchorPane apModelo;
-    @FXML
-    private TextField boxModelo;
-    @FXML
-    private TextField boxDescripcion;
-    @FXML
-    private TextField boxAnio;
+    private TextField boxNombre;
     @FXML
     private TextField boxInfo;
+
     @FXML
     private Button btnGuardar;
     @FXML
     private Button btnCancelar;
 
-    private final Marca marca;
-    
+    private Marca marca;
+
     private MarcaJpaController jpaMarca;
 
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO        
-        jpaMarca = new JpaService().getMarca();
-
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                boxModelo.requestFocus();
-            }
-        });
-
+        initControls();
         btnGuardar.setOnAction(e -> guardar(e));
-        btnCancelar.setOnAction(e ->cancelar(e));
+        btnCancelar.setOnAction(e -> cancelar(e));
+    }
+
+    private void initControls() {
+        try {
+            if (marca != null) {
+                boxNombre.setText(marca.getNombre());
+                boxInfo.setText(marca.getDescripcion());
+            }else{
+                marca = new Marca();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isEmptytBox() {
+        if (boxNombre.getText().trim().isEmpty()) {
+            UtilDialog.errorDialog("Requiere valor", "Nombre");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    boxNombre.requestFocus();
+                }
+            });
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @FXML
     private void guardar(ActionEvent event) {
         try {
-            marca.setNombre(boxModelo.getText());
-           
-            jpaMarca.create(marca);
+            if (!isEmptytBox()) {
+                marca.setNombre(boxNombre.getText());
+                marca.setDescripcion(boxInfo.getText());
 
-            cancelar(event);
+                jpaMarca = new JpaService().getMarca();
+                if (marca.getIdMarca() != null) {
+                    jpaMarca.edit(marca);
+                } else {
+                    jpaMarca.create(marca);
+                }
+                cancelar(event);
+            }
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
     }

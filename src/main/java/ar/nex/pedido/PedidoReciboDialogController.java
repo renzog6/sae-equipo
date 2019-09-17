@@ -2,7 +2,7 @@ package ar.nex.pedido;
 
 import ar.nex.repuesto.RepuestoStockController;
 import ar.nex.entity.equipo.Pedido;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.jpa.PedidoJpaController;
 import java.net.URL;
 import java.text.DateFormat;
@@ -109,7 +109,7 @@ public class PedidoReciboDialogController implements Initializable {
             System.out.println("ar.nex.pedido.PedidoReciboDialogController.initControls() :" + pedido.getRepuesto().getStock());
 
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -147,7 +147,7 @@ public class PedidoReciboDialogController implements Initializable {
             }
             cancelar(event);
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
 
     }

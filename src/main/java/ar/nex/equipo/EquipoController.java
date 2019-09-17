@@ -1,7 +1,7 @@
 package ar.nex.equipo;
 
 import ar.nex.entity.equipo.Equipo;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.equipo.util.EquipoToExel;
 import ar.nex.service.JpaService;
 import java.io.IOException;
@@ -205,7 +205,7 @@ public class EquipoController implements Initializable {
             table.setItems(data);
         } catch (Exception e) {
             clearAll();
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
 
     }

@@ -3,7 +3,7 @@ package ar.nex.equipo.transporte;
 import ar.nex.entity.equipo.Equipo;
 import ar.nex.entity.equipo.Transporte;
 import ar.nex.equipo.util.DateUtils;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.service.JpaService;
 import java.io.IOException;
 import java.net.URL;
@@ -119,7 +119,7 @@ public class TransporteController implements Initializable {
             btnEditAcoplado.setOnAction(e -> editAcoplado());
             startTask();
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -193,7 +193,7 @@ public class TransporteController implements Initializable {
                 table.setItems(data);
             }
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 

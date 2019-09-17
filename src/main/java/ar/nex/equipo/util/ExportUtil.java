@@ -37,7 +37,7 @@ public class ExportUtil {
             workbook.write(outputStream);
             workbook.close();
 
-            if (DialogController.confirmDialog("Desea ABRIR el archivo generado?")) {
+            if (UtilDialog.confirmDialog("Desea ABRIR el archivo generado?")) {
                 abrir(saveFile.toString());
             }
 

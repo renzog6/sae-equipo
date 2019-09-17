@@ -8,7 +8,7 @@ import ar.nex.entity.equipo.EquipoCompraVenta;
 import ar.nex.entity.equipo.EquipoModelo;
 import ar.nex.entity.equipo.EquipoTipo;
 import ar.nex.entity.Marca;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.service.JpaService;
 import java.io.IOException;
 import java.net.URL;
@@ -167,7 +167,7 @@ public class EquipoDialogController implements Initializable {
             boxValorCompra.setText("0.0");
 
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -209,7 +209,7 @@ public class EquipoDialogController implements Initializable {
             }
 
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         } finally {
             ((Node) (e.getSource())).getScene().getWindow().hide();
         }
@@ -247,7 +247,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 3);
         } catch (IOException e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -283,7 +283,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 2);
         } catch (IOException e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -307,7 +307,7 @@ public class EquipoDialogController implements Initializable {
                     }
             );
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -319,7 +319,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 1);
         } catch (IOException e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -355,7 +355,7 @@ public class EquipoDialogController implements Initializable {
 
             showDialog(new Scene(loader.load()), 4);
         } catch (IOException e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 
@@ -393,7 +393,7 @@ public class EquipoDialogController implements Initializable {
                     break;
             }
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
     }
 

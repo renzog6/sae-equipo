@@ -4,7 +4,7 @@ import ar.nex.entity.equipo.EquipoModelo;
 import ar.nex.entity.equipo.Pedido;
 import ar.nex.entity.equipo.Repuesto;
 import ar.nex.equipo.EquipoController;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.repuesto.RepuestoPedidoDialogController;
 import ar.nex.service.JpaService;
 import java.net.URL;
@@ -137,7 +137,7 @@ public class PedidoController implements Initializable {
             initFiltroEstado();
             startTask();
         } catch (Exception e) {
-            DialogController.showException(e);
+            UtilDialog.showException(e);
         }
 
     }
@@ -321,7 +321,7 @@ public class PedidoController implements Initializable {
 
             colEstado.setCellFactory(cellFactory);
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
     }
 
@@ -457,7 +457,7 @@ public class PedidoController implements Initializable {
 
     private void devolverPedido() {
         try {
-            if (DialogController.confirmDialog("Seguro que desea Cancelar el Pedido???")) {
+            if (UtilDialog.confirmDialog("Seguro que desea Cancelar el Pedido???")) {
                 if (pedidoSelect.getEstado() == EstadoPedido.COMPLETO.getValue()) {
                     pedidoSelect.getRepuesto().setStock(pedidoSelect.getRepuesto().getStock() - pedidoSelect.getCantidad());
                     jpa.getRepuesto().edit(pedidoSelect.getRepuesto());

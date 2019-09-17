@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
  *
  * @author Renzo
  */
-public class DialogController {
+public class UtilDialog {
 
     public static void showSuccess(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

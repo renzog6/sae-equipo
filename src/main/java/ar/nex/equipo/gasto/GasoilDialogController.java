@@ -1,9 +1,10 @@
 package ar.nex.equipo.gasto;
 
+import ar.nex.entity.equipo.gasto.GasoilMovimiento;
 import ar.nex.entity.equipo.Equipo;
 import ar.nex.entity.equipo.gasto.Gasoil;
 import ar.nex.equipo.util.DateUtils;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.service.JpaService;
 import java.net.URL;
 import java.time.LocalDate;
@@ -167,14 +168,14 @@ public class GasoilDialogController implements Initializable {
                 boxPrecio.setDisable(true);
             }
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
 
     }
 
     private boolean isEmptytBox() {        
         if (!DateUtils.validate(dpFecha.getValue())) {
-            DialogController.errorDialog("Requiere valor", "Fecha");
+            UtilDialog.errorDialog("Requiere valor", "Fecha");
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -183,7 +184,7 @@ public class GasoilDialogController implements Initializable {
             });
             return true;
         } else if (boxLitros.getText().trim().isEmpty()) {
-            DialogController.errorDialog("Requiere valor", "Litros");
+            UtilDialog.errorDialog("Requiere valor", "Litros");
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -192,7 +193,7 @@ public class GasoilDialogController implements Initializable {
             });
             return true;
         } else if (boxEquipo.getText().trim().isEmpty() && (cbMovimiento.getValue() != GasoilMovimiento.DESCARDA)) {
-            DialogController.errorDialog("Requiere valor", "Equipo");
+            UtilDialog.errorDialog("Requiere valor", "Equipo");
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -201,7 +202,7 @@ public class GasoilDialogController implements Initializable {
             });
             return true;
         } else if (boxPrecio.getText().trim().isEmpty()) {
-            DialogController.errorDialog("Requiere valor", lblPrecio_kms.getText());
+            UtilDialog.errorDialog("Requiere valor", lblPrecio_kms.getText());
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -220,7 +221,7 @@ public class GasoilDialogController implements Initializable {
                 gasoil.setFecha(DateUtils.convertToDateViaSqlDate(dpFecha.getValue()));
                 gasoil.setLitros(Double.parseDouble(boxLitros.getText()));
 
-                gasoil.setMovimineto(cbMovimiento.getValue().getValue());
+                gasoil.setMovimineto(cbMovimiento.getValue());
                 Gasoil ultimo = ultimoMovimiento();
                 switch (cbMovimiento.getValue()) {
                     case CARGA:
@@ -255,7 +256,7 @@ public class GasoilDialogController implements Initializable {
                 ((Node) (e.getSource())).getScene().getWindow().hide();
 
             } catch (Exception ex) {
-                DialogController.showException(ex);
+                UtilDialog.showException(ex);
             }
         }
     }

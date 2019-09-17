@@ -2,7 +2,7 @@ package ar.nex.repuesto;
 
 import ar.nex.entity.equipo.RepuestoStockDetalle;
 import ar.nex.equipo.util.DateUtils;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.jpa.RepuestoStockDetalleJpaController;
 import java.net.URL;
 import java.util.Objects;
@@ -75,7 +75,7 @@ public class RepuestoUsoEditController implements Initializable {
 
             boxFecha.setValue(dateUtil.convertToLocalDateViaSqlDate(stockDetalle.getFecha()));
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
 
         boxCantidad.setText(stockDetalle.getCantidad().toString());
@@ -85,7 +85,7 @@ public class RepuestoUsoEditController implements Initializable {
     private void borrar(ActionEvent event) {
         try {
             String msg = "Seguro que desea ELIMINAR esta entrada?";
-            if (DialogController.confirmDialog(msg)) {
+            if (UtilDialog.confirmDialog(msg)) {
                 new RepuestoStockController().borrarStock(stockDetalle);
             }
         } catch (Exception ex) {
@@ -99,14 +99,14 @@ public class RepuestoUsoEditController implements Initializable {
             if (!validarCambios()) {
 
                 String msg = "Seguro que desea GUARDAR los cambios?";
-                if (DialogController.confirmDialog(msg)) {
+                if (UtilDialog.confirmDialog(msg)) {
                     stockDetalle.setFecha(dateUtil.convertToDateViaSqlDate(boxFecha.getValue()));
                     stockDetalle.setInfo(boxInfo.getText());
 
                     new RepuestoStockController().editarStock(stockDetalle, Double.valueOf(boxCantidad.getText()));
                 }
             } else {
-                DialogController.showSuccess("No se modifico nada!!!");
+                UtilDialog.showSuccess("No se modifico nada!!!");
             }
         } catch (Exception ex) {
             Logger.getLogger(RepuestoUsoEditController.class.getName()).log(Level.SEVERE, null, ex);

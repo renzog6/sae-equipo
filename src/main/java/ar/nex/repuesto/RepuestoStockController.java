@@ -2,7 +2,7 @@ package ar.nex.repuesto;
 
 import ar.nex.entity.equipo.Pedido;
 import ar.nex.entity.equipo.RepuestoStockDetalle;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.jpa.RepuestoJpaController;
 import ar.nex.jpa.RepuestoStockDetalleJpaController;
 import javax.persistence.Persistence;
@@ -39,7 +39,7 @@ public class RepuestoStockController {
             jpaStockDetalle.create(stock);
 
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
     }
 
@@ -51,7 +51,7 @@ public class RepuestoStockController {
 
             jpaStockDetalle.create(stockDetalle);
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
     }
 
@@ -66,7 +66,7 @@ public class RepuestoStockController {
             jpaRepuesto().edit(stockDetalle.getRepuesto());
             jpaStockDetalle.edit(stockDetalle);
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
     }
 
@@ -78,7 +78,7 @@ public class RepuestoStockController {
 
             jpaStockDetalle.destroy(stockDetalle.getIdStock());
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
     }
 }

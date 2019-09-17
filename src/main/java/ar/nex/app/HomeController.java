@@ -59,6 +59,7 @@ public class HomeController implements Initializable {
         mbEquipo.getItems().get(3).setOnAction(e->loadUI("repuesto/RepuestoUso"));
         mbEquipo.getItems().get(4).setOnAction(e->loadUI("gasoil/GasoilList"));
         mbEquipo.getItems().get(5).setOnAction(e->loadUI("transporte/TransporteList"));
+        mbEquipo.getItems().get(6).setOnAction(e->loadUI("marca/MarcaList"));
     }
     
     public void loadUI(String ui) {

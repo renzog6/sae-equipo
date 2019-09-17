@@ -16,9 +16,9 @@
 <BorderPane fx:id="bpRepuesto" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.repuesto.RepuestoController">
     
     <center>
-        <AnchorPane minHeight="558.0" prefHeight="558.0">
+        <AnchorPane>
             <children>
-                <TableView fx:id="table" layoutX="-9.0" layoutY="14.0" minHeight="558.0" onMouseClicked="#showOnClick" prefHeight="558.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <TableView fx:id="table" layoutX="-9.0" layoutY="14.0" onMouseClicked="#showOnClick" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
                         <TableColumn fx:id="colEquipos" minWidth="50.0" prefWidth="100.0" text="Equipos" />
                         <TableColumn fx:id="colCodigo" minWidth="50.0" prefWidth="100.0" text="Codigo" />

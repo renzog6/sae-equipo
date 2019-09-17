@@ -4,7 +4,7 @@ import ar.nex.entity.empresa.Empresa;
 import ar.nex.entity.equipo.Pedido;
 import ar.nex.entity.equipo.Repuesto;
 import ar.nex.equipo.util.DateUtils;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.service.JpaService;
 import java.net.URL;
 import java.time.LocalDate;
@@ -180,7 +180,7 @@ public class PedidoEditController implements Initializable {
                 dpFin.setDisable(true);
             }
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
 
     }

@@ -4,7 +4,7 @@ import ar.nex.entity.equipo.Equipo;
 import ar.nex.entity.equipo.Repuesto;
 import ar.nex.entity.equipo.RepuestoStockDetalle;
 import ar.nex.equipo.util.DateUtils;
-import ar.nex.equipo.util.DialogController;
+import ar.nex.equipo.util.UtilDialog;
 import ar.nex.jpa.RepuestoJpaController;
 import java.net.URL;
 import java.text.DateFormat;
@@ -185,16 +185,16 @@ public class RepuestoUsoAddController implements Initializable {
     }
 
     public boolean validate() {
-        if (!dateUtil.validate(boxFecha.getValue().toString())) {
-            DialogController.showSuccess("Requiere una Fecha Valida.");
+        if (!dateUtil.validate(boxFecha.getValue())) {
+            UtilDialog.showSuccess("Requiere una Fecha Valida.");
             return false;
         }
         if (boxRepuesto.getText().isEmpty()) {
-            DialogController.showSuccess("Requiere un Repuesto.");
+            UtilDialog.showSuccess("Requiere un Repuesto.");
             return false;
         }
         if (boxCantidad.getText().isEmpty()) {
-            DialogController.showSuccess("Requiere una Cantidad.");
+            UtilDialog.showSuccess("Requiere una Cantidad.");
             return false;
         }
 
@@ -216,7 +216,7 @@ public class RepuestoUsoAddController implements Initializable {
                 resetControls();
             }
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
     }
 
@@ -225,7 +225,7 @@ public class RepuestoUsoAddController implements Initializable {
             dataStockDetalle.add(rsd);
             tableStockDetalle.setItems(dataStockDetalle);
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
     }
 
@@ -260,7 +260,7 @@ public class RepuestoUsoAddController implements Initializable {
 
             colAction.setCellFactory(cellFactory);
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
     }
 
@@ -270,7 +270,7 @@ public class RepuestoUsoAddController implements Initializable {
                 new RepuestoStockController().outStock(item);
             });
         } catch (Exception ex) {
-            DialogController.showException(ex);
+            UtilDialog.showException(ex);
         }
         ((Node) (event.getSource())).getScene().getWindow().hide();
     }
