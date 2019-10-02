@@ -19,7 +19,7 @@
 <BorderPane fx:id="bpTransporte" minHeight="600.0" minWidth="800.0" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.transporte.TransporteController">
     
     <center>
-        <AnchorPane minHeight="560.0">
+        <AnchorPane minHeight="550.0">
             <children>
                 <TableView fx:id="table" layoutX="-9.0" layoutY="-1.0" onMouseClicked="#showOnClick" prefHeight="561.0" prefWidth="690.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
                     <columns>
@@ -52,30 +52,30 @@
     </top>
     
     <bottom>
-        <AnchorPane fx:id="menuPane" minHeight="100.0" styleClass="menuPane" BorderPane.alignment="CENTER">
+        <AnchorPane fx:id="menuPane" minHeight="50.0" styleClass="menuPane" BorderPane.alignment="CENTER">
             <children>
              
-                <Button fx:id="btnAdd" contentDisplay="CENTER" layoutX="609.0" layoutY="312.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="110.0">
+                <Button fx:id="btnAdd" contentDisplay="CENTER" layoutX="609.0" layoutY="312.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" scaleX="1.5" scaleY="1.5">
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" scaleX="1.2" scaleY="1.2">
                             <image>
                                 <Image url="@../../img/plus_64.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>                        
-                <Button fx:id="btnEdit" alignment="CENTER" contentDisplay="CENTER" layoutX="609.0" layoutY="359.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="60.0">
+                <Button fx:id="btnEdit" alignment="CENTER" contentDisplay="CENTER" layoutX="609.0" layoutY="359.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="60.0">
                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" scaleX="1.5" scaleY="1.5">
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" scaleX="1.2" scaleY="1.2">
                             <image>
                                 <Image url="@../../img/pencil_64.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>                        
-                <Button fx:id="btnDelete" contentDisplay="CENTER" layoutX="609.0" layoutY="405.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                <Button fx:id="btnDelete" contentDisplay="CENTER" layoutX="609.0" layoutY="405.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="110.0">
                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" scaleX="1.5" scaleY="1.5">
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" scaleX="1.2" scaleY="1.2">
                             <image>
                                 <Image url="@../../img/delete_64.png" />
                             </image>
@@ -87,7 +87,7 @@
         </AnchorPane>
     </bottom>
     <right>
-        <AnchorPane prefWidth="500.0" BorderPane.alignment="CENTER">
+        <AnchorPane prefWidth="450.0" BorderPane.alignment="CENTER">
             <children>
                 <GridPane fx:id="gpTitulo" alignment="CENTER" styleClass="grid-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="0.0">
                     <columnConstraints>

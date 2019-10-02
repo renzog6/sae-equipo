@@ -25,7 +25,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -34,7 +33,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -96,8 +94,6 @@ public class EquipoController implements Initializable {
     private TableColumn<?, ?> colPatente;
     @FXML
     private TableColumn<?, ?> colOtro;
-    @FXML
-    private TableColumn colAccion;
 
     @FXML
     private MenuButton mbMenu;
@@ -112,14 +108,11 @@ public class EquipoController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        initControls();
         initMenu();
         initTable();
-        initSevice();
         initFiltro();
         loadData(0);
-
-        btnAdd.setOnAction(e -> this.add());
-        btnEdit.setOnAction(e -> this.edit());
     }
 
     private void initMenu() {
@@ -132,14 +125,45 @@ public class EquipoController implements Initializable {
         mbMenu.getItems().add(item);
     }
 
-    public void clearAll() {
+    private void initControls() {
+        jpa = new JpaService();
+
+        btnAdd.setOnAction(e -> this.add());
+        btnEdit.setOnAction(e -> this.edit());
+
+        searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            filteredData.setPredicate((Predicate<? super Equipo>) e -> {
+                try {
+                    if (newValue == null || newValue.isEmpty()) {
+                        return true;
+                    }
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    if (e.getModelo().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    } else if (e.getTipo().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    } else if (e.getCategoria().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    } else if (e.getMarca().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    } else if (e.getPatente().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    }
+                    return false;
+                } catch (Exception ex) {
+                    return false;
+                }
+
+            });
+        });
+    }
+
+    private void clearAll() {
         data.clear();
-        searchBox.clear();
         equipoSelect = null;
     }
 
-    public void initTable() {
-        System.out.println("ar.nex.equipo.EquipoController.initTable()");
+    private void initTable() {
         colCategoria.setCellValueFactory(new PropertyValueFactory<>("categoria"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         colModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
@@ -149,51 +173,15 @@ public class EquipoController implements Initializable {
         colMotor.setCellValueFactory(new PropertyValueFactory<>("motor"));
         colPatente.setCellValueFactory(new PropertyValueFactory<>("patente"));
         colOtro.setCellValueFactory(new PropertyValueFactory<>("otro"));
-        initCellAccion();
     }
 
-    public void initCellAccion() {
-        colAccion.setCellValueFactory(new PropertyValueFactory<>("Accion"));
-        Callback<TableColumn<Equipo, String>, TableCell<Equipo, String>> cellFactory
-                = //
-                (final TableColumn<Equipo, String> param) -> {
-                    final TableCell<Equipo, String> cell = new TableCell<Equipo, String>() {
-
-                final Button btn = new Button("+");
-
-                @Override
-                public void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setGraphic(null);
-                        setText(null);
-                    } else {
-                        btn.setOnAction(event -> {
-                            Equipo itemSelect = getTableView().getItems().get(getIndex());
-                            //Equipo newEquipo = dialog.addToEquipo(repuesto);
-                            //jpaEquipo.create(newEquipo);
-                        });
-                        setGraphic(btn);
-                        setText(null);
-                    }
-                }
-            };
-                    return cell;
-                };
-        colAccion.setCellFactory(cellFactory);
-    }
-
-    public void initSevice() {
-        jpa = new JpaService();
-    }
-
-    public void initFiltro() {
+    private void initFiltro() {
         ObservableList list = FXCollections.observableArrayList(EmpresaSelect.values());
         filtroEmpresa.getItems().addAll(list);
         filtroEmpresa.getSelectionModel().select(0);
     }
 
-    public void loadData(long id) {
+    private void loadData(long id) {
         try {
             clearAll();
             List<Equipo> lst = jpa.getEquipo().findEquipoEntities();
@@ -212,22 +200,7 @@ public class EquipoController implements Initializable {
 
     @FXML
     private void Search() {
-        searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            filteredData.setPredicate((Predicate<? super Equipo>) user -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (user.getModelo().getNombre().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (user.getTipo().getNombre().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (user.getCategoria().getNombre().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                return false;
-            });
-        });
+
         SortedList<Equipo> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(table.comparatorProperty());
         table.setItems(sortedData);
@@ -235,8 +208,7 @@ public class EquipoController implements Initializable {
 
     @FXML
     private void goSignOut(ActionEvent event) {
-        Stage stage = (Stage) signOut.getScene().getWindow();
-        stage.close();
+        ((Stage) signOut.getScene().getWindow()).close();
     }
 
     private void add() {
@@ -260,7 +232,7 @@ public class EquipoController implements Initializable {
 
             dialog.showAndWait();
             this.loadData(0);
-
+            Search();
         } catch (IOException e) {
             System.err.print(e);
         }
@@ -290,7 +262,7 @@ public class EquipoController implements Initializable {
         loadData(empresa.getId());
     }
 
-    private void export(){
-        new EquipoToExel().export(data,  filtroEmpresa.getSelectionModel().getSelectedItem().toString());
+    private void export() {
+        new EquipoToExel().export(data, filtroEmpresa.getSelectionModel().getSelectedItem().toString());
     }
 }

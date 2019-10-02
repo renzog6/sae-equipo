@@ -197,11 +197,6 @@ public class TransporteController implements Initializable {
         }
     }
 
-    private void initGridPane() {
-        gpDetalle.getStyleClass().add("grid-pane");
-
-    }
-
     @FXML
     private void showOnClick(MouseEvent event) {
         try {
@@ -260,10 +255,10 @@ public class TransporteController implements Initializable {
         try {
             switch (i) {
                 case 0:
-                    lbl.setText(e.toString());
+                    lbl.setText(equipoDetalle(e));
                     break;
                 case 1:
-                    lbl.setText("???");
+                    lbl.setText(DateUtils.getDateString(e.getSeguro().getHasta()));
                     break;
                 case 2:
                     lbl.setText(DateUtils.getDateString(e.getDocumentacion().getRutaVto()));
@@ -286,11 +281,30 @@ public class TransporteController implements Initializable {
     }
 
     private void add() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        transporteSelect = new Transporte();
+        edit();
     }
 
     private void edit() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            if (transporteSelect != null) {
+                Stage dialog = new Stage();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/transporte/TransporteEdit.fxml"));
+                TransporteEditController controller = new TransporteEditController(transporteSelect);
+                loader.setController(controller);
+
+                Scene scene = new Scene(loader.load());
+
+                dialog.setScene(scene);
+                dialog.initModality(Modality.APPLICATION_MODAL);
+                dialog.resizableProperty().setValue(Boolean.FALSE);
+
+                dialog.showAndWait();
+                loadData();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -321,7 +335,6 @@ public class TransporteController implements Initializable {
     }
 
     private void editChofer() {
-        System.out.println("ar.nex.equipo.transporte.TransporteController.editChofer()::: " + transporteSelect.getChofer().toString());
         try {
             Stage dialog = new Stage();
 

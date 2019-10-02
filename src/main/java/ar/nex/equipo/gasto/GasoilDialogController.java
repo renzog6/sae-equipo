@@ -173,7 +173,7 @@ public class GasoilDialogController implements Initializable {
 
     }
 
-    private boolean isEmptytBox() {        
+    private boolean isEmptytBox() {
         if (!DateUtils.validate(dpFecha.getValue())) {
             UtilDialog.errorDialog("Requiere valor", "Fecha");
             Platform.runLater(new Runnable() {
@@ -201,7 +201,7 @@ public class GasoilDialogController implements Initializable {
                 }
             });
             return true;
-        } else if (boxPrecio.getText().trim().isEmpty()) {
+        } else if (boxPrecio.getText().trim().isEmpty() && !lblPrecio_kms.getText().equals("?")) {
             UtilDialog.errorDialog("Requiere valor", lblPrecio_kms.getText());
             Platform.runLater(new Runnable() {
                 @Override
@@ -217,7 +217,7 @@ public class GasoilDialogController implements Initializable {
 
     private void guardar(ActionEvent e) {
         if (!isEmptytBox()) {
-            try {                
+            try {
                 gasoil.setFecha(DateUtils.convertToDateViaSqlDate(dpFecha.getValue()));
                 gasoil.setLitros(Double.parseDouble(boxLitros.getText()));
 

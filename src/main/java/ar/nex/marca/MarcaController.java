@@ -1,10 +1,7 @@
 package ar.nex.marca;
 
 import ar.nex.entity.Marca;
-import ar.nex.entity.equipo.gasto.Gasoil;
 import ar.nex.equipo.gasto.GasoilController;
-import ar.nex.equipo.gasto.GasoilDialogController;
-import ar.nex.jpa.MarcaJpaController;
 import ar.nex.service.JpaService;
 import java.io.IOException;
 import java.net.URL;
@@ -28,14 +25,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.InputMethodEvent;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javax.persistence.Persistence;
 
 /**
  * FXML Controller class

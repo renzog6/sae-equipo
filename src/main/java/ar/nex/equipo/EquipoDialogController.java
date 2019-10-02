@@ -8,10 +8,13 @@ import ar.nex.entity.equipo.EquipoCompraVenta;
 import ar.nex.entity.equipo.EquipoModelo;
 import ar.nex.entity.equipo.EquipoTipo;
 import ar.nex.entity.Marca;
+import ar.nex.equipo.util.DateUtils;
 import ar.nex.equipo.util.UtilDialog;
 import ar.nex.service.JpaService;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -108,9 +111,7 @@ public class EquipoDialogController implements Initializable {
         loadDataTipo();
         loadDataModelo();
         loadDataMarca();
-
         initFiltro();
-
         initControls();
     }
 
@@ -162,27 +163,21 @@ public class EquipoDialogController implements Initializable {
                 cbUsaGasoil.setSelected(false);
             }
 
-            boxFechaCompra.setText("-");
-            boxVendedor.setText("-");
-            boxValorCompra.setText("0.0");
+            boxFechaCompra.setText(new SimpleDateFormat("dd/MM/yyyy").format(equipo.getCompraVenta().getFechaCompra()));
+            boxVendedor.setText(equipo.getCompraVenta().getVendedor());
+            boxValorCompra.setText(equipo.getCompraVenta().getValorCompra().toString());
 
         } catch (Exception e) {
-            UtilDialog.showException(e);
+            boxFechaCompra.setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+            boxVendedor.setText("");
+            boxValorCompra.setText("");
         }
     }
 
     @FXML
     private void guardar(ActionEvent e) {
         try {
-
             Empresa emp = jpa.getEmpresa().findEmpresa(idEmp);
-
-            EquipoCompraVenta cv = new EquipoCompraVenta();//service.getCompraVenta().findEquipoCompraVenta(Long.valueOf(1));
-            Date fechaCompra = new Date();
-            cv.setFechaCompra(fechaCompra);
-            cv.setVendedor(boxVendedor.getText());
-            cv.setValorCompra(Double.valueOf(boxValorCompra.getText()));
-            jpa.getEquipoCompraVenta().create(cv);
 
             equipo.setEmpresa(emp);
             equipo.setAnio(boxAnio.getText());
@@ -200,7 +195,7 @@ public class EquipoDialogController implements Initializable {
 
             equipo.setUsaGasoil(cbUsaGasoil.isSelected());
 
-            equipo.setCompraVenta(cv);
+            equipo.setCompraVenta(crearCompraVenta());
 
             if (equipo.getIdEquipo() != null) {
                 jpa.getEquipo().edit(equipo);
@@ -213,6 +208,22 @@ public class EquipoDialogController implements Initializable {
         } finally {
             ((Node) (e.getSource())).getScene().getWindow().hide();
         }
+    }
+
+    private EquipoCompraVenta crearCompraVenta() {
+        EquipoCompraVenta cv = new EquipoCompraVenta();
+        try {
+            DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
+            cv.setFechaCompra(fd.parse(boxFechaCompra.getText()));
+            cv.setVendedor(boxVendedor.getText());
+            cv.setValorCompra(Double.valueOf(boxValorCompra.getText()));
+        } catch (Exception e) {
+            cv.setFechaCompra(new Date());
+            cv.setVendedor("-");
+            cv.setValorCompra(0.0);
+        }
+        jpa.getEquipoCompraVenta().create(cv);
+        return cv;
     }
 
     private EquipoCategoria categoriaSelect;

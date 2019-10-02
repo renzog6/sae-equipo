@@ -121,14 +121,13 @@ public class RepuestoController implements Initializable {
         loadData();
     }
 
-    public void clearAll() {
+    private void clearAll() {
         data.clear();
         searchBox.clear();
         selectRepuesto = null;
     }
 
-    public void initTable() {
-        System.out.println("ar.nex.util.RepuestoController.initTable()");
+    private void initTable() {        
         colEquipos.setCellValueFactory(new Callback<CellDataFeatures<Repuesto, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(CellDataFeatures<Repuesto, String> data) {

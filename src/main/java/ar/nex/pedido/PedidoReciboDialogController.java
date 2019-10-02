@@ -52,7 +52,7 @@ public class PedidoReciboDialogController implements Initializable {
     @FXML
     private ComboBox<?> filtroEstado;
 
-    private Pedido pedido;
+    private final Pedido pedido;
 
     /**
      * Initializes the controller

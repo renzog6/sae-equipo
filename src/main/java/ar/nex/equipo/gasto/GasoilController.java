@@ -161,6 +161,10 @@ public class GasoilController implements Initializable {
         MenuItem item = new MenuItem("[ Update Stock ]");
         item.setOnAction(e -> updateStock());
         mbMenu.getItems().add(item);
+
+        item = new MenuItem("Gasto Transporte");
+        item.setOnAction(e -> gastoTransporte());
+        mbMenu.getItems().add(item);
     }
 
     private void initFecha() {
@@ -351,15 +355,24 @@ public class GasoilController implements Initializable {
     private void Search() {
         searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
             filteredData.setPredicate((Predicate<? super Gasoil>) item -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
+                try {
+                    if (newValue == null || newValue.isEmpty()) {
+                        return true;
+                    }
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    if (item.getInfo().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    } else if (item.getEquipo().getNombre() != null) {
+                        if (item.getEquipo().getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                            return true;
+                        }
+                    } else if (item.getEquipo().getPatente().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    return false;
                 }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (item.getInfo().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (item.getInfo().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
+
                 return false;
             });
         });
@@ -404,6 +417,26 @@ public class GasoilController implements Initializable {
         data.clear();
         searchBox.clear();
         gasoilSelect = null;
+    }
+
+    private void gastoTransporte() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/gasoil/GasoilTransporte.fxml"));
+            //GasoilDialogController controller = new GasoilDialogController();
+            // loader.setController(controller);
+
+            Scene scene = new Scene(loader.load());
+            Stage dialog = new Stage();
+            dialog.setTitle("Gas-Oil");
+            dialog.setScene(scene);
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.resizableProperty().setValue(Boolean.FALSE);
+
+            dialog.showAndWait();
+
+        } catch (IOException e) {
+            System.err.print(e);
+        }
     }
 
 }
