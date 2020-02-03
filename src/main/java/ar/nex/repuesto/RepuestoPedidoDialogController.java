@@ -33,16 +33,16 @@ import org.controlsfx.control.textfield.TextFields;
  * @author Renzo
  */
 public class RepuestoPedidoDialogController implements Initializable {
-    
+
     public RepuestoPedidoDialogController(Repuesto r) {
         this.repuesto = r;
     }
-    
+
     @FXML
     private Label lblCodigo;
     @FXML
     private Label lblProvedor;
-    
+
     @FXML
     private TextField boxFecha;
     @FXML
@@ -55,7 +55,7 @@ public class RepuestoPedidoDialogController implements Initializable {
     private Button btnGuardar;
     @FXML
     private Button btnCancelar;
-    
+
     private final Repuesto repuesto;
 
     /**
@@ -70,7 +70,7 @@ public class RepuestoPedidoDialogController implements Initializable {
         initControls();
         loadDataProvedor();
     }
-    
+
     private void initControls() {
         try {
             Platform.runLater(new Runnable() {
@@ -79,28 +79,31 @@ public class RepuestoPedidoDialogController implements Initializable {
                     boxCantidad.requestFocus();
                 }
             });
-            
+
             lblCodigo.setText("Codigo: " + repuesto.toString());
-            
+
             DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
             boxFecha.setText(fd.format(new Date()));
 
-            //boxProvedor.setPromptText(respuesto.getLastPedido().getEmpresa().toString());
-            lblProvedor.setText("Ultimo Provedor: " + repuesto.getPedidoList().get(repuesto.getPedidoList().size()-1).getEmpresa().getNombre());             
-            provedorSelect = repuesto.getPedidoList().get(repuesto.getPedidoList().size()-1).getEmpresa();
-            
+            if (!repuesto.getPedidoList().isEmpty()) {
+                lblProvedor.setText("Ultimo Provedor: " + repuesto.getPedidoList().get(repuesto.getPedidoList().size() - 1).getEmpresa().getNombre());
+                provedorSelect = repuesto.getPedidoList().get(repuesto.getPedidoList().size() - 1).getEmpresa();
+            } else {
+                lblProvedor.setText("Provedor:");
+            }
+
             btnGuardar.setOnAction(e -> guardar(e));
             btnCancelar.setOnAction(e -> cancelar(e));
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     private Empresa provedorSelect;
-    
+
     private final ObservableList<Empresa> dataProvedor = FXCollections.observableArrayList();
-    
+
     private void loadDataProvedor() {
         try {
             this.dataProvedor.clear();
@@ -108,45 +111,45 @@ public class RepuestoPedidoDialogController implements Initializable {
             List<Empresa> lst = jpaProvedor.findEmpresaEntities();
             lst.forEach((item) -> {
                 this.dataProvedor.add(item);
-            });            
-            AutoCompletionBinding<Empresa> autoProvedor = TextFields.bindAutoCompletion(boxProvedor, dataProvedor);            
+            });
+            AutoCompletionBinding<Empresa> autoProvedor = TextFields.bindAutoCompletion(boxProvedor, dataProvedor);
             autoProvedor.setOnAutoCompleted((AutoCompletionBinding.AutoCompletionEvent<Empresa> event) -> {
-                        provedorSelect = event.getCompletion();
-                    }
-            );            
+                provedorSelect = event.getCompletion();
+            }
+            );
         } catch (Exception e) {
             System.err.println(e);
         }
     }
-    
+
     @FXML
     private void guardar(ActionEvent event) {
         try {
             Pedido pedido = new Pedido();
             pedido.setRepuesto(repuesto);
-            
+
             DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
             pedido.setFechaInicio(fd.parse(boxFecha.getText()));
-            
+
             pedido.setCantidad(Double.valueOf(boxCantidad.getText()));
             pedido.setEmpresa(provedorSelect);
             pedido.setInfo(boxInfo.getText());
-            
+
             pedido.setEstado(EstadoPedido.PENDIENTE.getValue());
-            
+
             PedidoJpaController jpaPedido = new PedidoJpaController(Persistence.createEntityManagerFactory("SaeFxPU"));
             if (pedido.getIdPedido() != null) {
                 jpaPedido.edit(pedido);
             } else {
                 jpaPedido.create(pedido);
             }
-            
+
             cancelar(event);
         } catch (Exception e) {
             System.err.println(e);
         }
     }
-    
+
     private void cancelar(ActionEvent e) {
         ((Node) (e.getSource())).getScene().getWindow().hide();
     }

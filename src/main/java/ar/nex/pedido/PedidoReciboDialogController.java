@@ -2,11 +2,13 @@ package ar.nex.pedido;
 
 import ar.nex.repuesto.RepuestoStockController;
 import ar.nex.entity.equipo.Pedido;
+import ar.nex.equipo.util.DateUtils;
 import ar.nex.equipo.util.UtilDialog;
 import ar.nex.jpa.PedidoJpaController;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -21,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javax.persistence.Persistence;
@@ -40,7 +43,7 @@ public class PedidoReciboDialogController implements Initializable {
     private Label lblCodigo;
 
     @FXML
-    private TextField boxFecha;
+    private DatePicker dpFecha;
     @FXML
     private TextField boxCantidad;
     @FXML
@@ -80,8 +83,7 @@ public class PedidoReciboDialogController implements Initializable {
 
             lblCodigo.setText("Codigo: " + pedido.getRepuesto().toString() + " ( Cantidad Pedida: " + pedido.getCantidad() + " )");
 
-            DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
-            boxFecha.setText(fd.format(new Date()));
+            dpFecha.setValue(LocalDate.now());
 
             boxCantidad.setText(pedido.getCantidad().toString());
             boxCantidad.textProperty().addListener(new ChangeListener<String>() {
@@ -125,12 +127,11 @@ public class PedidoReciboDialogController implements Initializable {
                 p.setEmpresa(pedido.getEmpresa());
                 p.setEstado(EstadoPedido.PENDIENTE.getValue());
                 p.setCantidad(pedido.getCantidad() - Double.valueOf(boxCantidad.getText()));
-                p.setInfo(boxFecha.getText() + " llegaron " + boxCantidad.getText());
+                p.setInfo(DateUtils.convertToDateViaSqlDate(dpFecha.getValue()) + " llegaron " + boxCantidad.getText());
                 jpaPedido.create(p);
             }
-            
-            DateFormat fd = new SimpleDateFormat("dd/MM/yyyy");
-            pedido.setFechaFin(fd.parse(boxFecha.getText()));
+
+            pedido.setFechaFin(DateUtils.convertToDateViaSqlDate(dpFecha.getValue()));
 
             pedido.setCantidad(Double.valueOf(boxCantidad.getText()));
             pedido.setInfo(boxInfo.getText());

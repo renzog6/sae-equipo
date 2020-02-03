@@ -1,7 +1,7 @@
 .table-cell {     
     -fx-padding: 0.2em 0.2em 0.1em 0.3em;
     -fx-border-color: -fx-box-border -fx-box-border transparent transparent;  
-    -fx-font: 14px "Segoe UI";    
+
     -fx-border-insets: 0;
     -fx-alignment: center; 
 }
@@ -47,7 +47,7 @@
 
 .table-view .column-header, .table-view .filler {
     -fx-background-color: white;    
-    -fx-size: 45;
+    -fx-size: 40;
     -fx-border-color: -fx-box-border;
     -fx-border-width: 0 1 2 0;
     -fx-border-insets: 0;
@@ -61,26 +61,6 @@
     -fx-background-color: white;
     -fx-border-color: -fx-box-border;
     -fx-border-insets: 0;
-}
-
-
-
-.table-view .button{
-/*    -fx-border-color: transparent;
-    -fx-border-width: 0;
-    -fx-background-radius: 0;
-    -fx-background-color: transparent;*/
-    -fx-font-family:"Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 14; /* 12 */
-    -fx-text-fill: #828282;
-    -fx-font-weight: bold;
-/*    -fx-background-image: url("/img/buy_64.png");
-    -fx-padding: 20 20 20 20;
-    -fx-min-height: 20px;
-    -fx-min-width: 20px;
-    -fx-background-size: 20px 20px;
-    -fx-background-repeat: no-repeat;
-    -fx-background-position: center 8px;*/
 }
 
 .table-view .button:focused {

@@ -12,20 +12,20 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="bpGasoil" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.gasto.GasoilTransporteController">
+<BorderPane fx:id="bpGasoil" prefHeight="500.0" prefWidth="800.0" stylesheets="@../../css/gasoil.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.gasto.GasoilTransporteController">
     
     <center>
         <AnchorPane minHeight="560.0" prefHeight="560.0">
             <children>
                 <TableView fx:id="table" layoutX="-9.0" layoutY="14.0" minHeight="558.0" onMouseClicked="#showOnClick" prefHeight="558.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                        <TableColumn fx:id="colEquipo" minWidth="50.0" prefWidth="100.0" text="Equipo" />                        
-                        <TableColumn fx:id="colUltima" prefWidth="102.0" text="Ultima Carga" />
-                        <TableColumn fx:id="colKms" prefWidth="102.0" text="Kilometros" />
-                        <TableColumn fx:id="colCargas" prefWidth="102.0" text="Cargas" />
-                        <TableColumn fx:id="colLitros" prefWidth="102.0" text="Litros" />
+                        <TableColumn fx:id="colEquipo" minWidth="50.0" text="Equipo" />                        
+                        <TableColumn fx:id="colUltima" text="Ultima Carga" />
+                        <TableColumn fx:id="colKms" text="Kilometros" />
+                        <TableColumn fx:id="colCargas" text="Cargas" />
+                        <TableColumn fx:id="colLitros" text="Litros" />
                         <TableColumn fx:id="colPromedio" prefWidth="102.0" text="Promedio" />
-                        <TableColumn fx:id="colAccion" text="Accion" />
+                        <TableColumn fx:id="colAccion" minWidth="5.0" prefWidth="50.0" text="Accion" />
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

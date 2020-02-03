@@ -1,6 +1,5 @@
 package ar.nex.repuesto;
 
-import ar.nex.entity.empresa.Empresa;
 import ar.nex.entity.equipo.EquipoModelo;
 import ar.nex.entity.equipo.Repuesto;
 import ar.nex.equipo.EquipoController;
@@ -15,6 +14,7 @@ import java.util.ResourceBundle;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -22,6 +22,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -35,6 +36,8 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -55,7 +58,7 @@ public class RepuestoController implements Initializable {
         Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getResource("/fxml/repuesto/Repuesto.fxml"));
-            root.setStyle("/fxml/repuesto/Repuesto.css");
+            root.setStyle("/css/repuesto.css");
         } catch (IOException ex) {
             Logger.getLogger(EquipoController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -98,7 +101,7 @@ public class RepuestoController implements Initializable {
     @FXML
     private TableColumn<?, ?> colStock;
     @FXML
-    private TableColumn colAccion;
+    private TableColumn<Repuesto, String> colId;
 
     @FXML
     private Label lblModelo;
@@ -111,9 +114,10 @@ public class RepuestoController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        searchBox.requestFocus();
+
         btnAdd.setOnAction(e -> this.add());
         btnEdit.setOnAction(e -> this.edit());
-
         btnAddModelo.setOnAction(e -> this.addModelo());
 
         jpa = new JpaService();
@@ -127,93 +131,138 @@ public class RepuestoController implements Initializable {
         selectRepuesto = null;
     }
 
-    private void initTable() {        
-        colEquipos.setCellValueFactory(new Callback<CellDataFeatures<Repuesto, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(CellDataFeatures<Repuesto, String> data) {
-                return new SimpleStringProperty(listaModelo(data.getValue()));
-            }
-        }
-        );
-
-        colCodigo.setCellValueFactory(
-                new PropertyValueFactory<>("codigo"));
-        colDescripcion.setCellValueFactory(
-                new PropertyValueFactory<>("descripcion"));
-        colParte.setCellValueFactory(
-                new PropertyValueFactory<>("parte"));
-        colInfo.setCellValueFactory(
-                new PropertyValueFactory<>("info"));
-        colMarca.setCellValueFactory(
-                new PropertyValueFactory<>("marca"));
-        colStock.setCellValueFactory(
-                new PropertyValueFactory<>("stock"));
-
-        initCellAccion();
-    }
-
-    public void initCellAccion() {
-        colAccion.setCellValueFactory(new PropertyValueFactory<>("Accion"));
-        Callback<TableColumn<Repuesto, String>, TableCell<Repuesto, String>> cellFactory
-                = //
-                (final TableColumn<Repuesto, String> param) -> {
-                    final TableCell<Repuesto, String> cell = new TableCell<Repuesto, String>() {
-
-                final Button btn = new Button("+");
-
+    private void initTable() {
+        System.out.println("ar.nex.repuesto.RepuestoController.initTable()");
+        try {
+            colId.setCellValueFactory(new Callback<CellDataFeatures<Repuesto, String>, ObservableValue<String>>() {
                 @Override
-                public void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setGraphic(null);
-                        setText(null);
-                    } else {
-                        btn.setOnAction(event -> {
-                            selectRepuesto = getTableView().getItems().get(getIndex());
+                public ObservableValue<String> call(CellDataFeatures<Repuesto, String> data) {
+                    return new SimpleStringProperty(data.getValue().getIdRepuesto().toString());
+                }
+            }
+            );
+
+            colEquipos.setCellValueFactory(new Callback<CellDataFeatures<Repuesto, String>, ObservableValue<String>>() {
+                @Override
+                public ObservableValue<String> call(CellDataFeatures<Repuesto, String> data) {
+                    return new SimpleStringProperty(listaModelo(data.getValue()));
+                }
+            }
+            );
+
+            colCodigo.setCellValueFactory(
+                    new PropertyValueFactory<>("codigo"));
+            colDescripcion.setCellValueFactory(
+                    new PropertyValueFactory<>("descripcion"));
+            colParte.setCellValueFactory(
+                    new PropertyValueFactory<>("parte"));
+            colInfo.setCellValueFactory(
+                    new PropertyValueFactory<>("info"));
+            colMarca.setCellValueFactory(
+                    new PropertyValueFactory<>("marca"));
+            colStock.setCellValueFactory(
+                    new PropertyValueFactory<>("stock"));
+
+            table.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                        OneClick();
+                        if (mouseEvent.getClickCount() == 2) {
                             addToPedido();
-                        });
-                        setGraphic(btn);
-                        setText(null);
+                        }
                     }
                 }
-            };
-                    return cell;
-                };
-        colAccion.setCellFactory(cellFactory);
+            });
+
+            table.setOnKeyPressed(event -> {
+                if (event.getCode().isArrowKey()) {
+                    OneClick();
+                    event.consume();
+                }
+                if (event.getCode() == KeyCode.ENTER) {
+                    addToPedido();
+                    event.consume();
+                }
+            });
+
+            // initCellAccion();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * public void initCellAccion() { try {
+     *
+     * colAccion.setCellValueFactory(new PropertyValueFactory<>("Accion"));
+     *
+     * Callback<TableColumn<Repuesto, String>, TableCell<Repuesto, String>>
+     * cellFactory = // (final TableColumn<Repuesto, String> param) -> { final
+     * TableCell<Repuesto, String> cell = new TableCell<Repuesto, String>() {
+     *
+     * final Button btn = new Button("+");
+     *
+     * @Override public void updateItem(String item, boolean empty) {
+     * super.updateItem(item, empty); if (empty) { setGraphic(null);
+     * setText(null); } else { btn.setOnAction(event -> { selectRepuesto =
+     * getTableView().getItems().get(getIndex()); addToPedido(); });
+     * setGraphic(btn); setText(null); } } }; return cell; };
+     * colAccion.setCellFactory(cellFactory); } catch (Exception e) {
+     *
+     * e.printStackTrace(); } }
+     */
     public void loadData() {
-        System.out.println("ar.nex.util.RepuestoController.loadData()");
-        clearAll();
-        selectRepuesto = null;
-        List<Repuesto> lst = jpa.getRepuesto().findRepuestoEntities();
-        lst.forEach((item) -> {
-            data.add(item);
-        });
-        table.setItems(data);
+        try {
+            clearAll();
+            selectRepuesto = null;
+            List<Repuesto> lst = jpa.getRepuesto().findRepuestoEntities();
+            lst.forEach((item) -> {
+                data.add(item);
+            });
+            table.setItems(data);
+        } catch (Exception e) {
+            System.out.println("ar.nex.repuesto.RepuestoController.loadData()");
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void Search() {
-        searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            filteredData.setPredicate((Predicate<? super Repuesto>) user -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (user.getCodigo().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (user.getDescripcion().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                } else if (user.getParte().toLowerCase().contains(lowerCaseFilter)) {
-                    return true;
-                }
-                return false;
+        try {
+            searchBox.textProperty().addListener((observableValue, oldValue, newValue) -> {
+                filteredData.setPredicate((Predicate<? super Repuesto>) user -> {
+                    if (newValue == null || newValue.isEmpty()) {
+                        return true;
+                    }
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    if (user.getCodigo().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    } else if (user.getDescripcion().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    } else if (user.getParte().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    }
+                    return false;
+                });
             });
-        });
-        SortedList<Repuesto> sortedData = new SortedList<>(filteredData);
-        sortedData.comparatorProperty().bind(table.comparatorProperty());
-        table.setItems(sortedData);
+            SortedList<Repuesto> sortedData = new SortedList<>(filteredData);
+            sortedData.comparatorProperty().bind(table.comparatorProperty());
+            table.setItems(sortedData);
+
+            searchBox.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.TAB) {
+                    table.requestFocus();
+                    table.getSelectionModel().selectFirst();
+                    table.getFocusModel().focus(0);
+                    OneClick();
+                    event.consume();
+                }
+            });
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @FXML
@@ -245,13 +294,13 @@ public class RepuestoController implements Initializable {
     }
 
     @FXML
-    private void showOnClick(MouseEvent event) {
+    private void OneClick() {
         try {
             Repuesto item = (Repuesto) table.getSelectionModel().getSelectedItem();
             selectRepuesto = jpa.getRepuesto().findRepuesto(item.getIdRepuesto());
 
             lblModelo.setText(listaModelo(selectRepuesto));
-            lblPedido.setText(listaProvedor(selectRepuesto));
+            //  lblPedido.setText(listaProvedor(selectRepuesto));
             if (selectRepuesto.getPedidoList().size() >= 1) {
                 lblCompra.setText(ultimaCompra(selectRepuesto.getPedidoList().size() - 1));
             } else {
@@ -260,7 +309,6 @@ public class RepuestoController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        event.consume();
     }
 
     private String ultimaCompra(int index) {
@@ -295,20 +343,6 @@ public class RepuestoController implements Initializable {
         return list;
     }
 
-    private String listaProvedor(Repuesto r) {
-        String list = null;
-        if (!r.getEmpresaList().isEmpty()) {
-            for (Empresa item : r.getEmpresaList()) {
-                if (list == null) {
-                    list = item.getNombre();
-                } else {
-                    list = list + " / " + item.getNombre();
-                }
-            }
-        }
-        return list;
-    }
-
     @FXML
     private void addToPedido() {
         System.out.println("ar.nex.pedido.RepuestoController.AddToPedido()");
@@ -327,6 +361,7 @@ public class RepuestoController implements Initializable {
 
             stage.showAndWait();
             this.loadData();
+            searchBox.requestFocus();
 
         } catch (IOException e) {
             System.err.print(e);
@@ -361,7 +396,11 @@ public class RepuestoController implements Initializable {
         }
     }
 
+    /**
+     * Agrega un Modelo mas que usa este repuesto.
+     */
     public void addModelo() {
+        System.out.println("ar.nex.repuesto.RepuestoController.addModelo()");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/repuesto/RepuestoModeloSelect.fxml"));
             RepuestoModeloSelectController controller = new RepuestoModeloSelectController(selectRepuesto.getModeloList());
@@ -383,7 +422,7 @@ public class RepuestoController implements Initializable {
             this.loadData();
 
         } catch (Exception e) {
-            System.err.print(e);
+            e.printStackTrace();
         }
     }
 }

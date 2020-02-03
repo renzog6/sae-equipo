@@ -1,14 +1,18 @@
+@font-face {
+    src: url('Roboto-Medium.ttf');
+}
+
+*{
+    -fx-font-size: 1.1em;
+    -fx-font-family: 'Roboto Medium';
+}
+
 .button-home{
     -fx-background-color: #0094FF;
     -fx-background-insets: 0,1,2,3;
     -fx-background-radius: 3,2,2,2;
     -fx-indent: 50;
     -fx-text-fill: white;
-    -fx-font-size: 14px;      
     -fx-pref-height: 50px;
     -fx-pref-width: 150px;
-}
-
-.menuPane{
-    -fx-background-color: #5B8099;
 }

@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="bpGasoil" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.gasto.GasoilController">
+<BorderPane fx:id="bpGasoil" minHeight="700.0" minWidth="1000.0" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ar.nex.equipo.gasto.GasoilController">
     
     <center>
         <AnchorPane minHeight="560.0" prefHeight="560.0">
@@ -52,9 +52,9 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <DatePicker fx:id="dpDesde" layoutX="368.0" layoutY="10.0" prefHeight="30.0" prefWidth="110.0" promptText="Desde" AnchorPane.topAnchor="10.0" />
-            <DatePicker fx:id="dpHasta" layoutX="549.0" layoutY="10.0" prefHeight="30.0" prefWidth="110.0" promptText="Hasta" AnchorPane.topAnchor="10.0" />
-            <Button fx:id="btnUpdate" layoutX="669.0" layoutY="12.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" AnchorPane.topAnchor="10.0">
+            <DatePicker fx:id="dpDesde" layoutX="368.0" layoutY="10.0" prefHeight="30.0" prefWidth="120.0" promptText="Desde" AnchorPane.topAnchor="10.0" />
+            <DatePicker fx:id="dpHasta" layoutX="549.0" layoutY="10.0" prefHeight="30.0" prefWidth="120.0" promptText="Hasta" AnchorPane.topAnchor="10.0" />
+            <Button fx:id="btnUpdate" layoutX="669.0" layoutY="12.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" AnchorPane.leftAnchor="680.0" AnchorPane.topAnchor="10.0">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" nodeOrientation="INHERIT" smooth="false">
                      <image>

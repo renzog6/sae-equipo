@@ -130,7 +130,6 @@ public class PedidoController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
         try {
             btnAdd.setOnAction(e -> add());
             btnEdit.setOnAction(e -> edit());

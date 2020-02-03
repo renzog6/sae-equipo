@@ -69,7 +69,7 @@ public class RepuestoDialogController implements Initializable {
         // TODO
         jpa = new JpaService();
         initControls();
-        loadDataProvedor();
+        //loadDataProvedor();
         loadDataMarca();
         loadDataModelo();
         initBoxs();
@@ -114,16 +114,14 @@ public class RepuestoDialogController implements Initializable {
             repuesto.setParte(boxParte.getText());
             repuesto.setStock(0.0);
 
-            
             if (repuesto.getIdRepuesto() != null) {
                 jpa.getRepuesto().edit(repuesto);
             } else {
                 repuesto.setMarca(marcaSelect.toString());
 
-                List<Empresa> lstProveedor = new ArrayList<>();
-                lstProveedor.add(provedorSelect);
-                repuesto.setEmpresaList(lstProveedor);
-
+//                List<Empresa> lstProveedor = new ArrayList<>();
+//                lstProveedor.add(provedorSelect);
+//                repuesto.setEmpresaList(lstProveedor);
                 List<EquipoModelo> lstModelo = new ArrayList<>();
                 lstModelo.add(modeloSelect);
                 repuesto.setModeloList(lstModelo);
@@ -142,27 +140,27 @@ public class RepuestoDialogController implements Initializable {
 
     private final ObservableList<Empresa> dataProvedor = FXCollections.observableArrayList();
 
-    private void loadDataProvedor() {
-        try {
-            this.dataProvedor.clear();            
-            List<Empresa> lst = jpa.getEmpresa().findEmpresaEntities();
-            lst.forEach((item) -> {
-                this.dataProvedor.add(item);
-            });
+//    private void loadDataProvedor() {
+//        try {
+//            this.dataProvedor.clear();
+//            List<Empresa> lst = jpa.getEmpresa().findEmpresaEntities();
+//            lst.forEach((item) -> {
+//                this.dataProvedor.add(item);
+//            });
+//
+//            AutoCompletionBinding<Empresa> autoProvedor = TextFields.bindAutoCompletion(boxProvedor, dataProvedor);
+//
+//            autoProvedor.setOnAutoCompleted((AutoCompletionBinding.AutoCompletionEvent<Empresa> event) -> {
+//                provedorSelect = event.getCompletion();
+//            }
+//            );
+//
+//        } catch (Exception e) {
+//            System.err.println(e);
+//        }
+//    }
 
-            AutoCompletionBinding<Empresa> autoProvedor = TextFields.bindAutoCompletion(boxProvedor, dataProvedor);
-
-            autoProvedor.setOnAutoCompleted((AutoCompletionBinding.AutoCompletionEvent<Empresa> event) -> {
-                        provedorSelect = event.getCompletion();
-                    }
-            );
-
-        } catch (Exception e) {
-            System.err.println(e);
-        }
-    }
-
-        private Marca marcaSelect;
+    private Marca marcaSelect;
 
     private final ObservableList<Marca> dataMarca = FXCollections.observableArrayList();
 
@@ -186,14 +184,14 @@ public class RepuestoDialogController implements Initializable {
             System.err.println(e);
         }
     }
-    
+
     private EquipoModelo modeloSelect;
 
     private final ObservableList<EquipoModelo> dataModelo = FXCollections.observableArrayList();
 
     private void loadDataModelo() {
         try {
-            this.dataModelo.clear();            
+            this.dataModelo.clear();
             List<EquipoModelo> lst = jpa.getEquipoModelo().findEquipoModeloEntities();
             lst.forEach((item) -> {
                 this.dataModelo.add(item);

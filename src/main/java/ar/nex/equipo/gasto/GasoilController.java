@@ -422,16 +422,17 @@ public class GasoilController implements Initializable {
     private void gastoTransporte() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/gasoil/GasoilTransporte.fxml"));
+            
             //GasoilDialogController controller = new GasoilDialogController();
-            // loader.setController(controller);
+            //loader.setController(controller);
 
             Scene scene = new Scene(loader.load());
-            Stage dialog = new Stage();
+            scene.getRoot().setStyle("/css/gasoil.css");
+            Stage dialog = new Stage();            
             dialog.setTitle("Gas-Oil");
-            dialog.setScene(scene);
+            dialog.setScene(scene);       
             dialog.initModality(Modality.APPLICATION_MODAL);
             dialog.resizableProperty().setValue(Boolean.FALSE);
-
             dialog.showAndWait();
 
         } catch (IOException e) {
